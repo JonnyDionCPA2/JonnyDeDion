@@ -222,7 +222,7 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
 <div id="creation-screen">
   <div class="creation-box">
     <div class="creation-title">Qui es-tu ?</div>
-    <div class="creation-sub">Ton histoire commence ici. Elle ne ressemblera à aucune autre.</div>
+    <div class="creation-sub">Ton histoire commence ici. Elle ne ressemblera à aucune autre.<br><span style="font-size:0.8rem;color:var(--ink3);">Joueur existant ? Entre simplement ton nom d'utilisateur pour te reconnecter.</span></div>
     <div class="field">
       <label>NOM D'UTILISATEUR</label>
       <input type="text" id="inp-username" placeholder="ex: jonny_dion" maxlength="20">
@@ -465,7 +465,9 @@ function selectHindrance(el){
 function validateForm(){
   const u=document.getElementById('inp-username').value.trim();
   const c=document.getElementById('inp-charname').value.trim();
-  document.getElementById('create-btn').disabled=!(u&&c&&selectedHindrance);
+  // Allow reconnect with just username (hindrance not required for existing players)
+  document.getElementById('create-btn').disabled=!(u&&c);
+  document.getElementById('create-btn').textContent=selectedHindrance?'Commencer mon histoire':'Se connecter / Commencer';
 }
 document.getElementById('inp-username').addEventListener('input',validateForm);
 document.getElementById('inp-charname').addEventListener('input',validateForm);
@@ -476,13 +478,29 @@ async function createPlayer(){
   const errEl=document.getElementById('creation-error');
   errEl.textContent='';
   document.getElementById('create-btn').disabled=true;
-  document.getElementById('create-btn').textContent='Création en cours...';
+  document.getElementById('create-btn').textContent='Connexion en cours...';
 
   // Check if username exists
-  const {data:existing}=await sb.from('players').select('id').eq('username',username).single();
+  const {data:existing,error:fetchErr}=await sb.from('players').select('*').eq('username',username).single();
   if(existing){
-    // Load existing player
-    await loadPlayer(existing.id,username,charname,selectedHindrance);
+    // Reconnect existing player — load their data
+    PLAYER=existing;
+    const saved=localStorage.getItem(KEY+'_pid_'+existing.id);
+    G=saved?JSON.parse(saved):def();
+    if(!G.equipment)G.equipment=[...START_EQUIP];
+    if(!G.queue)G.queue=[];
+    if(!G.marketStock)G.marketStock={};
+    if(!G.lotteryEntries)G.lotteryEntries={};
+    localStorage.setItem(KEY+'_pid',existing.id);
+    startGame();
+    return;
+  }
+
+  // New player — require hindrance selected
+  if(!selectedHindrance){
+    errEl.textContent='Choisis une hindrance pour continuer.';
+    document.getElementById('create-btn').disabled=false;
+    document.getElementById('create-btn').textContent='Commencer mon histoire';
     return;
   }
 
@@ -504,18 +522,18 @@ async function createPlayer(){
   PLAYER=player;
   G=def();
   localStorage.setItem(KEY+'_pid',player.id);
-  localStorage.setItem(KEY+'_data',JSON.stringify(G));
+  localStorage.setItem(KEY+'_pid_'+player.id,JSON.stringify(G));
   startGame();
 }
 
-async function loadPlayer(pid,username,charname,hindrance){
+async function loadPlayer(pid){
   const{data:player}=await sb.from('players').select('*').eq('id',pid).single();
   if(!player){
     document.getElementById('creation-error').textContent='Joueur introuvable.';
     return;
   }
   PLAYER=player;
-  const saved=localStorage.getItem(KEY+'_data');
+  const saved=localStorage.getItem(KEY+'_pid_'+player.id);
   G=saved?JSON.parse(saved):def();
   if(!G.equipment)G.equipment=[...START_EQUIP];
   if(!G.queue)G.queue=[];
@@ -531,7 +549,7 @@ async function tryAutoLogin(){
   const{data:player}=await sb.from('players').select('*').eq('id',pid).single();
   if(!player)return false;
   PLAYER=player;
-  const saved=localStorage.getItem(KEY+'_data');
+  const saved=localStorage.getItem(KEY+'_pid_'+player.id);
   G=saved?JSON.parse(saved):def();
   if(!G.equipment)G.equipment=[...START_EQUIP];
   if(!G.queue)G.queue=[];
@@ -607,7 +625,9 @@ function updateAgeAndBackground(){
 // --- Save ---
 function save(){
   G.lastSeen=Date.now();
-  try{localStorage.setItem(KEY+'_data',JSON.stringify(G));}catch(e){}
+  try{
+    localStorage.setItem(KEY+'_pid_'+(PLAYER?PLAYER.id:'local'),JSON.stringify(G));
+  }catch(e){}
 }
 async function syncScores(){
   if(!PLAYER)return;
@@ -800,39 +820,65 @@ function renderQueue(){
   const groups=[];
   G.queue.forEach((actId,i)=>{
     const last=groups[groups.length-1];
-    if(last&&last.actId===actId&&i>0){last.count++;last.endIdx=i;}
-    else groups.push({actId,count:1,startIdx:i,endIdx:i});
+    if(last&&last.actId===actId)last.count++;
+    else groups.push({actId,count:1});
   });
 
+  // Rebuild startIdx/endIdx
+  let cursor=0;
+  groups.forEach(grp=>{grp.startIdx=cursor;grp.endIdx=cursor+grp.count-1;cursor+=grp.count;});
+
   let html='';
-  let groupNum=0;
-  groups.forEach(grp=>{
-    groupNum++;
+  groups.forEach((grp,gi)=>{
     const act=ACTS.find(a=>a.id===grp.actId);if(!act)return;
     const totalDur=act.dur*grp.count;
     const isActive=grp.startIdx===0&&G.queueStart;
     let rem=totalDur,pct=0;
     if(isActive){
       const elapsed=Math.max(0,now-G.queueStart);
-      // cycles done within this group
-      const cyclesDone=Math.floor(elapsed/act.dur);
-      const withinCycle=elapsed%act.dur;
       rem=Math.max(0,totalDur-elapsed);
       pct=Math.min(100,Math.round(elapsed/totalDur*100));
     }
-    const countLabel=grp.count>1?grp.count+'× ':'';
-    const skLabel='<span style="font-size:0.65rem;font-family:\'Cinzel\',serif;padding:1px 5px;border-radius:2px;background:rgba(90,60,20,.08);color:var(--ink3);">'+SN[act.sk].toUpperCase().slice(0,3)+'</span>';
+    const skBadge='<span style="font-size:0.65rem;font-family:\'Cinzel\',serif;padding:1px 5px;border-radius:2px;background:rgba(90,60,20,.08);color:var(--ink3);">'+SN[act.sk].toUpperCase().slice(0,3)+'</span>';
     html+='<div class="qitem'+(isActive?' active-item':'')+'">'
       +'<div class="qitem-info">'
-      +'<div class="qitem-name">'+countLabel+act.name+' '+skLabel+'</div>'
+      +'<div class="qitem-name">'+grp.count+'× '+act.name+' '+skBadge+'</div>'
       +'<div class="qitem-meta">'+(isActive?'En cours · ':'')+fmtDur(act.dur)+'/cycle · '+(isActive?'reste '+fmtDur(rem):fmtDur(totalDur)+' total')+'</div>'
       +'</div>'
-      +'<button class="qitem-rm" onclick="removeGroup('+grp.startIdx+','+grp.endIdx+')" title="Retirer">×</button>'
+      +'<div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">'
+      +'<button class="qitem-rm" onclick="adjustGroup('+gi+',-1)" title="Retirer 1 cycle">−</button>'
+      +'<button class="qitem-rm" onclick="adjustGroup('+gi+',1)" title="Ajouter 1 cycle">+</button>'
+      +'<button class="qitem-rm" onclick="removeGroup('+grp.startIdx+','+grp.endIdx+')" title="Supprimer tout">×</button>'
+      +'</div>'
       +(isActive?'<div class="qitem-prog" style="width:'+pct+'%"></div>':'')
       +'</div>';
   });
   el.innerHTML=html;
   document.getElementById('etaLine').textContent='Fin dans '+fmtDur(totalQueueMs())+' ('+fmtETA(totalQueueMs())+')';
+}
+
+function adjustGroup(groupIdx,delta){
+  // Rebuild groups to find the right one
+  const groups=[];
+  G.queue.forEach((actId,i)=>{
+    const last=groups[groups.length-1];
+    if(last&&last.actId===actId)last.count++;
+    else groups.push({actId,count:1});
+  });
+  let cursor=0;
+  groups.forEach(grp=>{grp.startIdx=cursor;grp.endIdx=cursor+grp.count-1;cursor+=grp.count;});
+  const grp=groups[groupIdx];
+  if(!grp)return;
+  if(delta>0){
+    // Insert one more after endIdx
+    G.queue.splice(grp.endIdx+1,0,grp.actId);
+  } else {
+    // Remove last of this group
+    if(grp.count<=1){G.queue.splice(grp.startIdx,1);}
+    else{G.queue.splice(grp.endIdx,1);}
+    if(!G.queue.length)G.queueStart=null;
+  }
+  save();renderQueue();
 }
 
 function removeGroup(startIdx,endIdx){
