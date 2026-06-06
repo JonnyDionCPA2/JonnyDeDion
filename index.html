@@ -630,6 +630,7 @@ function logout(){
 }
 
 function startGame(){
+  document.getElementById('login-screen').style.display='none';
   document.getElementById('creation-screen').style.display='none';
   document.getElementById('game-screen').style.display='block';
   document.getElementById('charName').textContent=PLAYER.character_name;
