@@ -26,43 +26,64 @@ h1.site-title{font-family:'Cinzel',serif;font-size:13px;letter-spacing:.18em;col
 .xtr{margin-top:4px;height:2px;background:rgba(90,60,20,.1);border-radius:1px;}
 .xfill{height:100%;border-radius:1px;background:var(--gold);transition:width .5s;}
 .xtxt{font-size:10px;color:var(--ink3);margin-top:2px;}
-.sec{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.12em;color:var(--ink3);padding:.5rem 1.4rem .35rem;border-bottom:1px solid var(--border);background:rgba(90,60,20,.025);}
+.sec{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.12em;color:var(--ink3);padding:.5rem 1.4rem .35rem;border-bottom:1px solid var(--border);background:rgba(90,60,20,.025);display:flex;align-items:center;gap:8px;}
+.sec-badge{background:rgba(26,74,58,.12);border:1px solid rgba(26,74,58,.2);border-radius:2px;padding:1px 7px;font-size:9px;color:var(--teal);letter-spacing:.04em;}
 .inv-row{padding:.55rem 1.4rem;border-bottom:1px solid var(--border);min-height:34px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;}
 .chip{font-size:12px;background:rgba(90,60,20,.07);border:1px solid var(--border);border-radius:2px;padding:1px 7px;color:var(--ink2);}
 .empty-txt{font-size:12px;font-style:italic;color:var(--ink3);}
-.agrid{display:grid;grid-template-columns:1fr 1fr;}
-.acard{padding:.9rem 1.2rem;border-right:1px solid var(--border);border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
-.acard:nth-child(even){border-right:none;}
-.acard:nth-last-child(-n+2){border-bottom:none;}
-.acard:hover:not(.locked){background:rgba(90,60,20,.04);}
-.acard.on{background:rgba(26,74,58,.06);border-left:2px solid var(--teal);}
-.acard.locked{opacity:.38;cursor:not-allowed;}
-.aname{font-family:'Cinzel',serif;font-size:12px;font-weight:500;margin-bottom:2px;}
-.adesc{font-size:12px;font-style:italic;color:var(--ink3);line-height:1.35;margin-bottom:5px;}
-.ameta{font-size:11px;color:var(--ink3);}
-.ameta span{color:var(--ink2);}
-.alck{font-size:10px;font-family:'Cinzel',serif;color:var(--red);letter-spacing:.04em;margin-top:3px;}
-.ptr{margin-top:6px;height:2px;background:rgba(90,60,20,.1);border-radius:1px;}
-.pfill{height:100%;border-radius:1px;background:var(--teal);width:0%;transition:width .12s linear;}
+
+/* Slots */
+.slots-wrap{border-bottom:1px solid var(--border);}
+.slot{padding:1rem 1.4rem;border-bottom:1px solid var(--border);position:relative;}
+.slot:last-child{border-bottom:none;}
+.slot-hd{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;color:var(--ink3);margin-bottom:.6rem;}
+.slot-locked{padding:1rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.slot-locked:last-child{border-bottom:none;}
+.slot-lock-msg{font-size:12px;font-style:italic;color:var(--ink3);}
+.act-select{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.7rem;}
+.aopt{padding:.6rem .8rem;border:1px solid var(--border);border-radius:2px;cursor:pointer;transition:background .12s;}
+.aopt:hover:not(.locked-opt){background:rgba(90,60,20,.05);}
+.aopt.selected{background:rgba(26,74,58,.07);border-color:rgba(26,74,58,.35);}
+.aopt.locked-opt{opacity:.35;cursor:not-allowed;}
+.aopt-name{font-family:'Cinzel',serif;font-size:11px;font-weight:500;margin-bottom:1px;}
+.aopt-meta{font-size:10px;color:var(--ink3);}
+.aopt-meta span{color:var(--ink2);}
+.slot-actions{display:flex;gap:8px;align-items:center;}
+.btn-start{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.06em;color:#fff;background:var(--teal);border:none;border-radius:2px;padding:5px 14px;cursor:pointer;}
+.btn-start:hover{background:#0d3328;}
+.btn-stop{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.06em;color:var(--red);background:none;border:1px solid rgba(107,26,26,.25);border-radius:2px;padding:5px 14px;cursor:pointer;}
+.btn-stop:hover{background:rgba(107,26,26,.05);}
+.slot-status{font-size:12px;font-style:italic;color:var(--ink3);}
+
+/* Progress */
+.active-panel{background:rgba(26,74,58,.05);border:1px solid rgba(26,74,58,.18);border-radius:2px;padding:.7rem .9rem;margin-top:.5rem;}
+.active-name{font-family:'Cinzel',serif;font-size:11px;color:var(--teal);margin-bottom:4px;}
+.active-eta{font-size:11px;color:var(--ink3);margin-bottom:6px;}
+.ptr{height:3px;background:rgba(90,60,20,.1);border-radius:1px;}
+.pfill{height:100%;border-radius:1px;background:var(--teal);transition:width .5s linear;}
+
 .log-area{padding:.7rem 1.4rem;min-height:105px;}
-.le{font-size:13px;line-height:1.55;padding:2px 0;border-bottom:1px solid rgba(90,60,20,.07);color:var(--ink2);}
+.le{font-size:13px;line-height:1.6;padding:3px 0;border-bottom:1px solid rgba(90,60,20,.07);color:var(--ink2);}
 .le:last-child{border-bottom:none;}
 .lt{font-size:10px;font-family:'Cinzel',serif;color:var(--ink3);margin-right:5px;}
 .lr{color:var(--teal);}
 .ll{color:var(--gold);font-style:italic;}
 .lev{color:var(--red);font-style:italic;}
+.loffline{color:#8a6a20;font-style:italic;}
 .foot{padding:.45rem 1.4rem;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:10px;font-family:'Cinzel',serif;letter-spacing:.05em;color:var(--ink3);}
 .dot{width:5px;height:5px;border-radius:50%;background:var(--teal);display:inline-block;}
 .rbtn{margin-left:auto;font-size:10px;font-family:'Cinzel',serif;color:var(--red);background:none;border:1px solid rgba(107,26,26,.2);border-radius:2px;padding:2px 7px;cursor:pointer;}
 .rbtn:hover{background:rgba(107,26,26,.05);}
 footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.1em;color:rgba(196,150,42,.3);}
-@media(max-width:480px){.stats{grid-template-columns:repeat(2,1fr);}.agrid{grid-template-columns:1fr;}.acard:nth-child(even){border-right:none;}.acard{border-right:none;}.acard:nth-last-child(-n+2){border-bottom:1px solid var(--border);}.acard:last-child{border-bottom:none;}}
+@media(max-width:500px){.stats{grid-template-columns:repeat(2,1fr);}.act-select{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 <h1 class="site-title">Chroniques de Westmarche</h1>
 <div class="wrap">
 <div class="parch">
+
+  <!-- Header -->
   <div class="hd" style="display:flex;justify-content:space-between;align-items:flex-start;">
     <div>
       <div class="char-name">Jonny de Dion</div>
@@ -71,68 +92,196 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:10px;letter-spacin
     </div>
     <div style="text-align:right;"><div class="gold-lbl">OR</div><div class="gold-val" id="gval">0</div></div>
   </div>
+
+  <!-- Stats -->
   <div class="stats">
     <div class="sc"><div class="slbl">COMBAT</div><div class="snum" id="lc">1</div><div class="xtr"><div class="xfill" id="bc"></div></div><div class="xtxt" id="xc">0/100</div></div>
     <div class="sc"><div class="slbl">SURVIE</div><div class="snum" id="ls">1</div><div class="xtr"><div class="xfill" id="bs"></div></div><div class="xtxt" id="xs">0/100</div></div>
     <div class="sc"><div class="slbl">ARTISANAT</div><div class="snum" id="la">1</div><div class="xtr"><div class="xfill" id="ba"></div></div><div class="xtxt" id="xa">0/100</div></div>
     <div class="sc"><div class="slbl">SAVOIR</div><div class="snum" id="lv">1</div><div class="xtr"><div class="xfill" id="bv"></div></div><div class="xtxt" id="xv">0/100</div></div>
   </div>
+
+  <!-- Inventory -->
   <div class="sec">INVENTAIRE</div>
   <div class="inv-row" id="inv"><span class="empty-txt">Aucun objet pour l'instant</span></div>
-  <div class="sec">ACTIVITÉS</div>
-  <div class="agrid" id="agrid"></div>
+
+  <!-- Slots -->
+  <div class="sec">
+    ACTIVITÉS
+    <span class="sec-badge" id="slot-badge">1 EMPLACEMENT</span>
+  </div>
+  <div class="slots-wrap" id="slots-wrap"></div>
+
+  <!-- Log -->
   <div class="sec">JOURNAL DE WESTMARCHE</div>
   <div class="log-area" id="log"></div>
-  <div class="foot"><span class="dot"></span><span>Progression sauvegardée</span><button class="rbtn" id="rbtn">Recommencer</button></div>
+
+  <div class="foot">
+    <span class="dot"></span>
+    <span>Progression sauvegardée · Calcul hors-ligne actif</span>
+    <button class="rbtn" id="rbtn">Recommencer</button>
+  </div>
 </div>
 </div>
 <footer>© Westmarche — Un projet de Jonny de Dion</footer>
 
 <script>
-const KEY='jonnydion_v2';
-const ACTS=[
-  {id:'wood',name:'Couper du bois',desc:"Les forêts au-delà des murs t'accueillent sans juger.",sk:'s',dur:5000,xp:15,loot:[{n:'Bois',a:1,b:3}],ga:0,gb:1,req:0,rsk:null},
-  {id:'guard',name:'Ronde de nuit',desc:"Tu patrouilles quand la ville dort. Enfin tranquille.",sk:'c',dur:8000,xp:25,loot:[{n:'Ration',a:0,b:1}],ga:2,gb:5,req:0,rsk:null},
-  {id:'study',name:'Étudier les parchemins',desc:"Un vieux moine t'enseigne l'écriture dans sa cellule sombre.",sk:'v',dur:7000,xp:20,loot:[{n:'Parchemin',a:0,b:1}],ga:0,gb:0,req:0,rsk:null},
-  {id:'hunt',name:'Chasse au gibier',desc:"Traquer en silence. Là, tu excelles.",sk:'s',dur:10000,xp:35,loot:[{n:'Viande',a:1,b:3},{n:'Peau',a:0,b:2}],ga:0,gb:3,req:3,rsk:'s'},
-  {id:'forge',name:'Apprenti forgeron',desc:"Forger la nuit, quand l'atelier est désert.",sk:'a',dur:12000,xp:40,loot:[{n:'Clou de fer',a:2,b:5}],ga:1,gb:4,req:2,rsk:'a'},
-  {id:'shadow',name:'Courses discrètes',desc:"Livrer des messages que personne ne doit voir.",sk:'v',dur:9000,xp:30,loot:[{n:'Pièce anonyme',a:1,b:2}],ga:3,gb:8,req:3,rsk:'v'},
+const KEY = 'jonnydion_v3';
+const MAX_OFFLINE_MS = 24 * 60 * 60 * 1000; // 24h cap
+const H = 60 * 60 * 1000;
+
+const ACTS = [
+  {id:'wood',   name:'Couper du bois',       tier:'Base',      desc:"Les forêts au-delà des murs t'accueillent sans juger.",          sk:'s', dur:1*H,   xp:80,  loot:[{n:'Bois',a:2,b:5}],           ga:0,gb:2,  req:0, rsk:null},
+  {id:'guard',  name:'Ronde de nuit',         tier:'Base',      desc:"Tu patrouilles quand la ville dort. Enfin tranquille.",           sk:'c', dur:1*H,   xp:90,  loot:[{n:'Ration',a:0,b:2}],          ga:3,gb:8,  req:0, rsk:null},
+  {id:'study',  name:'Étudier les parchemins',tier:'Base',      desc:"Un vieux moine t'enseigne l'écriture dans sa cellule sombre.",   sk:'v', dur:1*H,   xp:80,  loot:[{n:'Parchemin',a:0,b:1}],       ga:0,gb:0,  req:0, rsk:null},
+  {id:'hunt',   name:'Chasse au gibier',      tier:'Intermédiaire', desc:"Traquer en silence. Là, tu excelles.",                       sk:'s', dur:2*H,   xp:200, loot:[{n:'Viande',a:2,b:5},{n:'Peau',a:1,b:3}], ga:2,gb:6, req:3, rsk:'s'},
+  {id:'forge',  name:'Apprenti forgeron',     tier:'Intermédiaire', desc:"Forger la nuit, quand l'atelier est désert.",                sk:'a', dur:2*H,   xp:210, loot:[{n:'Clou de fer',a:3,b:8}],     ga:4,gb:10, req:2, rsk:'a'},
+  {id:'shadow', name:'Courses discrètes',     tier:'Avancée',   desc:"Livrer des messages que personne ne doit voir.",                 sk:'v', dur:4*H,   xp:480, loot:[{n:'Pièce anonyme',a:2,b:4}],   ga:10,gb:25,req:3, rsk:'v'},
 ];
-const EVTS=[
-  {sk:'s',lv:2,m:"Un passeur remarque que tu connais tout le monde... mais disparais toujours avant minuit. Il hoche la tête avec respect."},
-  {sk:'c',lv:3,m:"On t'offre une place dans la garde du jour. Tu déclènes poliment. Deux fois. Ils cessent de demander."},
-  {sk:'v',lv:4,m:"Tu lis les gens mieux que les livres — leurs peurs, leurs secrets. Ça t'a sauvé la mise plus d'une fois."},
-  {sk:'s',lv:5,m:"Les bas-fonds murmurent ton nom. «Jonny de Dion» — dit avec un sourire, jamais sûr si c'est une menace ou un compliment."},
-  {sk:'a',lv:3,m:"On te commande des outils... inavouables. Tu poses peu de questions. L'or parle plus fort."},
-  {sk:'v',lv:2,m:"Un vieux bougon te glisse : «T'as l'air d'un gars fiable. C'est dangereux, ça.»"},
+
+const EVTS = [
+  {sk:'s',lv:2, m:"Un passeur remarque que tu connais tout le monde... mais disparais toujours avant minuit. Il hoche la tête avec respect."},
+  {sk:'c',lv:3, m:"On t'offre une place dans la garde du jour. Tu déclènes poliment. Deux fois. Ils cessent de demander."},
+  {sk:'v',lv:4, m:"Tu lis les gens mieux que les livres — leurs peurs, leurs secrets. Ça t'a sauvé la mise plus d'une fois."},
+  {sk:'s',lv:5, m:"Les bas-fonds murmurent ton nom. «Jonny de Dion» — dit avec un sourire, jamais sûr si c'est une menace ou un compliment."},
+  {sk:'a',lv:3, m:"On te commande des outils... inavouables. Tu poses peu de questions. L'or parle plus fort."},
+  {sk:'v',lv:2, m:"Un vieux bougon te glisse : «T'as l'air d'un gars fiable. C'est dangereux, ça.»"},
 ];
-const SN={c:'Combat',s:'Survie',a:'Artisanat',v:'Savoir'};
-const UI={c:{l:'lc',b:'bc',x:'xc'},s:{l:'ls',b:'bs',x:'xs'},a:{l:'la',b:'ba',x:'xa'},v:{l:'lv',b:'bv',x:'xv'}};
 
-function def(){return{sk:{c:1,s:1,a:1,v:1},xp:{c:0,s:0,a:0,v:0},inv:{},gold:0,seen:[],log:[{t:'—',m:"Tu commences ta vie dans la Ruelle des Murmures. Que vas-tu faire ?",tp:''}]};}
-let G=function(){try{const d=localStorage.getItem(KEY);if(d)return JSON.parse(d);}catch(e){}return def();}();
-let aid=null,atimer=null,piv=null,ast=null;
+const SN = {c:'Combat',s:'Survie',a:'Artisanat',v:'Savoir'};
+const UI = {c:{l:'lc',b:'bc',x:'xc'},s:{l:'ls',b:'bs',x:'xs'},a:{l:'la',b:'ba',x:'xa'},v:{l:'lv',b:'bv',x:'xv'}};
 
-function save(){try{localStorage.setItem(KEY,JSON.stringify(G));}catch(e){}}
-function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
-function xpN(lv){return lv*100;}
+function def() {
+  return {
+    sk:{c:1,s:1,a:1,v:1},
+    xp:{c:0,s:0,a:0,v:0},
+    inv:{}, gold:0, seen:[],
+    slots:[{actId:null, startedAt:null},{actId:null, startedAt:null}],
+    lastSeen: Date.now(),
+    log:[{t:'—',m:"Tu commences ta vie dans la Ruelle des Murmures. Que vas-tu faire ?",tp:''}]
+  };
+}
 
-function addXp(sk,amt){
-  G.xp[sk]+=amt;
-  if(G.xp[sk]>=xpN(G.sk[sk])){
-    G.xp[sk]-=xpN(G.sk[sk]);
+let G = (function(){
+  try { const d = localStorage.getItem(KEY); if(d) return JSON.parse(d); } catch(e){}
+  return def();
+})();
+
+// Ensure slots array exists for saves before this version
+if(!G.slots) G.slots = [{actId:null,startedAt:null},{actId:null,startedAt:null}];
+if(!G.lastSeen) G.lastSeen = Date.now();
+
+let tickInterval = null;
+
+function save() {
+  G.lastSeen = Date.now();
+  try { localStorage.setItem(KEY, JSON.stringify(G)); } catch(e){}
+}
+
+function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+function xpN(lv){ return lv*100; }
+function fmtDur(ms){
+  const h=Math.floor(ms/H), m=Math.floor((ms%H)/60000);
+  if(h>0&&m>0) return h+'h '+m+'min';
+  if(h>0) return h+'h';
+  return m+'min';
+}
+function fmtTime(d){
+  const dt=new Date(d);
+  return dt.getHours().toString().padStart(2,'0')+':'+dt.getMinutes().toString().padStart(2,'0');
+}
+function nowStr(){ return fmtTime(Date.now()); }
+
+function maxSlots(){
+  return (G.sk.c>=5||G.sk.s>=5||G.sk.a>=5||G.sk.v>=5) ? 2 : 1;
+}
+
+// --- Offline calculation ---
+function processOffline() {
+  const now = Date.now();
+  const elapsed = Math.min(now - G.lastSeen, MAX_OFFLINE_MS);
+  if(elapsed < 60000) return; // less than 1 min, skip
+
+  let anyCompleted = false;
+  let summary = {};
+
+  G.slots.forEach((slot, idx) => {
+    if(!slot.actId || !slot.startedAt) return;
+    const act = ACTS.find(a=>a.id===slot.actId);
+    if(!act) return;
+
+    const timeRunning = now - slot.startedAt;
+    const cycles = Math.floor(timeRunning / act.dur);
+    if(cycles < 1) return;
+
+    anyCompleted = true;
+    // Apply cycles
+    let totalXp = act.xp * cycles;
+    let totalGold = 0;
+    let lootSummary = {};
+
+    for(let i=0;i<cycles;i++){
+      const g = rand(act.ga, act.gb);
+      totalGold += g;
+      act.loot.forEach(l=>{
+        const q = rand(l.a,l.b);
+        if(q>0){ lootSummary[l.n]=(lootSummary[l.n]||0)+q; }
+      });
+    }
+
+    // Apply to state
+    addXpSilent(act.sk, totalXp);
+    G.gold += totalGold;
+    Object.entries(lootSummary).forEach(([n,q])=>{ G.inv[n]=(G.inv[n]||0)+q; });
+
+    // Advance startedAt to reflect completed cycles
+    slot.startedAt = slot.startedAt + (cycles * act.dur);
+
+    // Build summary line
+    const key = act.name;
+    if(!summary[key]) summary[key]={cycles:0,xp:0,gold:0,loot:{}};
+    summary[key].cycles += cycles;
+    summary[key].xp += totalXp;
+    summary[key].gold += totalGold;
+    Object.entries(lootSummary).forEach(([n,q])=>{
+      summary[key].loot[n]=(summary[key].loot[n]||0)+q;
+    });
+  });
+
+  if(anyCompleted){
+    const absentTime = fmtDur(elapsed);
+    addLog('Tu étais absent depuis '+absentTime+'. Voici ce qui s\'est passé :','offline');
+    Object.entries(summary).forEach(([name,s])=>{
+      let line = s.cycles+'× '+name+' — +'+s.xp+' XP '+SN[ACTS.find(a=>a.name===name)?.sk||'s'];
+      const lootParts = Object.entries(s.loot).map(([n,q])=>q+'× '+n);
+      if(lootParts.length) line += ', '+lootParts.join(', ');
+      if(s.gold>0) line += ', '+s.gold+' or';
+      addLog(line,'r');
+    });
+  }
+}
+
+// Silent XP (no re-render, for offline batch)
+function addXpSilent(sk, amt){
+  G.xp[sk] += amt;
+  while(G.xp[sk] >= xpN(G.sk[sk])){
+    G.xp[sk] -= xpN(G.sk[sk]);
     G.sk[sk]++;
     addLog('Niveau '+G.sk[sk]+' en '+SN[sk]+' !','l');
-    EVTS.forEach(ev=>{
-      const k=ev.sk+ev.lv;
-      if(ev.sk===sk&&ev.lv===G.sk[sk]&&!G.seen.includes(k)){
-        G.seen.push(k);
-        setTimeout(()=>{addLog(ev.m,'ev');},500);
-      }
-    });
-    renderActs();
+    checkEvents(sk, G.sk[sk]);
   }
-  updSkill(sk);save();
+}
+
+function addXp(sk, amt){ addXpSilent(sk,amt); updSkill(sk); save(); }
+
+function checkEvents(sk, lv){
+  EVTS.forEach(ev=>{
+    const k=ev.sk+ev.lv;
+    if(ev.sk===sk&&ev.lv===lv&&!G.seen.includes(k)){
+      G.seen.push(k);
+      setTimeout(()=>addLog(ev.m,'ev'),600);
+    }
+  });
 }
 
 function updSkill(sk){
@@ -143,16 +292,16 @@ function updSkill(sk){
 }
 
 function addLog(m,tp=''){
-  const d=new Date(),t=d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+  const t=nowStr();
   G.log.unshift({t,m,tp});
-  if(G.log.length>15)G.log.pop();
-  renderLog();save();
+  if(G.log.length>20) G.log.pop();
+  renderLog();
 }
 
 function renderLog(){
   document.getElementById('log').innerHTML=G.log.map(e=>{
-    const cls=e.tp==='r'?'lr':e.tp==='l'?'ll':e.tp==='ev'?'lev':'';
-    return'<div class="le"><span class="lt">'+e.t+'</span><span class="'+cls+'">'+e.m+'</span></div>';
+    const cls=e.tp==='r'?'lr':e.tp==='l'?'ll':e.tp==='ev'?'lev':e.tp==='offline'?'loffline':'';
+    return '<div class="le"><span class="lt">'+e.t+'</span><span class="'+cls+'">'+e.m+'</span></div>';
   }).join('');
 }
 
@@ -162,68 +311,139 @@ function renderInv(){
   el.innerHTML=en.length?en.map(([n,c])=>'<span class="chip">'+c+'× '+n+'</span>').join(''):'<span class="empty-txt">Aucun objet pour l\'instant</span>';
 }
 
-function unlocked(act){return!act.rsk||G.sk[act.rsk]>=act.req;}
+function unlocked(act){ return !act.rsk || G.sk[act.rsk]>=act.req; }
 
-function renderActs(){
-  document.getElementById('agrid').innerHTML=ACTS.map(act=>{
-    const on=aid===act.id,lk=!unlocked(act);
-    return'<div class="acard'+(on?' on':'')+(lk?' locked':'')+'" onclick="clickAct(\''+act.id+'\')">'
-      +'<div class="aname">'+act.name+'</div>'
-      +'<div class="adesc">'+act.desc+'</div>'
-      +'<div class="ameta">XP : <span>'+act.xp+'</span> · <span>'+act.dur/1000+'s</span></div>'
-      +(lk?'<div class="alck">Niveau '+act.req+' en '+SN[act.rsk]+' requis</div>':'')
-      +'<div class="ptr"><div class="pfill" data-id="'+act.id+'"></div></div>'
-      +'</div>';
-  }).join('');
+function renderSlots(){
+  const ms = maxSlots();
+  document.getElementById('slot-badge').textContent = ms===2 ? '2 EMPLACEMENTS' : '1 EMPLACEMENT';
+
+  let html = '';
+  for(let i=0;i<2;i++){
+    if(i >= ms){
+      html += '<div class="slot-locked"><span class="slot-lock-msg">Emplacement 2 — Atteins le niveau 5 dans n\'importe quelle compétence pour débloquer.</span></div>';
+      continue;
+    }
+    const slot = G.slots[i];
+    const act = slot.actId ? ACTS.find(a=>a.id===slot.actId) : null;
+
+    html += '<div class="slot" id="slot-'+i+'">';
+    html += '<div class="slot-hd">EMPLACEMENT '+(i+1)+'</div>';
+
+    if(!act){
+      // Show activity picker
+      html += '<div class="act-select">';
+      ACTS.forEach(a=>{
+        const lk = !unlocked(a);
+        const taken = G.slots.some((sl,si)=>si!==i&&sl.actId===a.id);
+        const disabled = lk || taken;
+        html += '<div class="aopt'+(disabled?' locked-opt':'')+'" onclick="selectAct('+i+',\''+a.id+'\')">'
+          +'<div class="aopt-name">'+a.name+'</div>'
+          +'<div class="aopt-meta">'+a.tier+' · <span>'+fmtDur(a.dur)+'</span> · <span>'+a.xp+' XP</span>'+(lk?' · <span style="color:var(--red)">Niv.'+a.req+' '+SN[a.rsk]+'</span>':''+(taken?' · <span style="color:var(--ink3)">En cours</span>':''))+'</div>'
+          +'</div>';
+      });
+      html += '</div>';
+      html += '<div class="slot-status">Aucune activité sélectionnée.</div>';
+    } else {
+      const now = Date.now();
+      const elapsed = now - slot.startedAt;
+      const remaining = Math.max(0, act.dur - (elapsed % act.dur));
+      const pct = Math.min(100, ((elapsed % act.dur) / act.dur)*100);
+      const eta = new Date(now + remaining);
+
+      html += '<div class="active-panel">'
+        +'<div class="active-name">'+act.name+'</div>'
+        +'<div class="active-eta">Prochain cycle dans '+fmtDur(remaining)+' ('+fmtTime(eta)+')</div>'
+        +'<div class="ptr"><div class="pfill" style="width:'+Math.round(pct)+'%"></div></div>'
+        +'</div>';
+      html += '<div class="slot-actions" style="margin-top:.6rem;">'
+        +'<button class="btn-stop" onclick="stopSlot('+i+')">Arrêter</button>'
+        +'<span class="slot-status">'+SN[act.sk]+' · '+act.xp+' XP/cycle</span>'
+        +'</div>';
+    }
+    html += '</div>';
+  }
+  document.getElementById('slots-wrap').innerHTML = html;
 }
 
-function clickAct(id){
-  const act=ACTS.find(a=>a.id===id);
-  if(!act||!unlocked(act))return;
-  if(aid===id){stopAct();return;}
-  stopAct();startAct(act);
+function selectAct(slotIdx, actId){
+  const act = ACTS.find(a=>a.id===actId);
+  if(!act||!unlocked(act)) return;
+  const taken = G.slots.some((sl,si)=>si!==slotIdx&&sl.actId===actId);
+  if(taken) return;
+  G.slots[slotIdx] = {actId:actId, startedAt:Date.now()};
+  addLog('Emplacement '+(slotIdx+1)+' : tu commences '+act.name+'.','');
+  save();
+  renderSlots();
 }
 
-function stopAct(){
-  clearTimeout(atimer);clearInterval(piv);
-  aid=null;renderActs();
+function stopSlot(slotIdx){
+  const slot = G.slots[slotIdx];
+  if(!slot.actId) return;
+  const act = ACTS.find(a=>a.id===slot.actId);
+  addLog('Tu interromps : '+(act?act.name:'l\'activité')+'.','');
+  G.slots[slotIdx] = {actId:null, startedAt:null};
+  save();
+  renderSlots();
 }
 
-function startAct(act){
-  aid=act.id;ast=Date.now();renderActs();
-  addLog('Tu commences : '+act.name,'');
-  piv=setInterval(()=>{
-    const el=document.querySelector('.pfill[data-id="'+act.id+'"]');
-    if(el)el.style.width=Math.min(((Date.now()-ast)/act.dur)*100,100)+'%';
-  },120);
-  atimer=setTimeout(()=>finishAct(act),act.dur);
+// Tick every 30s — check if a cycle completed while tab is open
+function tick(){
+  const now = Date.now();
+  let changed = false;
+  G.slots.forEach((slot,idx)=>{
+    if(!slot.actId||!slot.startedAt) return;
+    const act = ACTS.find(a=>a.id===slot.actId);
+    if(!act) return;
+    const elapsed = now - slot.startedAt;
+    const cycles = Math.floor(elapsed / act.dur);
+    if(cycles < 1) return;
+
+    changed = true;
+    let totalXp = act.xp * cycles;
+    let totalGold = 0;
+    let lootSummary = {};
+    for(let i=0;i<cycles;i++){
+      totalGold += rand(act.ga,act.gb);
+      act.loot.forEach(l=>{const q=rand(l.a,l.b);if(q>0)lootSummary[l.n]=(lootSummary[l.n]||0)+q;});
+    }
+    addXp(act.sk, totalXp);
+    G.gold += totalGold;
+    Object.entries(lootSummary).forEach(([n,q])=>{G.inv[n]=(G.inv[n]||0)+q;});
+    slot.startedAt = slot.startedAt + (cycles * act.dur);
+
+    let line = cycles+'× '+act.name+' — +'+totalXp+' XP '+SN[act.sk];
+    const lp = Object.entries(lootSummary).map(([n,q])=>q+'× '+n);
+    if(lp.length) line+=', '+lp.join(', ');
+    if(totalGold>0) line+=', '+totalGold+' or';
+    addLog(line,'r');
+  });
+  if(changed){ renderInv(); renderSlots(); Object.keys(G.sk).forEach(updSkill); save(); }
+  else { renderSlots(); } // update progress bars
 }
 
-function finishAct(act){
-  clearInterval(piv);
-  addXp(act.sk,act.xp);
-  const g=rand(act.ga,act.gb);
-  if(g>0){G.gold+=g;document.getElementById('gval').textContent=G.gold;}
-  let r='+'+act.xp+' XP '+SN[act.sk];
-  act.loot.forEach(l=>{const q=rand(l.a,l.b);if(q>0){G.inv[l.n]=(G.inv[l.n]||0)+q;r+=', '+q+'× '+l.n;}});
-  if(g>0)r+=', '+g+' or';
-  addLog(r,'r');
-  renderInv();save();
-  aid=null;startAct(act);
-}
-
-document.getElementById('rbtn').onclick=()=>{
-  if(confirm('Recommencer depuis le début ?')){
-    stopAct();G=def();save();
-    document.getElementById('gval').textContent='0';
+// Init
+document.getElementById('rbtn').onclick = ()=>{
+  if(confirm('Recommencer depuis le début ? Ta progression sera effacée.')){
+    clearInterval(tickInterval);
+    G = def();
+    save();
     Object.keys(G.sk).forEach(updSkill);
-    renderInv();renderActs();renderLog();
+    document.getElementById('gval').textContent='0';
+    renderInv();renderSlots();renderLog();
+    tickInterval = setInterval(tick, 30000);
   }
 };
 
+// Boot sequence
+processOffline();
 Object.keys(G.sk).forEach(updSkill);
-renderInv();renderActs();renderLog();
-document.getElementById('gval').textContent=G.gold;
+document.getElementById('gval').textContent = G.gold;
+renderInv();
+renderSlots();
+renderLog();
+// Update gold display reactively
+setInterval(()=>{ document.getElementById('gval').textContent=G.gold; },2000);
+tickInterval = setInterval(tick, 30000);
 </script>
 </body>
 </html>
