@@ -1,1 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jonny de Dion — Chroniques de Westmarche</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--ink:#1a1208;--ink2:#4a3a20;--ink3:#7a6040;--gold:#c4962a;--teal:#1a4a3a;--red:#6b1a1a;--border:rgba(90,60,20,0.22);}
+body{font-family:'Crimson Pro',Georgia,serif;background:#2a1f0e;color:var(--ink);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem;}
+h1.site-title{font-family:'Cinzel',serif;font-size:13px;letter-spacing:.18em;color:rgba(196,150,42,.6);margin-bottom:1.5rem;text-transform:uppercase;}
+.wrap{width:100%;max-width:680px;}
+.parch{background:linear-gradient(135deg,#f7f0dc,#ede4c5);border:1px solid rgba(90,60,20,0.28);border-radius:3px;box-shadow:inset 0 0 50px rgba(90,60,20,0.06),0 8px 40px rgba(0,0,0,0.4);}
+.hd{padding:1.1rem 1.4rem;border-bottom:1px solid var(--border);}
+.char-name{font-family:'Cinzel',serif;font-size:20px;font-weight:500;letter-spacing:.02em;}
+.char-sub{font-size:13px;font-style:italic;color:var(--ink3);margin-top:2px;}
+.htag{display:inline-block;margin-top:5px;font-size:10px;font-family:'Cinzel',serif;letter-spacing:.06em;color:var(--red);background:rgba(107,26,26,.07);border:1px solid rgba(107,26,26,.18);border-radius:2px;padding:2px 7px;}
+.gold-lbl{font-size:10px;font-family:'Cinzel',serif;letter-spacing:.08em;color:var(--ink3);}
+.gold-val{font-family:'Cinzel',serif;font-size:16px;color:var(--gold);font-weight:500;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border);}
+.sc{padding:.7rem 1rem;border-right:1px solid var(--border);}
+.sc:last-child{border-right:none;}
+.slbl{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.09em;color:var(--ink3);margin-bottom:3px;}
+.snum{font-size:21px;font-weight:300;line-height:1;}
+.xtr{margin-top:4px;height:2px;background:rgba(90,60,20,.1);border-radius:1px;}
+.xfill{height:100%;border-radius:1px;background:var(--gold);transition:width .5s;}
+.xtxt{font-size:10px;color:var(--ink3);margin-top:2px;}
+.sec{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.12em;color:var(--ink3);padding:.5rem 1.4rem .35rem;border-bottom:1px solid var(--border);background:rgba(90,60,20,.025);}
+.inv-row{padding:.55rem 1.4rem;border-bottom:1px solid var(--border);min-height:34px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;}
+.chip{font-size:12px;background:rgba(90,60,20,.07);border:1px solid var(--border);border-radius:2px;padding:1px 7px;color:var(--ink2);}
+.empty-txt{font-size:12px;font-style:italic;color:var(--ink3);}
+.agrid{display:grid;grid-template-columns:1fr 1fr;}
+.acard{padding:.9rem 1.2rem;border-right:1px solid var(--border);border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.acard:nth-child(even){border-right:none;}
+.acard:nth-last-child(-n+2){border-bottom:none;}
+.acard:hover:not(.locked){background:rgba(90,60,20,.04);}
+.acard.on{background:rgba(26,74,58,.06);border-left:2px solid var(--teal);}
+.acard.locked{opacity:.38;cursor:not-allowed;}
+.aname{font-family:'Cinzel',serif;font-size:12px;font-weight:500;margin-bottom:2px;}
+.adesc{font-size:12px;font-style:italic;color:var(--ink3);line-height:1.35;margin-bottom:5px;}
+.ameta{font-size:11px;color:var(--ink3);}
+.ameta span{color:var(--ink2);}
+.alck{font-size:10px;font-family:'Cinzel',serif;color:var(--red);letter-spacing:.04em;margin-top:3px;}
+.ptr{margin-top:6px;height:2px;background:rgba(90,60,20,.1);border-radius:1px;}
+.pfill{height:100%;border-radius:1px;background:var(--teal);width:0%;transition:width .12s linear;}
+.log-area{padding:.7rem 1.4rem;min-height:105px;}
+.le{font-size:13px;line-height:1.55;padding:2px 0;border-bottom:1px solid rgba(90,60,20,.07);color:var(--ink2);}
+.le:last-child{border-bottom:none;}
+.lt{font-size:10px;font-family:'Cinzel',serif;color:var(--ink3);margin-right:5px;}
+.lr{color:var(--teal);}
+.ll{color:var(--gold);font-style:italic;}
+.lev{color:var(--red);font-style:italic;}
+.foot{padding:.45rem 1.4rem;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:10px;font-family:'Cinzel',serif;letter-spacing:.05em;color:var(--ink3);}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--teal);display:inline-block;}
+.rbtn{margin-left:auto;font-size:10px;font-family:'Cinzel',serif;color:var(--red);background:none;border:1px solid rgba(107,26,26,.2);border-radius:2px;padding:2px 7px;cursor:pointer;}
+.rbtn:hover{background:rgba(107,26,26,.05);}
+footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.1em;color:rgba(196,150,42,.3);}
+@media(max-width:480px){.stats{grid-template-columns:repeat(2,1fr);}.agrid{grid-template-columns:1fr;}.acard:nth-child(even){border-right:none;}.acard{border-right:none;}.acard:nth-last-child(-n+2){border-bottom:1px solid var(--border);}.acard:last-child{border-bottom:none;}}
+</style>
+</head>
+<body>
+<h1 class="site-title">Chroniques de Westmarche</h1>
+<div class="wrap">
+<div class="parch">
+  <div class="hd" style="display:flex;justify-content:space-between;align-items:flex-start;">
+    <div>
+      <div class="char-name">Jonny de Dion</div>
+      <div class="char-sub">Âge <span id="cage">14</span> ans · Ruelle des Murmures, Westmarche</div>
+      <div class="htag">⚑ Agoraphobie — Opère dans l'ombre</div>
+    </div>
+    <div style="text-align:right;"><div class="gold-lbl">OR</div><div class="gold-val" id="gval">0</div></div>
+  </div>
+  <div class="stats">
+    <div class="sc"><div class="slbl">COMBAT</div><div class="snum" id="lc">1</div><div class="xtr"><div class="xfill" id="bc"></div></div><div class="xtxt" id="xc">0/100</div></div>
+    <div class="sc"><div class="slbl">SURVIE</div><div class="snum" id="ls">1</div><div class="xtr"><div class="xfill" id="bs"></div></div><div class="xtxt" id="xs">0/100</div></div>
+    <div class="sc"><div class="slbl">ARTISANAT</div><div class="snum" id="la">1</div><div class="xtr"><div class="xfill" id="ba"></div></div><div class="xtxt" id="xa">0/100</div></div>
+    <div class="sc"><div class="slbl">SAVOIR</div><div class="snum" id="lv">1</div><div class="xtr"><div class="xfill" id="bv"></div></div><div class="xtxt" id="xv">0/100</div></div>
+  </div>
+  <div class="sec">INVENTAIRE</div>
+  <div class="inv-row" id="inv"><span class="empty-txt">Aucun objet pour l'instant</span></div>
+  <div class="sec">ACTIVITÉS</div>
+  <div class="agrid" id="agrid"></div>
+  <div class="sec">JOURNAL DE WESTMARCHE</div>
+  <div class="log-area" id="log"></div>
+  <div class="foot"><span class="dot"></span><span>Progression sauvegardée</span><button class="rbtn" id="rbtn">Recommencer</button></div>
+</div>
+</div>
+<footer>© Westmarche — Un projet de Jonny de Dion</footer>
 
+<script>
+const KEY='jonnydion_v2';
+const ACTS=[
+  {id:'wood',name:'Couper du bois',desc:"Les forêts au-delà des murs t'accueillent sans juger.",sk:'s',dur:5000,xp:15,loot:[{n:'Bois',a:1,b:3}],ga:0,gb:1,req:0,rsk:null},
+  {id:'guard',name:'Ronde de nuit',desc:"Tu patrouilles quand la ville dort. Enfin tranquille.",sk:'c',dur:8000,xp:25,loot:[{n:'Ration',a:0,b:1}],ga:2,gb:5,req:0,rsk:null},
+  {id:'study',name:'Étudier les parchemins',desc:"Un vieux moine t'enseigne l'écriture dans sa cellule sombre.",sk:'v',dur:7000,xp:20,loot:[{n:'Parchemin',a:0,b:1}],ga:0,gb:0,req:0,rsk:null},
+  {id:'hunt',name:'Chasse au gibier',desc:"Traquer en silence. Là, tu excelles.",sk:'s',dur:10000,xp:35,loot:[{n:'Viande',a:1,b:3},{n:'Peau',a:0,b:2}],ga:0,gb:3,req:3,rsk:'s'},
+  {id:'forge',name:'Apprenti forgeron',desc:"Forger la nuit, quand l'atelier est désert.",sk:'a',dur:12000,xp:40,loot:[{n:'Clou de fer',a:2,b:5}],ga:1,gb:4,req:2,rsk:'a'},
+  {id:'shadow',name:'Courses discrètes',desc:"Livrer des messages que personne ne doit voir.",sk:'v',dur:9000,xp:30,loot:[{n:'Pièce anonyme',a:1,b:2}],ga:3,gb:8,req:3,rsk:'v'},
+];
+const EVTS=[
+  {sk:'s',lv:2,m:"Un passeur remarque que tu connais tout le monde... mais disparais toujours avant minuit. Il hoche la tête avec respect."},
+  {sk:'c',lv:3,m:"On t'offre une place dans la garde du jour. Tu déclènes poliment. Deux fois. Ils cessent de demander."},
+  {sk:'v',lv:4,m:"Tu lis les gens mieux que les livres — leurs peurs, leurs secrets. Ça t'a sauvé la mise plus d'une fois."},
+  {sk:'s',lv:5,m:"Les bas-fonds murmurent ton nom. «Jonny de Dion» — dit avec un sourire, jamais sûr si c'est une menace ou un compliment."},
+  {sk:'a',lv:3,m:"On te commande des outils... inavouables. Tu poses peu de questions. L'or parle plus fort."},
+  {sk:'v',lv:2,m:"Un vieux bougon te glisse : «T'as l'air d'un gars fiable. C'est dangereux, ça.»"},
+];
+const SN={c:'Combat',s:'Survie',a:'Artisanat',v:'Savoir'};
+const UI={c:{l:'lc',b:'bc',x:'xc'},s:{l:'ls',b:'bs',x:'xs'},a:{l:'la',b:'ba',x:'xa'},v:{l:'lv',b:'bv',x:'xv'}};
+
+function def(){return{sk:{c:1,s:1,a:1,v:1},xp:{c:0,s:0,a:0,v:0},inv:{},gold:0,seen:[],log:[{t:'—',m:"Tu commences ta vie dans la Ruelle des Murmures. Que vas-tu faire ?",tp:''}]};}
+let G=function(){try{const d=localStorage.getItem(KEY);if(d)return JSON.parse(d);}catch(e){}return def();}();
+let aid=null,atimer=null,piv=null,ast=null;
+
+function save(){try{localStorage.setItem(KEY,JSON.stringify(G));}catch(e){}}
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function xpN(lv){return lv*100;}
+
+function addXp(sk,amt){
+  G.xp[sk]+=amt;
+  if(G.xp[sk]>=xpN(G.sk[sk])){
+    G.xp[sk]-=xpN(G.sk[sk]);
+    G.sk[sk]++;
+    addLog('Niveau '+G.sk[sk]+' en '+SN[sk]+' !','l');
+    EVTS.forEach(ev=>{
+      const k=ev.sk+ev.lv;
+      if(ev.sk===sk&&ev.lv===G.sk[sk]&&!G.seen.includes(k)){
+        G.seen.push(k);
+        setTimeout(()=>{addLog(ev.m,'ev');},500);
+      }
+    });
+    renderActs();
+  }
+  updSkill(sk);save();
+}
+
+function updSkill(sk){
+  const lv=G.sk[sk],xp=G.xp[sk],n=xpN(lv);
+  document.getElementById(UI[sk].l).textContent=lv;
+  document.getElementById(UI[sk].b).style.width=Math.round(xp/n*100)+'%';
+  document.getElementById(UI[sk].x).textContent=xp+'/'+n;
+}
+
+function addLog(m,tp=''){
+  const d=new Date(),t=d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+  G.log.unshift({t,m,tp});
+  if(G.log.length>15)G.log.pop();
+  renderLog();save();
+}
+
+function renderLog(){
+  document.getElementById('log').innerHTML=G.log.map(e=>{
+    const cls=e.tp==='r'?'lr':e.tp==='l'?'ll':e.tp==='ev'?'lev':'';
+    return'<div class="le"><span class="lt">'+e.t+'</span><span class="'+cls+'">'+e.m+'</span></div>';
+  }).join('');
+}
+
+function renderInv(){
+  const el=document.getElementById('inv');
+  const en=Object.entries(G.inv);
+  el.innerHTML=en.length?en.map(([n,c])=>'<span class="chip">'+c+'× '+n+'</span>').join(''):'<span class="empty-txt">Aucun objet pour l\'instant</span>';
+}
+
+function unlocked(act){return!act.rsk||G.sk[act.rsk]>=act.req;}
+
+function renderActs(){
+  document.getElementById('agrid').innerHTML=ACTS.map(act=>{
+    const on=aid===act.id,lk=!unlocked(act);
+    return'<div class="acard'+(on?' on':'')+(lk?' locked':'')+'" onclick="clickAct(\''+act.id+'\')">'
+      +'<div class="aname">'+act.name+'</div>'
+      +'<div class="adesc">'+act.desc+'</div>'
+      +'<div class="ameta">XP : <span>'+act.xp+'</span> · <span>'+act.dur/1000+'s</span></div>'
+      +(lk?'<div class="alck">Niveau '+act.req+' en '+SN[act.rsk]+' requis</div>':'')
+      +'<div class="ptr"><div class="pfill" data-id="'+act.id+'"></div></div>'
+      +'</div>';
+  }).join('');
+}
+
+function clickAct(id){
+  const act=ACTS.find(a=>a.id===id);
+  if(!act||!unlocked(act))return;
+  if(aid===id){stopAct();return;}
+  stopAct();startAct(act);
+}
+
+function stopAct(){
+  clearTimeout(atimer);clearInterval(piv);
+  aid=null;renderActs();
+}
+
+function startAct(act){
+  aid=act.id;ast=Date.now();renderActs();
+  addLog('Tu commences : '+act.name,'');
+  piv=setInterval(()=>{
+    const el=document.querySelector('.pfill[data-id="'+act.id+'"]');
+    if(el)el.style.width=Math.min(((Date.now()-ast)/act.dur)*100,100)+'%';
+  },120);
+  atimer=setTimeout(()=>finishAct(act),act.dur);
+}
+
+function finishAct(act){
+  clearInterval(piv);
+  addXp(act.sk,act.xp);
+  const g=rand(act.ga,act.gb);
+  if(g>0){G.gold+=g;document.getElementById('gval').textContent=G.gold;}
+  let r='+'+act.xp+' XP '+SN[act.sk];
+  act.loot.forEach(l=>{const q=rand(l.a,l.b);if(q>0){G.inv[l.n]=(G.inv[l.n]||0)+q;r+=', '+q+'× '+l.n;}});
+  if(g>0)r+=', '+g+' or';
+  addLog(r,'r');
+  renderInv();save();
+  aid=null;startAct(act);
+}
+
+document.getElementById('rbtn').onclick=()=>{
+  if(confirm('Recommencer depuis le début ?')){
+    stopAct();G=def();save();
+    document.getElementById('gval').textContent='0';
+    Object.keys(G.sk).forEach(updSkill);
+    renderInv();renderActs();renderLog();
+  }
+};
+
+Object.keys(G.sk).forEach(updSkill);
+renderInv();renderActs();renderLog();
+document.getElementById('gval').textContent=G.gold;
+</script>
+</body>
+</html>
