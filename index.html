@@ -16,10 +16,10 @@ body{font-family:'Crimson Pro',Georgia,serif;background:#2a1f0e;color:var(--ink)
 
 /* Phase backgrounds */
 /* Phase backgrounds — images hébergées sur GitHub */
-body.phase-0{background:url('https://jonnydioncpa2.github.io/JonnyDeDion/phase1.png') center center/cover no-repeat fixed;}
-body.phase-1{background:url('https://jonnydioncpa2.github.io/JonnyDeDion/phase2.png') center center/cover no-repeat fixed;}
-body.phase-2{background:url('https://jonnydioncpa2.github.io/JonnyDeDion/phase3.png') center center/cover no-repeat fixed;}
-body.phase-3{background:url('https://jonnydioncpa2.github.io/JonnyDeDion/phase4.png') center center/cover no-repeat fixed;}
+body.phase-0{background:url('https://jonnydioncpa2.github.io/JonnyDeDion/Phase%201%20%E2%80%94%2014-17%20ans.png') center center/cover no-repeat fixed;}
+body.phase-1{background:url('https://jonnydioncpa2.github.io/JonnyDeDion/Phase%202%20%E2%80%94%2018-22%20ans.png') center center/cover no-repeat fixed;}
+body.phase-2{background:url('https://jonnydioncpa2.github.io/JonnyDeDion/Phase%203%20%E2%80%94%2023-30%20ans.png') center center/cover no-repeat fixed;}
+body.phase-3{background:url('https://jonnydioncpa2.github.io/JonnyDeDion/Phase%204%20%E2%80%94%2031%2B%20ans.png') center center/cover no-repeat fixed;}
 
 /* Overlay sombre pour garder le parchemin lisible */
 body.phase-0::before{content:'';position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:0;pointer-events:none;}
@@ -91,14 +91,16 @@ h1.site-title{font-family:'Cinzel',serif;font-size:0.85rem;letter-spacing:.18em;
 .col-left{border-right:1px solid var(--border);}
 .col-sec{font-family:'Cinzel',serif;font-size:0.7rem;letter-spacing:.1em;color:var(--ink3);padding:.45rem 1rem .35rem;border-bottom:1px solid var(--border);background:rgba(90,60,20,.025);display:flex;justify-content:space-between;align-items:center;}
 .act-list{padding:.5rem;}
-.arow{display:flex;align-items:center;padding:.55rem .6rem;border-radius:2px;cursor:pointer;transition:background .12s;gap:8px;}
-.arow:hover:not(.locked-row){background:rgba(90,60,20,.05);}
+.arow{display:flex;align-items:center;padding:.55rem .6rem;border-radius:3px;cursor:pointer;transition:all .15s;gap:8px;border:1px solid transparent;}
+.arow:hover:not(.locked-row){background:rgba(26,74,58,.07);border-color:rgba(26,74,58,.2);}
+.arow:active:not(.locked-row){background:rgba(26,74,58,.12);}
 .arow.locked-row{opacity:.35;cursor:not-allowed;}
 .arow-info{flex:1;min-width:0;}
 .arow-name{font-family:'Cinzel',serif;font-size:0.8rem;font-weight:500;}
 .arow-meta{font-size:0.75rem;color:var(--ink3);margin-top:1px;}
 .arow-meta span{color:var(--ink2);}
 .arow-sk{font-size:0.65rem;font-family:'Cinzel',serif;letter-spacing:.05em;padding:1px 5px;border-radius:2px;white-space:nowrap;}
+.arow-hint{font-size:0.65rem;color:var(--ink3);font-style:italic;margin-top:2px;}
 .sk-c{background:rgba(107,26,26,.08);color:var(--red);}
 .sk-s{background:rgba(26,74,58,.08);color:var(--teal);}
 .sk-a{background:rgba(139,107,32,.08);color:#5a4010;}
@@ -108,15 +110,15 @@ h1.site-title{font-family:'Cinzel',serif;font-size:0.85rem;letter-spacing:.18em;
 .add-btn:disabled{opacity:.3;cursor:not-allowed;}
 .queue-area{padding:.5rem;}
 .queue-empty{font-size:0.875rem;font-style:italic;color:var(--ink3);padding:.4rem .5rem;}
-.qitem{display:flex;align-items:center;gap:6px;padding:.45rem .5rem;border-bottom:1px solid rgba(90,60,20,.08);position:relative;}
+.qitem{display:flex;align-items:center;gap:8px;padding:.55rem .6rem;border-bottom:1px solid rgba(90,60,20,.08);position:relative;}
 .qitem:last-child{border-bottom:none;}
-.qitem-num{font-family:'Cinzel',serif;font-size:0.7rem;color:var(--ink3);min-width:16px;}
-.qitem-name{font-size:0.875rem;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.qitem-dur{font-size:0.75rem;color:var(--ink3);white-space:nowrap;}
-.qitem-rm{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:0.95rem;padding:0 2px;line-height:1;}
+.qitem-info{flex:1;min-width:0;}
+.qitem-name{font-size:0.875rem;font-family:'Cinzel',serif;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.qitem-meta{font-size:0.75rem;color:var(--ink3);margin-top:1px;}
+.qitem-rm{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:0.95rem;padding:0 4px;line-height:1;flex-shrink:0;}
 .qitem-rm:hover{color:var(--red);}
 .qitem.active-item{background:rgba(26,74,58,.06);}
-.qitem-prog{position:absolute;bottom:0;left:0;height:2px;background:var(--teal);transition:width .5s linear;}
+.qitem-prog{position:absolute;bottom:0;left:0;height:2px;background:var(--teal);transition:width .5s linear;border-radius:0;}
 .queue-ctrl{padding:.5rem;border-top:1px solid var(--border);display:flex;gap:6px;align-items:center;}
 .qty-label{font-size:0.7rem;font-family:'Cinzel',serif;letter-spacing:.05em;color:var(--ink3);}
 .qty-input{width:50px;font-family:'Cinzel',serif;font-size:0.875rem;border:1px solid var(--border);border-radius:2px;padding:3px 5px;background:rgba(255,255,255,.5);color:var(--ink);text-align:center;}
@@ -777,11 +779,15 @@ function renderActList(){
   const qty=parseInt(document.getElementById('qtyInput').value)||1;
   document.getElementById('actList').innerHTML=ACTS.map(act=>{
     const lk=!unlocked(act);
-    return'<div class="arow'+(lk?' locked-row':'')+'">'
-      +'<div class="arow-info"><div class="arow-name">'+act.name+'</div>'
-      +'<div class="arow-meta"><span>'+SN[act.sk]+'</span> · <span>'+fmtDur(act.dur)+'</span> · <span>'+act.xp+' XP</span>'+(lk?' · <span style="color:var(--red)">Niv.'+act.req+' '+SN[act.rsk]+'</span>':'')+'</div></div>'
+    const totalDur=fmtDur(act.dur*qty);
+    return'<div class="arow'+(lk?' locked-row':'')+'" onclick="'+(lk?'':'addToQueue(\''+act.id+'\','+qty+')')+'">'
+      +'<div class="arow-info">'
+      +'<div class="arow-name">'+act.name+'</div>'
+      +'<div class="arow-meta"><span>'+SN[act.sk]+'</span> · <span>'+fmtDur(act.dur)+'/cycle</span> · <span>'+act.xp+' XP</span>'+(lk?' · <span style="color:var(--red)">Niv.'+act.req+' '+SN[act.rsk]+' requis</span>':'')+'</div>'
+      +(qty>1?'<div class="arow-hint">Cliquer pour ajouter '+qty+'× ('+totalDur+')</div>':'<div class="arow-hint">Cliquer pour ajouter à la file</div>')
+      +'</div>'
       +'<span class="arow-sk '+SKC[act.sk]+'">'+SN[act.sk].toUpperCase().slice(0,3)+'</span>'
-      +'<button class="add-btn" '+(lk?'disabled':'')+' onclick="addToQueue(\''+act.id+'\','+qty+')">+'+qty+'</button>'
+      +(lk?'':'<span style="font-family:\'Cinzel\',serif;font-size:0.75rem;color:var(--teal);white-space:nowrap;">+'+qty+'</span>')
       +'</div>';
   }).join('');
 }
@@ -789,15 +795,51 @@ function renderQueue(){
   const el=document.getElementById('queueList');
   if(!G.queue.length){el.innerHTML='<div class="queue-empty">Aucune activité planifiée.</div>';document.getElementById('etaLine').textContent='File vide.';return;}
   const now=Date.now();
-  el.innerHTML=G.queue.map((actId,i)=>{
-    const act=ACTS.find(a=>a.id===actId);if(!act)return'';
-    if(i===0&&G.queueStart){
-      const elapsed=Math.max(0,now-G.queueStart),rem=Math.max(0,act.dur-elapsed),pct=Math.min(100,Math.round(elapsed/act.dur*100));
-      return'<div class="qitem active-item"><span class="qitem-num">1</span><span class="qitem-name">'+act.name+'</span><span class="qitem-dur">'+fmtDur(rem)+'</span><button class="qitem-rm" onclick="removeFromQueue(0)">×</button><div class="qitem-prog" style="width:'+pct+'%"></div></div>';
+
+  // Group consecutive identical activities
+  const groups=[];
+  G.queue.forEach((actId,i)=>{
+    const last=groups[groups.length-1];
+    if(last&&last.actId===actId&&i>0){last.count++;last.endIdx=i;}
+    else groups.push({actId,count:1,startIdx:i,endIdx:i});
+  });
+
+  let html='';
+  let groupNum=0;
+  groups.forEach(grp=>{
+    groupNum++;
+    const act=ACTS.find(a=>a.id===grp.actId);if(!act)return;
+    const totalDur=act.dur*grp.count;
+    const isActive=grp.startIdx===0&&G.queueStart;
+    let rem=totalDur,pct=0;
+    if(isActive){
+      const elapsed=Math.max(0,now-G.queueStart);
+      // cycles done within this group
+      const cyclesDone=Math.floor(elapsed/act.dur);
+      const withinCycle=elapsed%act.dur;
+      rem=Math.max(0,totalDur-elapsed);
+      pct=Math.min(100,Math.round(elapsed/totalDur*100));
     }
-    return'<div class="qitem"><span class="qitem-num">'+(i+1)+'</span><span class="qitem-name">'+act.name+'</span><span class="qitem-dur">'+fmtDur(act.dur)+'</span><button class="qitem-rm" onclick="removeFromQueue('+i+')">×</button></div>';
-  }).join('');
+    const countLabel=grp.count>1?grp.count+'× ':'';
+    const skLabel='<span style="font-size:0.65rem;font-family:\'Cinzel\',serif;padding:1px 5px;border-radius:2px;background:rgba(90,60,20,.08);color:var(--ink3);">'+SN[act.sk].toUpperCase().slice(0,3)+'</span>';
+    html+='<div class="qitem'+(isActive?' active-item':'')+'">'
+      +'<div class="qitem-info">'
+      +'<div class="qitem-name">'+countLabel+act.name+' '+skLabel+'</div>'
+      +'<div class="qitem-meta">'+(isActive?'En cours · ':'')+fmtDur(act.dur)+'/cycle · '+(isActive?'reste '+fmtDur(rem):fmtDur(totalDur)+' total')+'</div>'
+      +'</div>'
+      +'<button class="qitem-rm" onclick="removeGroup('+grp.startIdx+','+grp.endIdx+')" title="Retirer">×</button>'
+      +(isActive?'<div class="qitem-prog" style="width:'+pct+'%"></div>':'')
+      +'</div>';
+  });
+  el.innerHTML=html;
   document.getElementById('etaLine').textContent='Fin dans '+fmtDur(totalQueueMs())+' ('+fmtETA(totalQueueMs())+')';
+}
+
+function removeGroup(startIdx,endIdx){
+  G.queue.splice(startIdx,endIdx-startIdx+1);
+  if(startIdx===0)G.queueStart=G.queue.length?Date.now():null;
+  if(!G.queue.length)G.queueStart=null;
+  save();renderQueue();
 }
 function addToQueue(actId,qty){
   const act=ACTS.find(a=>a.id===actId);if(!act||!unlocked(act))return;
