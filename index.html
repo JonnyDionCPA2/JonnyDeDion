@@ -15,82 +15,17 @@
 body{font-family:'Crimson Pro',Georgia,serif;background:#2a1f0e;color:var(--ink);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem;transition:background 3s ease;}
 
 /* Phase backgrounds */
-body.phase-0{
-  background:
-    radial-gradient(ellipse at 50% 100%, rgba(180,120,40,0.18) 0%, transparent 70%),
-    radial-gradient(ellipse at 20% 60%, rgba(140,80,20,0.12) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 40%, rgba(100,60,10,0.10) 0%, transparent 50%),
-    linear-gradient(180deg, #1a1005 0%, #2a1a08 40%, #3a2410 70%, #2a1a08 100%);
-}
-body.phase-1{
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(196,150,42,0.10) 0%, transparent 60%),
-    radial-gradient(ellipse at 75% 80%, rgba(180,100,20,0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 25% 70%, rgba(80,50,100,0.08) 0%, transparent 40%),
-    linear-gradient(180deg, #0f0d18 0%, #1a1525 40%, #251a10 70%, #1a1008 100%);
-}
-body.phase-2{
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(80,100,160,0.20) 0%, transparent 55%),
-    radial-gradient(ellipse at 15% 50%, rgba(196,150,42,0.12) 0%, transparent 40%),
-    radial-gradient(ellipse at 85% 60%, rgba(196,150,42,0.08) 0%, transparent 35%),
-    radial-gradient(ellipse at 50% 100%, rgba(40,20,60,0.30) 0%, transparent 60%),
-    linear-gradient(180deg, #080c1a 0%, #101828 45%, #1a1430 70%, #0e0c18 100%);
-}
-body.phase-3{
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(40,60,120,0.30) 0%, transparent 50%),
-    radial-gradient(ellipse at 10% 40%, rgba(196,150,42,0.15) 0%, transparent 35%),
-    radial-gradient(ellipse at 90% 40%, rgba(196,150,42,0.10) 0%, transparent 30%),
-    radial-gradient(ellipse at 50% 85%, rgba(100,40,20,0.20) 0%, transparent 50%),
-    linear-gradient(180deg, #050810 0%, #0a0f20 35%, #15102a 65%, #0a0808 100%);
-}
+/* Phase backgrounds — images hébergées sur GitHub */
+body.phase-0{background:url('https://jonnydioncpa2.github.io/JonnyDeDion/phase1.png') center center/cover no-repeat fixed;}
+body.phase-1{background:url('https://jonnydioncpa2.github.io/JonnyDeDion/phase2.png') center center/cover no-repeat fixed;}
+body.phase-2{background:url('https://jonnydioncpa2.github.io/JonnyDeDion/phase3.png') center center/cover no-repeat fixed;}
+body.phase-3{background:url('https://jonnydioncpa2.github.io/JonnyDeDion/phase4.png') center center/cover no-repeat fixed;}
 
-/* Animated stars for night phases */
-body.phase-2::before, body.phase-3::before{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:
-    radial-gradient(1px 1px at 10% 15%, rgba(255,255,220,0.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 25% 8%, rgba(255,255,220,0.4) 0%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 40% 20%, rgba(255,255,220,0.7) 0%, transparent 100%),
-    radial-gradient(1px 1px at 55% 5%, rgba(255,255,220,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 70% 12%, rgba(255,255,220,0.4) 0%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 85% 18%, rgba(255,255,220,0.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 92% 7%, rgba(255,255,220,0.3) 0%, transparent 100%),
-    radial-gradient(1px 1px at 33% 3%, rgba(255,255,220,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 62% 25%, rgba(255,255,220,0.4) 0%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 78% 30%, rgba(255,255,220,0.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 18% 28%, rgba(255,255,220,0.3) 0%, transparent 100%),
-    radial-gradient(1px 1px at 48% 32%, rgba(255,255,220,0.5) 0%, transparent 100%);
-  animation:twinkle 4s ease-in-out infinite alternate;
-}
-@keyframes twinkle{0%{opacity:.6;}100%{opacity:1;}}
-
-/* Silhouette cityscape SVG overlay */
-body::after{
-  content:'';position:fixed;bottom:0;left:0;right:0;height:220px;
-  pointer-events:none;z-index:0;
-  background-repeat:repeat-x;
-  background-position:bottom;
-  background-size:auto 100%;
-  opacity:0;transition:opacity 3s ease,background-image 3s ease;
-}
-body.phase-0::after{
-  opacity:0.55;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='220' viewBox='0 0 800 220'%3E%3Cpath fill='%231a0e05' d='M0,220 L0,160 L20,160 L20,140 L30,140 L30,120 L40,120 L40,140 L60,140 L60,100 L70,100 L70,80 L80,80 L80,100 L100,100 L100,130 L110,130 L110,110 L125,110 L125,90 L135,90 L135,110 L150,110 L150,140 L170,140 L170,120 L185,120 L185,100 L195,100 L195,120 L210,120 L210,150 L230,150 L230,130 L245,130 L245,115 L255,115 L255,130 L270,130 L270,160 L290,160 L290,135 L305,135 L305,115 L315,115 L315,95 L325,95 L325,115 L340,115 L340,135 L360,135 L360,155 L380,155 L380,135 L395,135 L395,110 L410,110 L410,90 L420,90 L420,110 L435,110 L435,135 L455,135 L455,115 L470,115 L470,100 L485,100 L485,120 L500,120 L500,145 L520,145 L520,125 L535,125 L535,105 L550,105 L550,125 L565,125 L565,150 L585,150 L585,130 L600,130 L600,110 L615,110 L615,130 L630,130 L630,155 L650,155 L650,135 L665,135 L665,115 L680,115 L680,100 L695,100 L695,120 L710,120 L710,145 L730,145 L730,160 L750,160 L750,140 L765,140 L765,160 L800,160 L800,220 Z'/%3E%3C/svg%3E");
-}
-body.phase-1::after{
-  opacity:0.70;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='220' viewBox='0 0 800 220'%3E%3Cpath fill='%230d0d1a' d='M0,220 L0,155 L15,155 L15,135 L25,135 L25,115 L35,115 L35,95 L45,95 L45,115 L55,115 L55,135 L75,135 L75,110 L85,110 L85,85 L95,85 L95,65 L105,65 L105,85 L115,85 L115,110 L135,110 L135,130 L150,130 L150,108 L162,108 L162,88 L172,88 L172,108 L185,108 L185,130 L200,130 L200,150 L220,150 L220,125 L235,125 L235,100 L248,100 L248,80 L258,80 L258,100 L270,100 L270,125 L290,125 L290,148 L308,148 L308,125 L322,125 L322,102 L335,102 L335,82 L348,82 L348,102 L360,102 L360,125 L378,125 L378,148 L395,148 L395,128 L410,128 L410,105 L425,105 L425,85 L438,85 L438,105 L450,105 L450,128 L468,128 L468,108 L482,108 L482,88 L495,88 L495,108 L508,108 L508,130 L525,130 L525,150 L542,150 L542,128 L558,128 L558,105 L572,105 L572,85 L585,85 L585,105 L598,105 L598,128 L615,128 L615,148 L632,148 L632,125 L648,125 L648,102 L662,102 L662,82 L675,82 L675,102 L688,102 L688,125 L705,125 L705,148 L722,148 L722,160 L740,160 L740,145 L755,145 L755,160 L800,160 L800,220 Z'/%3E%3C/svg%3E");
-}
-body.phase-2::after{
-  opacity:0.85;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='220' viewBox='0 0 800 220'%3E%3Cpath fill='%23080810' d='M0,220 L0,160 L10,160 L10,140 L20,140 L20,118 L30,118 L30,95 L40,95 L40,75 L50,75 L50,55 L60,55 L60,75 L70,75 L70,95 L80,95 L80,118 L95,118 L95,140 L108,140 L108,115 L120,115 L120,90 L132,90 L132,68 L144,68 L144,50 L154,50 L154,68 L164,68 L164,90 L175,90 L175,115 L188,115 L188,140 L202,140 L202,160 L218,160 L218,138 L232,138 L232,112 L246,112 L246,88 L260,88 L260,65 L272,65 L272,45 L282,45 L282,65 L292,65 L292,88 L305,88 L305,112 L318,112 L318,138 L332,138 L332,158 L348,158 L348,135 L362,135 L362,110 L376,110 L376,88 L390,88 L390,65 L402,65 L402,45 L414,45 L414,65 L425,65 L425,88 L438,88 L438,110 L450,110 L450,135 L464,135 L464,158 L480,158 L480,138 L494,138 L494,115 L508,115 L508,90 L522,90 L522,68 L534,68 L534,50 L545,50 L545,68 L556,68 L556,90 L568,90 L568,115 L582,115 L582,140 L596,140 L596,118 L610,118 L610,95 L624,95 L624,75 L636,75 L636,55 L648,55 L648,75 L658,75 L658,95 L670,95 L670,118 L682,118 L682,140 L696,140 L696,160 L715,160 L715,145 L730,145 L730,160 L800,160 L800,220 Z'/%3E%3C/svg%3E");
-}
-body.phase-3::after{
-  opacity:0.92;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='220' viewBox='0 0 800 220'%3E%3Cpath fill='%23050508' d='M0,220 L0,165 L12,165 L12,145 L22,145 L22,122 L32,122 L32,98 L42,98 L42,75 L52,75 L52,52 L62,52 L62,35 L70,35 L70,52 L78,52 L78,75 L88,75 L88,98 L98,98 L98,122 L110,122 L110,145 L124,145 L124,165 L138,165 L138,142 L150,142 L150,118 L162,118 L162,92 L174,92 L174,68 L185,68 L185,45 L195,45 L195,28 L204,28 L204,45 L213,45 L213,68 L224,68 L224,92 L235,92 L235,118 L248,118 L248,142 L262,142 L262,162 L278,162 L278,140 L292,140 L292,115 L306,115 L306,90 L320,90 L320,65 L333,65 L333,42 L344,42 L344,22 L354,22 L354,42 L364,42 L364,65 L376,65 L376,90 L388,90 L388,115 L400,115 L400,140 L414,140 L414,162 L430,162 L430,140 L444,140 L444,115 L458,115 L458,90 L472,90 L472,65 L484,65 L484,42 L495,42 L495,22 L506,22 L506,42 L516,42 L516,65 L528,65 L528,90 L540,90 L540,115 L554,115 L554,140 L568,140 L568,162 L584,162 L584,142 L598,142 L598,118 L612,118 L612,92 L626,92 L626,68 L638,68 L638,45 L650,45 L650,28 L660,28 L660,45 L670,45 L670,68 L682,68 L682,92 L694,92 L694,118 L706,118 L706,142 L720,142 L720,165 L740,165 L740,150 L756,150 L756,165 L800,165 L800,220 Z'/%3E%3Crect fill='%23080810' x='0' y='165' width='800' height='55'/%3E%3C/svg%3E");
-}
+/* Overlay sombre pour garder le parchemin lisible */
+body.phase-0::before{content:'';position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:0;pointer-events:none;}
+body.phase-1::before{content:'';position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:0;pointer-events:none;}
+body.phase-2::before{content:'';position:fixed;inset:0;background:rgba(0,0,0,0.50);z-index:0;pointer-events:none;}
+body.phase-3::before{content:'';position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:0;pointer-events:none;}
 h1.site-title{font-family:'Cinzel',serif;font-size:0.85rem;letter-spacing:.18em;color:rgba(196,150,42,.6);margin-bottom:1.5rem;text-transform:uppercase;position:relative;z-index:1;}
 .wrap{width:100%;max-width:1600px;position:relative;z-index:1;}
 .parch{background:linear-gradient(135deg,#f7f0dc,#ede4c5);border:1px solid rgba(90,60,20,0.28);border-radius:3px;box-shadow:inset 0 0 50px rgba(90,60,20,0.06),0 8px 40px rgba(0,0,0,0.4);position:relative;z-index:1;}
