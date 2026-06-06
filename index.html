@@ -32,6 +32,7 @@ h1.site-title{font-family:'Cinzel',serif;font-size:0.85rem;letter-spacing:.18em;
 
 /* --- Creation Screen --- */
 #creation-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;padding:3rem 2rem;position:relative;z-index:1;}
+#login-screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;padding:3rem 2rem;position:relative;z-index:1;}
 .creation-box{background:linear-gradient(135deg,#f7f0dc,#ede4c5);border:1px solid rgba(90,60,20,0.28);border-radius:3px;box-shadow:0 8px 40px rgba(0,0,0,0.4);padding:2.5rem 3rem;max-width:560px;width:100%;}
 .creation-title{font-family:'Cinzel',serif;font-size:1.4rem;letter-spacing:.05em;color:var(--ink);margin-bottom:.4rem;text-align:center;}
 .creation-sub{font-size:0.9rem;font-style:italic;color:var(--ink3);text-align:center;margin-bottom:2rem;}
@@ -218,11 +219,29 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
 <body>
 <h1 class="site-title">Chroniques de Westmarche</h1>
 
+<!-- Login Screen -->
+<div id="login-screen">
+  <div class="creation-box">
+    <div class="creation-title">Chroniques de Westmarche</div>
+    <div class="creation-sub">Ton histoire t'attend.</div>
+    <div class="field">
+      <label>NOM D'UTILISATEUR</label>
+      <input type="text" id="inp-login-username" placeholder="ex: jonny_dion" maxlength="20" onkeydown="if(event.key==='Enter')loginPlayer()">
+    </div>
+    <button class="create-btn" id="login-btn" onclick="loginPlayer()">Se connecter</button>
+    <div class="creation-error" id="login-error"></div>
+    <div style="margin-top:1.2rem;text-align:center;">
+      <span style="font-size:0.85rem;color:var(--ink3);">Première fois à Westmarche ?</span>
+      <button onclick="showCreateScreen()" style="background:none;border:none;font-family:'Cinzel',serif;font-size:0.85rem;color:var(--teal);cursor:pointer;text-decoration:underline;margin-left:6px;">Créer un personnage</button>
+    </div>
+  </div>
+</div>
+
 <!-- Creation Screen -->
-<div id="creation-screen">
+<div id="creation-screen" style="display:none;">
   <div class="creation-box">
     <div class="creation-title">Qui es-tu ?</div>
-    <div class="creation-sub">Ton histoire commence ici. Elle ne ressemblera à aucune autre.<br><span style="font-size:0.8rem;color:var(--ink3);">Joueur existant ? Entre simplement ton nom d'utilisateur pour te reconnecter.</span></div>
+    <div class="creation-sub">Ton histoire commence ici. Elle ne ressemblera à aucune autre.</div>
     <div class="field">
       <label>NOM D'UTILISATEUR</label>
       <input type="text" id="inp-username" placeholder="ex: jonny_dion" maxlength="20">
@@ -254,6 +273,9 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
     </div>
     <button class="create-btn" id="create-btn" onclick="createPlayer()" disabled>Commencer mon histoire</button>
     <div class="creation-error" id="creation-error"></div>
+    <div style="margin-top:1.2rem;text-align:center;">
+      <button onclick="showLoginScreen()" style="background:none;border:none;font-family:'Cinzel',serif;font-size:0.85rem;color:var(--ink3);cursor:pointer;text-decoration:underline;">← Retour à la connexion</button>
+    </div>
   </div>
 </div>
 
@@ -455,7 +477,48 @@ let tickIv=null;
 let currentTab='activities';
 let selectedHindrance=null;
 
-// --- Creation ---
+// --- Screen navigation ---
+function showLoginScreen(){
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('creation-screen').style.display='none';
+  document.getElementById('login-error').textContent='';
+  document.getElementById('inp-login-username').value='';
+  document.getElementById('login-btn').textContent='Se connecter';
+  document.getElementById('login-btn').disabled=false;
+}
+function showCreateScreen(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('creation-screen').style.display='flex';
+}
+
+// --- Login existing player ---
+async function loginPlayer(){
+  const username=document.getElementById('inp-login-username').value.trim().toLowerCase();
+  if(!username)return;
+  const errEl=document.getElementById('login-error');
+  errEl.textContent='';
+  document.getElementById('login-btn').disabled=true;
+  document.getElementById('login-btn').textContent='Connexion...';
+
+  const{data:player,error}=await sb.from('players').select('*').eq('username',username).single();
+  if(!player){
+    errEl.textContent='Aucun joueur trouvé avec ce nom. Crée un personnage d\'abord.';
+    document.getElementById('login-btn').disabled=false;
+    document.getElementById('login-btn').textContent='Se connecter';
+    return;
+  }
+  PLAYER=player;
+  const saved=localStorage.getItem(KEY+'_pid_'+player.id);
+  G=saved?JSON.parse(saved):def();
+  if(!G.equipment)G.equipment=[...START_EQUIP];
+  if(!G.queue)G.queue=[];
+  if(!G.marketStock)G.marketStock={};
+  if(!G.lotteryEntries)G.lotteryEntries={};
+  localStorage.setItem(KEY+'_pid',player.id);
+  startGame();
+}
+
+// --- Create new player ---
 function selectHindrance(el){
   document.querySelectorAll('.hcard').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');
@@ -465,9 +528,7 @@ function selectHindrance(el){
 function validateForm(){
   const u=document.getElementById('inp-username').value.trim();
   const c=document.getElementById('inp-charname').value.trim();
-  // Allow reconnect with just username (hindrance not required for existing players)
-  document.getElementById('create-btn').disabled=!(u&&c);
-  document.getElementById('create-btn').textContent=selectedHindrance?'Commencer mon histoire':'Se connecter / Commencer';
+  document.getElementById('create-btn').disabled=!(u&&c&&selectedHindrance);
 }
 document.getElementById('inp-username').addEventListener('input',validateForm);
 document.getElementById('inp-charname').addEventListener('input',validateForm);
@@ -564,13 +625,8 @@ function logout(){
   localStorage.removeItem(KEY+'_pid');
   G=null;PLAYER=null;
   document.getElementById('game-screen').style.display='none';
-  document.getElementById('creation-screen').style.display='flex';
-  document.getElementById('inp-username').value='';
-  document.getElementById('inp-charname').value='';
-  document.querySelectorAll('.hcard').forEach(c=>c.classList.remove('selected'));
   selectedHindrance=null;
-  document.getElementById('create-btn').disabled=true;
-  document.getElementById('create-btn').textContent='Commencer mon histoire';
+  showLoginScreen();
 }
 
 function startGame(){
@@ -1012,7 +1068,7 @@ document.getElementById('qtyInput').addEventListener('input',renderActList);
 (async()=>{
   const loggedIn=await tryAutoLogin();
   if(!loggedIn){
-    document.getElementById('creation-screen').style.display='flex';
+    showLoginScreen();
   }
 })();
 </script>
