@@ -7,75 +7,144 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{--ink:#1a1208;--ink2:#4a3a20;--ink3:#7a6040;--gold:#c4962a;--teal:#1a4a3a;--red:#6b1a1a;--border:rgba(90,60,20,0.22);}
+:root{--ink:#1a1208;--ink2:#4a3a20;--ink3:#7a6040;--gold:#c4962a;--teal:#1a4a3a;--red:#6b1a1a;--border:rgba(90,60,20,0.22);--rare:#4a1a6a;}
 body{font-family:'Crimson Pro',Georgia,serif;background:#2a1f0e;color:var(--ink);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem;}
 h1.site-title{font-family:'Cinzel',serif;font-size:13px;letter-spacing:.18em;color:rgba(196,150,42,.6);margin-bottom:1.5rem;text-transform:uppercase;}
-.wrap{width:100%;max-width:680px;}
+.wrap{width:100%;max-width:760px;}
 .parch{background:linear-gradient(135deg,#f7f0dc,#ede4c5);border:1px solid rgba(90,60,20,0.28);border-radius:3px;box-shadow:inset 0 0 50px rgba(90,60,20,0.06),0 8px 40px rgba(0,0,0,0.4);}
-.hd{padding:1.1rem 1.4rem;border-bottom:1px solid var(--border);}
+
+/* Nav tabs */
+.tabs{display:flex;border-bottom:1px solid var(--border);}
+.tab{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.1em;padding:.6rem 1.2rem;cursor:pointer;color:var(--ink3);border-right:1px solid var(--border);transition:background .12s;}
+.tab:hover{background:rgba(90,60,20,.04);}
+.tab.active{color:var(--ink);background:rgba(90,60,20,.06);border-bottom:2px solid var(--gold);}
+
+/* Header */
+.hd{padding:1rem 1.4rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;}
 .char-name{font-family:'Cinzel',serif;font-size:20px;font-weight:500;letter-spacing:.02em;}
 .char-sub{font-size:13px;font-style:italic;color:var(--ink3);margin-top:2px;}
 .htag{display:inline-block;margin-top:5px;font-size:10px;font-family:'Cinzel',serif;letter-spacing:.06em;color:var(--red);background:rgba(107,26,26,.07);border:1px solid rgba(107,26,26,.18);border-radius:2px;padding:2px 7px;}
+.hd-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.location-tag{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.1em;color:var(--teal);background:rgba(26,74,58,.08);border:1px solid rgba(26,74,58,.22);border-radius:2px;padding:3px 10px;}
 .gold-lbl{font-size:10px;font-family:'Cinzel',serif;letter-spacing:.08em;color:var(--ink3);}
-.gold-val{font-family:'Cinzel',serif;font-size:16px;color:var(--gold);font-weight:500;}
+.gold-val{font-family:'Cinzel',serif;font-size:16px;color:var(--gold);font-weight:500;text-align:right;}
+
+/* Stats */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border);}
-.sc{padding:.7rem 1rem;border-right:1px solid var(--border);}
+.sc{padding:.65rem 1rem;border-right:1px solid var(--border);}
 .sc:last-child{border-right:none;}
 .slbl{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.09em;color:var(--ink3);margin-bottom:3px;}
 .snum{font-size:21px;font-weight:300;line-height:1;}
 .xtr{margin-top:4px;height:2px;background:rgba(90,60,20,.1);border-radius:1px;}
 .xfill{height:100%;border-radius:1px;background:var(--gold);transition:width .5s;}
 .xtxt{font-size:10px;color:var(--ink3);margin-top:2px;}
-.sec{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.12em;color:var(--ink3);padding:.5rem 1.4rem .35rem;border-bottom:1px solid var(--border);background:rgba(90,60,20,.025);display:flex;align-items:center;gap:8px;}
-.sec-badge{background:rgba(26,74,58,.12);border:1px solid rgba(26,74,58,.2);border-radius:2px;padding:1px 7px;font-size:9px;color:var(--teal);letter-spacing:.04em;}
-.inv-row{padding:.55rem 1.4rem;border-bottom:1px solid var(--border);min-height:34px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;}
+
+/* Section headers */
+.sec{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.12em;color:var(--ink3);padding:.45rem 1.4rem .35rem;border-bottom:1px solid var(--border);background:rgba(90,60,20,.025);display:flex;align-items:center;justify-content:space-between;}
+
+/* Inventory */
+.inv-row{padding:.5rem 1.4rem;border-bottom:1px solid var(--border);min-height:32px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;}
 .chip{font-size:12px;background:rgba(90,60,20,.07);border:1px solid var(--border);border-radius:2px;padding:1px 7px;color:var(--ink2);}
+.chip.equip{background:rgba(26,74,58,.08);border-color:rgba(26,74,58,.25);color:var(--teal);}
+.chip.rare{background:rgba(74,26,106,.08);border-color:rgba(74,26,106,.25);color:var(--rare);}
 .empty-txt{font-size:12px;font-style:italic;color:var(--ink3);}
 
-/* Slots */
-.slots-wrap{border-bottom:1px solid var(--border);}
-.slot{padding:1rem 1.4rem;border-bottom:1px solid var(--border);position:relative;}
-.slot:last-child{border-bottom:none;}
-.slot-hd{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;color:var(--ink3);margin-bottom:.6rem;}
-.slot-locked{padding:1rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
-.slot-locked:last-child{border-bottom:none;}
-.slot-lock-msg{font-size:12px;font-style:italic;color:var(--ink3);}
-.act-select{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.7rem;}
-.aopt{padding:.6rem .8rem;border:1px solid var(--border);border-radius:2px;cursor:pointer;transition:background .12s;}
-.aopt:hover:not(.locked-opt){background:rgba(90,60,20,.05);}
-.aopt.selected{background:rgba(26,74,58,.07);border-color:rgba(26,74,58,.35);}
-.aopt.locked-opt{opacity:.35;cursor:not-allowed;}
-.aopt-name{font-family:'Cinzel',serif;font-size:11px;font-weight:500;margin-bottom:1px;}
-.aopt-meta{font-size:10px;color:var(--ink3);}
-.aopt-meta span{color:var(--ink2);}
-.slot-actions{display:flex;gap:8px;align-items:center;}
-.btn-start{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.06em;color:#fff;background:var(--teal);border:none;border-radius:2px;padding:5px 14px;cursor:pointer;}
-.btn-start:hover{background:#0d3328;}
-.btn-stop{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.06em;color:var(--red);background:none;border:1px solid rgba(107,26,26,.25);border-radius:2px;padding:5px 14px;cursor:pointer;}
-.btn-stop:hover{background:rgba(107,26,26,.05);}
-.slot-status{font-size:12px;font-style:italic;color:var(--ink3);}
+/* Pages */
+.page{display:none;}
+.page.active{display:block;}
 
-/* Progress */
-.active-panel{background:rgba(26,74,58,.05);border:1px solid rgba(26,74,58,.18);border-radius:2px;padding:.7rem .9rem;margin-top:.5rem;}
-.active-name{font-family:'Cinzel',serif;font-size:11px;color:var(--teal);margin-bottom:4px;}
-.active-eta{font-size:11px;color:var(--ink3);margin-bottom:6px;}
-.ptr{height:3px;background:rgba(90,60,20,.1);border-radius:1px;}
-.pfill{height:100%;border-radius:1px;background:var(--teal);transition:width .5s linear;}
+/* Activities page */
+.main-cols{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border);}
+.col-left{border-right:1px solid var(--border);}
+.col-sec{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;color:var(--ink3);padding:.45rem 1rem .35rem;border-bottom:1px solid var(--border);background:rgba(90,60,20,.025);display:flex;justify-content:space-between;align-items:center;}
+.act-list{padding:.5rem;}
+.arow{display:flex;align-items:center;justify-content:space-between;padding:.45rem .5rem;border-radius:2px;cursor:pointer;transition:background .12s;gap:8px;}
+.arow:hover:not(.locked-row){background:rgba(90,60,20,.05);}
+.arow.locked-row{opacity:.35;cursor:not-allowed;}
+.arow-info{flex:1;min-width:0;}
+.arow-name{font-family:'Cinzel',serif;font-size:11px;font-weight:500;}
+.arow-meta{font-size:10px;color:var(--ink3);margin-top:1px;}
+.arow-meta span{color:var(--ink2);}
+.arow-sk{font-size:9px;font-family:'Cinzel',serif;letter-spacing:.05em;padding:1px 5px;border-radius:2px;white-space:nowrap;}
+.sk-c{background:rgba(107,26,26,.08);color:var(--red);}
+.sk-s{background:rgba(26,74,58,.08);color:var(--teal);}
+.sk-a{background:rgba(139,107,32,.08);color:#5a4010;}
+.sk-v{background:rgba(50,50,100,.08);color:#2a2a6a;}
+.add-btn{font-family:'Cinzel',serif;font-size:10px;color:var(--teal);background:none;border:1px solid rgba(26,74,58,.25);border-radius:2px;padding:2px 7px;cursor:pointer;white-space:nowrap;}
+.add-btn:hover{background:rgba(26,74,58,.06);}
+.add-btn:disabled{opacity:.3;cursor:not-allowed;}
+.queue-area{padding:.5rem;}
+.queue-empty{font-size:12px;font-style:italic;color:var(--ink3);padding:.4rem .5rem;}
+.qitem{display:flex;align-items:center;gap:6px;padding:.4rem .5rem;border-bottom:1px solid rgba(90,60,20,.08);position:relative;}
+.qitem:last-child{border-bottom:none;}
+.qitem-num{font-family:'Cinzel',serif;font-size:9px;color:var(--ink3);min-width:14px;}
+.qitem-name{font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.qitem-dur{font-size:10px;color:var(--ink3);white-space:nowrap;}
+.qitem-rm{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:13px;padding:0 2px;line-height:1;}
+.qitem-rm:hover{color:var(--red);}
+.qitem.active-item{background:rgba(26,74,58,.06);}
+.qitem-prog{position:absolute;bottom:0;left:0;height:2px;background:var(--teal);transition:width .5s linear;border-radius:0;}
+.queue-ctrl{padding:.5rem;border-top:1px solid var(--border);display:flex;gap:6px;align-items:center;}
+.qty-label{font-size:9px;font-family:'Cinzel',serif;letter-spacing:.05em;color:var(--ink3);}
+.qty-input{width:46px;font-family:'Cinzel',serif;font-size:12px;border:1px solid var(--border);border-radius:2px;padding:3px 5px;background:rgba(255,255,255,.5);color:var(--ink);text-align:center;}
+.clear-btn{margin-left:auto;font-size:10px;font-family:'Cinzel',serif;color:var(--red);background:none;border:1px solid rgba(107,26,26,.2);border-radius:2px;padding:3px 8px;cursor:pointer;}
+.eta-line{font-size:11px;color:var(--ink3);padding:.35rem 1rem .4rem;border-top:1px solid var(--border);font-style:italic;}
 
-.log-area{padding:.7rem 1.4rem;min-height:105px;}
-.le{font-size:13px;line-height:1.6;padding:3px 0;border-bottom:1px solid rgba(90,60,20,.07);color:var(--ink2);}
+/* Market page */
+.market-wrap{padding:1rem 1.4rem;}
+.market-section{margin-bottom:1.5rem;}
+.market-hd{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.08em;color:var(--ink2);margin-bottom:.1rem;display:flex;align-items:center;gap:8px;}
+.market-refresh{font-size:10px;font-style:italic;color:var(--ink3);font-family:'Crimson Pro',serif;letter-spacing:0;}
+.market-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:.6rem;}
+.mitem{background:rgba(255,255,255,.4);border:1px solid var(--border);border-radius:3px;padding:.7rem .9rem;display:flex;flex-direction:column;gap:4px;}
+.mitem.rare-item{border-color:rgba(74,26,106,.3);background:rgba(74,26,106,.04);}
+.mitem-name{font-family:'Cinzel',serif;font-size:12px;font-weight:500;}
+.mitem.rare-item .mitem-name{color:var(--rare);}
+.mitem-desc{font-size:11px;font-style:italic;color:var(--ink3);line-height:1.4;}
+.mitem-effect{font-size:11px;color:var(--ink2);}
+.mitem-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px;}
+.mitem-price{font-family:'Cinzel',serif;font-size:13px;color:var(--gold);}
+.mitem-stock{font-size:10px;color:var(--ink3);}
+.buy-btn{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.04em;color:#fff;background:var(--teal);border:none;border-radius:2px;padding:3px 10px;cursor:pointer;}
+.buy-btn:hover{background:#0d3328;}
+.buy-btn:disabled{background:rgba(90,60,20,.2);cursor:not-allowed;color:var(--ink3);}
+.sell-section{margin-top:1rem;}
+.sell-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:.6rem;}
+.sitem{background:rgba(255,255,255,.4);border:1px solid var(--border);border-radius:3px;padding:.6rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.sitem-name{font-size:12px;color:var(--ink2);}
+.sitem-count{font-size:11px;color:var(--ink3);}
+.sitem-price{font-size:12px;color:var(--gold);font-family:'Cinzel',serif;}
+.sell-btn{font-family:'Cinzel',serif;font-size:10px;color:var(--red);background:none;border:1px solid rgba(107,26,26,.2);border-radius:2px;padding:2px 8px;cursor:pointer;}
+.sell-btn:hover{background:rgba(107,26,26,.05);}
+.no-sell{font-size:12px;font-style:italic;color:var(--ink3);padding:.4rem 0;}
+
+/* Equipment page */
+.equip-wrap{padding:1rem 1.4rem;}
+.equip-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.eitem{background:rgba(255,255,255,.4);border:1px solid var(--border);border-radius:3px;padding:.7rem .9rem;}
+.eitem.rare-equip{border-color:rgba(74,26,106,.3);background:rgba(74,26,106,.04);}
+.eitem-name{font-family:'Cinzel',serif;font-size:12px;font-weight:500;margin-bottom:3px;}
+.eitem.rare-equip .eitem-name{color:var(--rare);}
+.eitem-effect{font-size:11px;color:var(--ink2);font-style:italic;}
+.eitem-start{font-size:10px;color:var(--ink3);margin-top:3px;}
+
+/* Log */
+.log-area{padding:.6rem 1.4rem;min-height:90px;}
+.le{font-size:13px;line-height:1.6;padding:2px 0;border-bottom:1px solid rgba(90,60,20,.07);color:var(--ink2);}
 .le:last-child{border-bottom:none;}
 .lt{font-size:10px;font-family:'Cinzel',serif;color:var(--ink3);margin-right:5px;}
 .lr{color:var(--teal);}
 .ll{color:var(--gold);font-style:italic;}
 .lev{color:var(--red);font-style:italic;}
-.loffline{color:#8a6a20;font-style:italic;}
-.foot{padding:.45rem 1.4rem;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:10px;font-family:'Cinzel',serif;letter-spacing:.05em;color:var(--ink3);}
+.loff{color:#8a6a20;font-style:italic;}
+.lbuy{color:var(--gold);}
+.lsell{color:#5a4010;}
+
+.foot{padding:.4rem 1.4rem;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:10px;font-family:'Cinzel',serif;letter-spacing:.05em;color:var(--ink3);}
 .dot{width:5px;height:5px;border-radius:50%;background:var(--teal);display:inline-block;}
 .rbtn{margin-left:auto;font-size:10px;font-family:'Cinzel',serif;color:var(--red);background:none;border:1px solid rgba(107,26,26,.2);border-radius:2px;padding:2px 7px;cursor:pointer;}
-.rbtn:hover{background:rgba(107,26,26,.05);}
 footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.1em;color:rgba(196,150,42,.3);}
-@media(max-width:500px){.stats{grid-template-columns:repeat(2,1fr);}.act-select{grid-template-columns:1fr;}}
+@media(max-width:520px){.main-cols{grid-template-columns:1fr;}.col-left{border-right:none;border-bottom:1px solid var(--border);}.stats{grid-template-columns:repeat(2,1fr);}.market-grid,.sell-grid,.equip-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -84,13 +153,16 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:10px;letter-spacin
 <div class="parch">
 
   <!-- Header -->
-  <div class="hd" style="display:flex;justify-content:space-between;align-items:flex-start;">
+  <div class="hd">
     <div>
       <div class="char-name">Jonny de Dion</div>
-      <div class="char-sub">Âge <span id="cage">14</span> ans · Ruelle des Murmures, Westmarche</div>
+      <div class="char-sub">Âge <span id="cage">14</span> ans</div>
       <div class="htag">⚑ Agoraphobie — Opère dans l'ombre</div>
     </div>
-    <div style="text-align:right;"><div class="gold-lbl">OR</div><div class="gold-val" id="gval">0</div></div>
+    <div class="hd-right">
+      <div class="location-tag">⌖ Westmarche</div>
+      <div><div class="gold-lbl">OR</div><div class="gold-val" id="gval">0</div></div>
+    </div>
   </div>
 
   <!-- Stats -->
@@ -102,23 +174,83 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:10px;letter-spacin
   </div>
 
   <!-- Inventory -->
-  <div class="sec">INVENTAIRE</div>
+  <div class="sec"><span>INVENTAIRE</span></div>
   <div class="inv-row" id="inv"><span class="empty-txt">Aucun objet pour l'instant</span></div>
 
-  <!-- Slots -->
-  <div class="sec">
-    ACTIVITÉS
-    <span class="sec-badge" id="slot-badge">1 EMPLACEMENT</span>
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('activities')">ACTIVITÉS</div>
+    <div class="tab" onclick="showTab('market')">MARCHÉ</div>
+    <div class="tab" onclick="showTab('equipment')">ÉQUIPEMENT</div>
   </div>
-  <div class="slots-wrap" id="slots-wrap"></div>
+
+  <!-- Page: Activities -->
+  <div class="page active" id="page-activities">
+    <div class="sec"><span>ACTIVITÉS &amp; FILE D'ATTENTE</span></div>
+    <div class="main-cols">
+      <div class="col-left">
+        <div class="col-sec"><span>DISPONIBLES</span></div>
+        <div class="act-list" id="actList"></div>
+      </div>
+      <div>
+        <div class="col-sec">
+          <span>FILE D'ATTENTE</span>
+          <button class="clear-btn" onclick="clearQueue()">Vider</button>
+        </div>
+        <div id="queueList"><div class="queue-empty">Aucune activité planifiée.</div></div>
+        <div class="queue-ctrl">
+          <span class="qty-label">RÉPÉTER</span>
+          <input class="qty-input" type="number" id="qtyInput" value="1" min="1" max="99">
+          <span class="qty-label">FOIS</span>
+        </div>
+        <div class="eta-line" id="etaLine">Planifie des activités pour commencer.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page: Market -->
+  <div class="page" id="page-market">
+    <div class="market-wrap">
+
+      <!-- Rare item -->
+      <div class="market-section" id="rareSection"></div>
+
+      <!-- Daily -->
+      <div class="market-section">
+        <div class="market-hd">DENRÉES <span class="market-refresh">— renouvellement quotidien</span></div>
+        <div class="market-grid" id="dailyGrid"></div>
+      </div>
+
+      <!-- Weekly -->
+      <div class="market-section">
+        <div class="market-hd">ÉQUIPEMENTS <span class="market-refresh">— renouvellement hebdomadaire</span></div>
+        <div class="market-grid" id="weeklyGrid"></div>
+      </div>
+
+      <!-- Sell -->
+      <div class="sell-section">
+        <div class="market-hd">VENDRE VOS MARCHANDISES</div>
+        <div id="sellGrid"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Page: Equipment -->
+  <div class="page" id="page-equipment">
+    <div class="equip-wrap">
+      <p style="font-size:13px;font-style:italic;color:var(--ink3);margin-bottom:1rem;">Équipement actuel de Jonny de Dion.</p>
+      <div class="equip-grid" id="equipGrid"></div>
+    </div>
+  </div>
 
   <!-- Log -->
-  <div class="sec">JOURNAL DE WESTMARCHE</div>
+  <div class="sec"><span>JOURNAL DE WESTMARCHE</span></div>
   <div class="log-area" id="log"></div>
 
   <div class="foot">
     <span class="dot"></span>
-    <span>Progression sauvegardée · Calcul hors-ligne actif</span>
+    <span>Sauvegardé · Calcul hors-ligne actif (max 24h)</span>
     <button class="rbtn" id="rbtn">Recommencer</button>
   </div>
 </div>
@@ -126,324 +258,402 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:10px;letter-spacin
 <footer>© Westmarche — Un projet de Jonny de Dion</footer>
 
 <script>
-const KEY = 'jonnydion_v3';
-const MAX_OFFLINE_MS = 24 * 60 * 60 * 1000; // 24h cap
-const H = 60 * 60 * 1000;
+const KEY='jonnydion_v5';
+const MAX_OFF=24*3600*1000;
+const H=3600*1000;
 
-const ACTS = [
-  {id:'wood',   name:'Couper du bois',       tier:'Base',      desc:"Les forêts au-delà des murs t'accueillent sans juger.",          sk:'s', dur:1*H,   xp:80,  loot:[{n:'Bois',a:2,b:5}],           ga:0,gb:2,  req:0, rsk:null},
-  {id:'guard',  name:'Ronde de nuit',         tier:'Base',      desc:"Tu patrouilles quand la ville dort. Enfin tranquille.",           sk:'c', dur:1*H,   xp:90,  loot:[{n:'Ration',a:0,b:2}],          ga:3,gb:8,  req:0, rsk:null},
-  {id:'study',  name:'Étudier les parchemins',tier:'Base',      desc:"Un vieux moine t'enseigne l'écriture dans sa cellule sombre.",   sk:'v', dur:1*H,   xp:80,  loot:[{n:'Parchemin',a:0,b:1}],       ga:0,gb:0,  req:0, rsk:null},
-  {id:'hunt',   name:'Chasse au gibier',      tier:'Intermédiaire', desc:"Traquer en silence. Là, tu excelles.",                       sk:'s', dur:2*H,   xp:200, loot:[{n:'Viande',a:2,b:5},{n:'Peau',a:1,b:3}], ga:2,gb:6, req:3, rsk:'s'},
-  {id:'forge',  name:'Apprenti forgeron',     tier:'Intermédiaire', desc:"Forger la nuit, quand l'atelier est désert.",                sk:'a', dur:2*H,   xp:210, loot:[{n:'Clou de fer',a:3,b:8}],     ga:4,gb:10, req:2, rsk:'a'},
-  {id:'shadow', name:'Courses discrètes',     tier:'Avancée',   desc:"Livrer des messages que personne ne doit voir.",                 sk:'v', dur:4*H,   xp:480, loot:[{n:'Pièce anonyme',a:2,b:4}],   ga:10,gb:25,req:3, rsk:'v'},
+// --- Data ---
+const ACTS=[
+  {id:'wood',  name:'Couper du bois',         sk:'s',tier:'Base',           dur:1*H,  xp:80,  loot:[{n:'Bois',a:2,b:5}],                        ga:0,gb:2,  req:0,rsk:null},
+  {id:'guard', name:'Ronde de nuit',           sk:'c',tier:'Base',           dur:1*H,  xp:90,  loot:[{n:'Ration',a:0,b:2}],                       ga:3,gb:8,  req:0,rsk:null},
+  {id:'study', name:'Étudier les parchemins',  sk:'v',tier:'Base',           dur:1*H,  xp:80,  loot:[{n:'Parchemin',a:0,b:1}],                    ga:0,gb:0,  req:0,rsk:null},
+  {id:'craft0',name:'Travaux de menuiserie',   sk:'a',tier:'Base',           dur:1*H,  xp:80,  loot:[{n:'Planche brute',a:1,b:3}],                ga:1,gb:3,  req:0,rsk:null},
+  {id:'hunt',  name:'Chasse au gibier',        sk:'s',tier:'Intermédiaire',  dur:2*H,  xp:200, loot:[{n:'Viande',a:2,b:5},{n:'Peau',a:1,b:3}],   ga:2,gb:6,  req:3,rsk:'s'},
+  {id:'forge', name:'Apprenti forgeron',       sk:'a',tier:'Intermédiaire',  dur:2*H,  xp:210, loot:[{n:'Clou de fer',a:3,b:8}],                  ga:4,gb:10, req:2,rsk:'a'},
+  {id:'shadow',name:'Courses discrètes',       sk:'v',tier:'Avancée',        dur:4*H,  xp:480, loot:[{n:'Pièce anonyme',a:2,b:4}],                ga:10,gb:25,req:3,rsk:'v'},
 ];
 
-const EVTS = [
-  {sk:'s',lv:2, m:"Un passeur remarque que tu connais tout le monde... mais disparais toujours avant minuit. Il hoche la tête avec respect."},
-  {sk:'c',lv:3, m:"On t'offre une place dans la garde du jour. Tu déclènes poliment. Deux fois. Ils cessent de demander."},
-  {sk:'v',lv:4, m:"Tu lis les gens mieux que les livres — leurs peurs, leurs secrets. Ça t'a sauvé la mise plus d'une fois."},
-  {sk:'s',lv:5, m:"Les bas-fonds murmurent ton nom. «Jonny de Dion» — dit avec un sourire, jamais sûr si c'est une menace ou un compliment."},
-  {sk:'a',lv:3, m:"On te commande des outils... inavouables. Tu poses peu de questions. L'or parle plus fort."},
-  {sk:'v',lv:2, m:"Un vieux bougon te glisse : «T'as l'air d'un gars fiable. C'est dangereux, ça.»"},
+// Sellable items and their base price
+const SELL_PRICES={
+  'Bois':1,'Planche brute':2,'Viande':3,'Peau':4,
+  'Clou de fer':2,'Parchemin':3,'Ration':2,'Pièce anonyme':5,
+};
+
+// Market pools
+const DAILY_POOL=[
+  {id:'d1',name:'Ration de voyage',      desc:'Sustentation pour les longues routes.',          effect:'Prérequis : Chasse avancée (1/cycle)',  price:5,  stock:5, category:'food'},
+  {id:'d2',name:'Miche de pain noir',    desc:'Dense, peu appétissant, mais ça tient.',         effect:'Abaisse seuil narratif de 1 (usage unique)', price:3, stock:3, category:'food'},
+  {id:'d3',name:'Flacon de vin du Sud',  desc:'Un vin honnête qui ouvre les langues.',          effect:'Abaisse seuil narratif de 2 (usage unique)', price:8, stock:2, category:'food'},
+  {id:'d4',name:'Herbes médicinales',    desc:'Contre les fièvres et les mauvaises nuits.',     effect:'Réduit pénalité cachot de moitié',      price:6,  stock:3, category:'food'},
+  {id:'d5',name:'Provision de route',    desc:'Pour les voyages qui durent.',                   effect:'Prérequis : Expédition (1/cycle 4h)',    price:7,  stock:4, category:'food'},
+  {id:'d6',name:'Viande séchée',         desc:'Se conserve longtemps. Le goût, moins.',        effect:'Prérequis : activités survie avancées',  price:4,  stock:5, category:'food'},
+  {id:'d7',name:'Fromage de garde',      desc:'Un fromage qui a vécu autant que toi.',          effect:'Monnaie sociale mineure (+0.5 seuil)',   price:2,  stock:4, category:'food'},
+  {id:'d8',name:'Eau de source purifiée',desc:'Indispensable en zone hostile.',                 effect:'Prérequis : zones hostiles futures',     price:4,  stock:6, category:'food'},
 ];
 
-const SN = {c:'Combat',s:'Survie',a:'Artisanat',v:'Savoir'};
-const UI = {c:{l:'lc',b:'bc',x:'xc'},s:{l:'ls',b:'bs',x:'xs'},a:{l:'la',b:'ba',x:'xa'},v:{l:'lv',b:'bv',x:'xv'}};
+const WEEKLY_POOL=[
+  {id:'w1',name:'Hache de bûcheron renforcée', desc:'Le fer tient mieux que le bois ordinaire.', effect:'+1 Bois par cycle de coupe',            price:45, stock:1, equip:true, slot:'outil_bois'},
+  {id:'w2',name:'Arc long de chasse',           desc:'Une portée qui change la donne.',           effect:'+1 Viande et +1 Peau par cycle',        price:60, stock:1, equip:true, slot:'arc'},
+  {id:'w3',name:'Cape de nuit',                 desc:'Disparaître dans l\'ombre est un art.',     effect:'+1 jets de Savoir dans les ruelles',    price:55, stock:1, equip:true, slot:'cape'},
+  {id:'w4',name:'Outils de menuisier',          desc:'Le bon outil pour le bon travail.',         effect:'+1 Planche par cycle, débloque menuiserie avancée', price:40, stock:1, equip:true, slot:'outil_bois2'},
+  {id:'w5',name:'Lanterne à huile',             desc:'Pour voir ce que la nuit cache.',           effect:'Débloque activités souterraines futures', price:30, stock:1, equip:true, slot:'lanterne'},
+  {id:'w6',name:'Cheval de trait',              desc:'Lent mais fiable. Comme la patience.',      effect:'Débloque déplacement vers nouvelles régions', price:120, stock:1, equip:true, slot:'monture'},
+  {id:'w7',name:'Armure de cuir légère',        desc:'Protège sans alourdir la démarche.',        effect:'+1 jets de Combat défensifs',           price:65, stock:1, equip:true, slot:'armure'},
+  {id:'w8',name:'Carnet de notes',              desc:'La mémoire est faillible. L\'encre non.',   effect:'+1 jets de Savoir pour décrypter',      price:25, stock:1, equip:true, slot:'carnet'},
+  {id:'w9',name:'Gants de forge',               desc:'Les mains d\'un forgeron valent leur pesant.', effect:'Prérequis forge avancée, améliore qualité', price:35, stock:1, equip:true, slot:'gants'},
+  {id:'w10',name:'Corde solide',                desc:'Dix mètres de confiance tressée.',          effect:'Prérequis escalade et activités futures', price:20, stock:2, equip:true, slot:'corde'},
+  {id:'w11',name:'Besace de voyage',            desc:'Porte plus, sans que ça paraisse.',         effect:'Augmente capacité inventaire',          price:30, stock:1, equip:true, slot:'besace'},
+  {id:'w12',name:'Pierre à aiguiser',           desc:'Un tranchant bien tenu change tout.',       effect:'+1 Loot sur les 3 prochains cycles',    price:15, stock:3, equip:false},
+];
 
-function def() {
-  return {
-    sk:{c:1,s:1,a:1,v:1},
-    xp:{c:0,s:0,a:0,v:0},
-    inv:{}, gold:0, seen:[],
-    slots:[{actId:null, startedAt:null},{actId:null, startedAt:null}],
-    lastSeen: Date.now(),
-    log:[{t:'—',m:"Tu commences ta vie dans la Ruelle des Murmures. Que vas-tu faire ?",tp:''}]
-  };
+const RARE_POOL=[
+  {id:'r1',name:'Épée de qualité',          desc:'Forgée par un maître dont on a oublié le nom.', effect:'+2 jets de Combat, prérequis quête de prestige', price:200, slot:'arme', equip:true},
+  {id:'r2',name:'Manteau du passeur',       desc:'Il a appartenu à quelqu\'un qui n\'en a plus besoin.', effect:'+2 jets de Savoir dans les ruelles, accès marché noir', price:180, slot:'manteau', equip:true},
+  {id:'r3',name:'Outils de maître',         desc:'La version supérieure de ce que Jonny utilise déjà.', effect:'+2 jets impliquant crochetage et infiltration', price:160, slot:'outils_maitre', equip:true},
+  {id:'r4',name:'Grimoire incomplet',       desc:'Les pages manquantes valent plus que les présentes.', effect:'Prérequis quête Savoir niveau 50', price:250, slot:'grimoire', equip:true},
+  {id:'r5',name:'Fer étoilé',               desc:'Le métal qui tombe du ciel. On ne sait pas pourquoi.', effect:'Prérequis craft objet légendaire', price:300, slot:null, equip:false},
+  {id:'r6',name:'Sceau d\'Aldric Renart',   desc:'Il porte une empreinte que tu reconnais sans savoir pourquoi.', effect:'Déclenche une quête (disponible à Combat 40+)', price:0, slot:'sceau', equip:true},
+];
+
+const SN={c:'Combat',s:'Survie',a:'Artisanat',v:'Savoir'};
+const SKC={c:'sk-c',s:'sk-s',a:'sk-a',v:'sk-v'};
+const UI={c:{l:'lc',b:'bc',x:'xc'},s:{l:'ls',b:'bs',x:'xs'},a:{l:'la',b:'ba',x:'xa'},v:{l:'lv',b:'bv',x:'xv'}};
+
+// Starting equipment for Jonny
+const START_EQUIP=[
+  {id:'start1',name:'Outils de crochetage',desc:'Usés mais fiables. Tu les as depuis l\'enfance.',effect:'Permet crochetage et infiltration de base',slot:'outils',rare:false},
+  {id:'start2',name:'Cape usée',           desc:'Trop grande pour toi à 14 ans. Elle te va mieux maintenant.',effect:'Discrétion mineure dans les ruelles',slot:'cape_base',rare:false},
+];
+
+function def(){return{
+  sk:{c:1,s:1,a:1,v:1},xp:{c:0,s:0,a:0,v:0},
+  inv:{},gold:0,seen:[],
+  equipment:[...START_EQUIP],
+  queue:[],queueStart:null,
+  lastSeen:Date.now(),
+  marketSeeds:{daily:0,weekly:0,rare:0},
+  marketStock:{},
+  log:[{t:'—',m:"Tu commences ta vie dans la Ruelle des Murmures. Que vas-tu faire ?",tp:''}]
+};}
+
+let G=(function(){try{const d=localStorage.getItem(KEY);if(d)return JSON.parse(d);}catch(e){}return def();})();
+if(!G.queue)G.queue=[];
+if(!G.equipment)G.equipment=[...START_EQUIP];
+if(!G.marketSeeds)G.marketSeeds={daily:0,weekly:0,rare:0};
+if(!G.marketStock)G.marketStock={};
+
+let tickIv=null;
+let currentTab='activities';
+
+// --- Utilities ---
+function save(){G.lastSeen=Date.now();try{localStorage.setItem(KEY,JSON.stringify(G));}catch(e){}}
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function seededRand(seed,i){const x=Math.sin(seed+i)*10000;return x-Math.floor(x);}
+function xpN(lv){return lv*100;}
+function fmtDur(ms){if(ms<=0)return '0min';const h=Math.floor(ms/H),m=Math.floor((ms%H)/60000);if(h>0&&m>0)return h+'h '+m+'min';if(h>0)return h+'h';return m+'min';}
+function fmtETA(ms){const d=new Date(Date.now()+ms);return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');}
+function nowStr(){const d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');}
+function unlocked(act){return !act.rsk||G.sk[act.rsk]>=act.req;}
+function modifier(lv){return Math.max(-5,Math.min(5,Math.floor((lv-26)/5)));}
+
+// --- Market seed system ---
+// Seeds based on real calendar day/week so everyone sees same stock
+function getDaySeed(){const d=new Date();return d.getFullYear()*10000+d.getMonth()*100+d.getDate();}
+function getWeekSeed(){const d=new Date();const jan1=new Date(d.getFullYear(),0,1);const week=Math.floor((d-jan1)/604800000);return d.getFullYear()*1000+week;}
+function getRareSeed(){
+  // Changes every ~3 days
+  const d=new Date();const day=Math.floor((d-new Date(2024,0,1))/86400000);
+  return Math.floor(day/3);
 }
 
-let G = (function(){
-  try { const d = localStorage.getItem(KEY); if(d) return JSON.parse(d); } catch(e){}
-  return def();
-})();
-
-// Ensure slots array exists for saves before this version
-if(!G.slots) G.slots = [{actId:null,startedAt:null},{actId:null,startedAt:null}];
-if(!G.lastSeen) G.lastSeen = Date.now();
-
-let tickInterval = null;
-
-function save() {
-  G.lastSeen = Date.now();
-  try { localStorage.setItem(KEY, JSON.stringify(G)); } catch(e){}
+function getMarketItems(){
+  const ds=getDaySeed(),ws=getWeekSeed(),rs=getRareSeed();
+  // Daily: pick 4 from 8
+  const dailyIdx=[];const dp=[...DAILY_POOL];
+  for(let i=0;i<4;i++){const r=Math.floor(seededRand(ds,i)*dp.length);dailyIdx.push(dp.splice(r,1)[0]);}
+  // Weekly: pick 4 from 12
+  const weeklyIdx=[];const wp=[...WEEKLY_POOL];
+  for(let i=0;i<4;i++){const r=Math.floor(seededRand(ws,i)*wp.length);weeklyIdx.push(wp.splice(r,1)[0]);}
+  // Rare: pick 1 from pool
+  const rareIdx=Math.floor(seededRand(rs,0)*RARE_POOL.length);
+  // Filter rare: sceau only if combat >= 40
+  let rareItem=RARE_POOL[rareIdx];
+  if(rareItem.id==='r6'&&G.sk.c<40)rareItem=RARE_POOL[0];
+  return{daily:dailyIdx,weekly:weeklyIdx,rare:rareItem};
 }
 
-function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
-function xpN(lv){ return lv*100; }
-function fmtDur(ms){
-  const h=Math.floor(ms/H), m=Math.floor((ms%H)/60000);
-  if(h>0&&m>0) return h+'h '+m+'min';
-  if(h>0) return h+'h';
-  return m+'min';
-}
-function fmtTime(d){
-  const dt=new Date(d);
-  return dt.getHours().toString().padStart(2,'0')+':'+dt.getMinutes().toString().padStart(2,'0');
-}
-function nowStr(){ return fmtTime(Date.now()); }
-
-function maxSlots(){
-  return (G.sk.c>=5||G.sk.s>=5||G.sk.a>=5||G.sk.v>=5) ? 2 : 1;
+function getStock(itemId,defaultQty){
+  if(G.marketStock[itemId]===undefined)G.marketStock[itemId]=defaultQty;
+  return G.marketStock[itemId];
 }
 
-// --- Offline calculation ---
-function processOffline() {
-  const now = Date.now();
-  const elapsed = Math.min(now - G.lastSeen, MAX_OFFLINE_MS);
-  if(elapsed < 60000) return; // less than 1 min, skip
+// --- XP & Skills ---
+function addXpSilent(sk,amt){
+  G.xp[sk]+=amt;
+  while(G.xp[sk]>=xpN(G.sk[sk])){G.xp[sk]-=xpN(G.sk[sk]);G.sk[sk]++;addLog('Niveau '+G.sk[sk]+' en '+SN[sk]+' !','l');checkEvents(sk,G.sk[sk]);}
+}
+function addXp(sk,amt){addXpSilent(sk,amt);updSkill(sk);}
+function checkEvents(sk,lv){
+  const EVTS=[
+    {sk:'s',lv:2,m:"Un passeur remarque que tu connais tout le monde... mais disparais toujours avant minuit."},
+    {sk:'c',lv:3,m:"On t'offre une place dans la garde du jour. Tu déclènes poliment. Deux fois."},
+    {sk:'v',lv:4,m:"Tu lis les gens mieux que les livres — leurs peurs, leurs secrets."},
+    {sk:'s',lv:5,m:"Les bas-fonds murmurent ton nom. «Jonny de Dion» — dit avec un sourire."},
+    {sk:'a',lv:3,m:"On te commande des outils... inavouables. Tu poses peu de questions."},
+    {sk:'v',lv:2,m:"Un vieux bougon te glisse : «T'as l'air d'un gars fiable. C'est dangereux, ça.»"},
+  ];
+  EVTS.forEach(ev=>{const k=ev.sk+ev.lv;if(ev.sk===sk&&ev.lv===lv&&!G.seen.includes(k)){G.seen.push(k);setTimeout(()=>{addLog(ev.m,'ev');renderLog();},700);}});
+}
+function updSkill(sk){const lv=G.sk[sk],xp=G.xp[sk],n=xpN(lv);document.getElementById(UI[sk].l).textContent=lv;document.getElementById(UI[sk].b).style.width=Math.round(xp/n*100)+'%';document.getElementById(UI[sk].x).textContent=xp+'/'+n;}
 
-  let anyCompleted = false;
-  let summary = {};
+// --- Log ---
+function addLog(m,tp=''){G.log.unshift({t:nowStr(),m,tp});if(G.log.length>25)G.log.pop();}
+function renderLog(){document.getElementById('log').innerHTML=G.log.map(e=>{const cls=e.tp==='r'?'lr':e.tp==='l'?'ll':e.tp==='ev'?'lev':e.tp==='off'?'loff':e.tp==='buy'?'lbuy':e.tp==='sell'?'lsell':'';return'<div class="le"><span class="lt">'+e.t+'</span><span class="'+cls+'">'+e.m+'</span></div>';}).join('');}
 
-  G.slots.forEach((slot, idx) => {
-    if(!slot.actId || !slot.startedAt) return;
-    const act = ACTS.find(a=>a.id===slot.actId);
-    if(!act) return;
+// --- Inventory ---
+function renderInv(){
+  const el=document.getElementById('inv');
+  const items=Object.entries(G.inv).filter(([,c])=>c>0);
+  const equipChips=G.equipment.map(e=>'<span class="chip '+(e.rare?'rare':'equip')+'">'+e.name+'</span>').join('');
+  const invChips=items.map(([n,c])=>'<span class="chip">'+c+'× '+n+'</span>').join('');
+  const all=equipChips+invChips;
+  el.innerHTML=all||'<span class="empty-txt">Aucun objet pour l\'instant</span>';
+}
 
-    const timeRunning = now - slot.startedAt;
-    const cycles = Math.floor(timeRunning / act.dur);
-    if(cycles < 1) return;
+// --- Queue ---
+function headAct(){if(!G.queue.length)return null;return ACTS.find(a=>a.id===G.queue[0])||null;}
+function totalQueueMs(){
+  if(!G.queue.length)return 0;
+  const now=Date.now();
+  const act=headAct();
+  const headElapsed=G.queueStart?Math.min(now-G.queueStart,act.dur):0;
+  const headRem=Math.max(0,act.dur-headElapsed);
+  const restMs=G.queue.slice(1).reduce((s,id)=>{const a=ACTS.find(x=>x.id===id);return s+(a?a.dur:0);},0);
+  return headRem+restMs;
+}
+function rewardCycle(act){
+  const g=rand(act.ga,act.gb);G.gold+=g;
+  let lp=[];
+  act.loot.forEach(l=>{const q=rand(l.a,l.b);if(q>0){G.inv[l.n]=(G.inv[l.n]||0)+q;lp.push(q+'× '+l.n);}});
+  addXp(act.sk,act.xp);
+  let line=act.name+' — +'+act.xp+' XP '+SN[act.sk];
+  if(lp.length)line+=', '+lp.join(', ');
+  if(g>0)line+=', '+g+' or';
+  addLog(line,'r');
+  G.queue.shift();G.queueStart=G.queue.length?Date.now():null;
+}
 
-    anyCompleted = true;
-    // Apply cycles
-    let totalXp = act.xp * cycles;
-    let totalGold = 0;
-    let lootSummary = {};
-
-    for(let i=0;i<cycles;i++){
-      const g = rand(act.ga, act.gb);
-      totalGold += g;
-      act.loot.forEach(l=>{
-        const q = rand(l.a,l.b);
-        if(q>0){ lootSummary[l.n]=(lootSummary[l.n]||0)+q; }
-      });
-    }
-
-    // Apply to state
-    addXpSilent(act.sk, totalXp);
-    G.gold += totalGold;
-    Object.entries(lootSummary).forEach(([n,q])=>{ G.inv[n]=(G.inv[n]||0)+q; });
-
-    // Advance startedAt to reflect completed cycles
-    slot.startedAt = slot.startedAt + (cycles * act.dur);
-
-    // Build summary line
-    const key = act.name;
-    if(!summary[key]) summary[key]={cycles:0,xp:0,gold:0,loot:{}};
-    summary[key].cycles += cycles;
-    summary[key].xp += totalXp;
-    summary[key].gold += totalGold;
-    Object.entries(lootSummary).forEach(([n,q])=>{
-      summary[key].loot[n]=(summary[key].loot[n]||0)+q;
-    });
-  });
-
-  if(anyCompleted){
-    const absentTime = fmtDur(elapsed);
-    addLog('Tu étais absent depuis '+absentTime+'. Voici ce qui s\'est passé :','offline');
-    Object.entries(summary).forEach(([name,s])=>{
-      let line = s.cycles+'× '+name+' — +'+s.xp+' XP '+SN[ACTS.find(a=>a.name===name)?.sk||'s'];
-      const lootParts = Object.entries(s.loot).map(([n,q])=>q+'× '+n);
-      if(lootParts.length) line += ', '+lootParts.join(', ');
-      if(s.gold>0) line += ', '+s.gold+' or';
-      addLog(line,'r');
-    });
+function processOffline(){
+  const now=Date.now();let elapsed=Math.min(now-G.lastSeen,MAX_OFF);
+  if(elapsed<60000||!G.queue.length)return;
+  let cycles=0,summary={},timeLeft=elapsed;
+  while(timeLeft>0&&G.queue.length){
+    const act=headAct();if(!act)break;
+    const headElapsed=G.queueStart?Math.min(now-G.queueStart,act.dur):0;
+    const remaining=act.dur-headElapsed;
+    if(timeLeft>=remaining){
+      timeLeft-=remaining;cycles++;
+      const g=rand(act.ga,act.gb);G.gold+=g;
+      if(!summary[act.name])summary[act.name]={sk:act.sk,xp:0,gold:0,loot:{}};
+      summary[act.name].xp+=act.xp;summary[act.name].gold+=g;
+      act.loot.forEach(l=>{const q=rand(l.a,l.b);if(q>0){G.inv[l.n]=(G.inv[l.n]||0)+q;summary[act.name].loot[l.n]=(summary[act.name].loot[l.n]||0)+q;}});
+      addXpSilent(act.sk,act.xp);
+      G.queue.shift();G.queueStart=G.queue.length?Date.now():null;
+    } else {G.queueStart=G.queueStart?G.queueStart-timeLeft:now-timeLeft;break;}
+  }
+  if(cycles>0){
+    addLog('Tu étais absent '+fmtDur(elapsed)+'. Résumé :','off');
+    Object.entries(summary).forEach(([name,s])=>{let line=name+' — +'+s.xp+' XP '+SN[s.sk];const lp=Object.entries(s.loot).map(([n,q])=>q+'× '+n);if(lp.length)line+=', '+lp.join(', ');if(s.gold>0)line+=', '+s.gold+' or';addLog(line,'r');});
   }
 }
 
-// Silent XP (no re-render, for offline batch)
-function addXpSilent(sk, amt){
-  G.xp[sk] += amt;
-  while(G.xp[sk] >= xpN(G.sk[sk])){
-    G.xp[sk] -= xpN(G.sk[sk]);
-    G.sk[sk]++;
-    addLog('Niveau '+G.sk[sk]+' en '+SN[sk]+' !','l');
-    checkEvents(sk, G.sk[sk]);
+// --- Market ---
+function buyItem(itemId,pool){
+  const allItems=[...DAILY_POOL,...WEEKLY_POOL,...RARE_POOL];
+  const item=allItems.find(i=>i.id===itemId);
+  if(!item)return;
+  const stock=getStock(itemId,item.stock||1);
+  if(stock<=0){alert('Plus en stock.');return;}
+  if(G.gold<item.price){alert('Pas assez d\'or.');return;}
+  G.gold-=item.price;
+  G.marketStock[itemId]=stock-1;
+  if(item.equip&&item.slot){
+    // Remove existing item in same slot
+    G.equipment=G.equipment.filter(e=>e.slot!==item.slot);
+    G.equipment.push({id:item.id,name:item.name,desc:item.desc,effect:item.effect,slot:item.slot,rare:item.id.startsWith('r')});
+  } else {
+    G.inv[item.name]=(G.inv[item.name]||0)+1;
   }
+  addLog('Acheté : '+item.name+' (−'+item.price+' or)','buy');
+  save();renderInv();renderLog();document.getElementById('gval').textContent=G.gold;
+  renderMarket();renderEquipment();
 }
 
-function addXp(sk, amt){ addXpSilent(sk,amt); updSkill(sk); save(); }
-
-function checkEvents(sk, lv){
-  EVTS.forEach(ev=>{
-    const k=ev.sk+ev.lv;
-    if(ev.sk===sk&&ev.lv===lv&&!G.seen.includes(k)){
-      G.seen.push(k);
-      setTimeout(()=>addLog(ev.m,'ev'),600);
-    }
-  });
+function sellItem(name,qty){
+  const price=SELL_PRICES[name]||1;
+  const available=G.inv[name]||0;
+  const toSell=Math.min(qty,available);
+  if(toSell<=0)return;
+  G.inv[name]-=toSell;
+  if(G.inv[name]<=0)delete G.inv[name];
+  G.gold+=price*toSell;
+  addLog('Vendu : '+toSell+'× '+name+' (+'+price*toSell+' or)','sell');
+  save();renderInv();renderLog();document.getElementById('gval').textContent=G.gold;
+  renderMarket();
 }
 
-function updSkill(sk){
-  const lv=G.sk[sk],xp=G.xp[sk],n=xpN(lv);
-  document.getElementById(UI[sk].l).textContent=lv;
-  document.getElementById(UI[sk].b).style.width=Math.round(xp/n*100)+'%';
-  document.getElementById(UI[sk].x).textContent=xp+'/'+n;
+function renderMarket(){
+  const {daily,weekly,rare}=getMarketItems();
+
+  // Rare
+  const rareEl=document.getElementById('rareSection');
+  const rStock=getStock(rare.id,1);
+  rareEl.innerHTML='<div class="market-hd">RARETÉ DU MOMENT <span class="market-refresh">— disparaît dans 48h</span></div>'
+    +'<div class="market-grid" style="margin-top:.6rem;">'
+    +'<div class="mitem rare-item">'
+    +'<div class="mitem-name">'+rare.name+'</div>'
+    +'<div class="mitem-desc">'+rare.desc+'</div>'
+    +'<div class="mitem-effect">'+rare.effect+'</div>'
+    +'<div class="mitem-footer">'
+    +'<span class="mitem-price">'+(rare.price===0?'Sans prix':rare.price+' or')+'</span>'
+    +'<span class="mitem-stock">'+(rStock>0?'En stock':'Épuisé')+'</span>'
+    +(rare.price>0?'<button class="buy-btn" '+(rStock<=0||G.gold<rare.price?'disabled':'')+' onclick="buyItem(\''+rare.id+'\',\'rare\')">Acheter</button>':'<button class="buy-btn" disabled>Introuvable</button>')
+    +'</div></div></div>';
+
+  // Daily
+  document.getElementById('dailyGrid').innerHTML=daily.map(item=>{
+    const st=getStock(item.id,item.stock);
+    return'<div class="mitem">'
+      +'<div class="mitem-name">'+item.name+'</div>'
+      +'<div class="mitem-desc">'+item.desc+'</div>'
+      +'<div class="mitem-effect">'+item.effect+'</div>'
+      +'<div class="mitem-footer">'
+      +'<span class="mitem-price">'+item.price+' or</span>'
+      +'<span class="mitem-stock">'+st+' en stock</span>'
+      +'<button class="buy-btn" '+(st<=0||G.gold<item.price?'disabled':'')+' onclick="buyItem(\''+item.id+'\',\'daily\')">Acheter</button>'
+      +'</div></div>';
+  }).join('');
+
+  // Weekly
+  document.getElementById('weeklyGrid').innerHTML=weekly.map(item=>{
+    const st=getStock(item.id,item.stock);
+    const owned=G.equipment.some(e=>e.id===item.id);
+    return'<div class="mitem">'
+      +'<div class="mitem-name">'+item.name+(owned?' <span style="font-size:10px;color:var(--teal)">(possédé)</span>':'')+'</div>'
+      +'<div class="mitem-desc">'+item.desc+'</div>'
+      +'<div class="mitem-effect">'+item.effect+'</div>'
+      +'<div class="mitem-footer">'
+      +'<span class="mitem-price">'+item.price+' or</span>'
+      +'<span class="mitem-stock">'+st+' en stock</span>'
+      +'<button class="buy-btn" '+(st<=0||G.gold<item.price||owned?'disabled':'')+' onclick="buyItem(\''+item.id+'\',\'weekly\')">Acheter</button>'
+      +'</div></div>';
+  }).join('');
+
+  // Sell
+  const sellable=Object.entries(G.inv).filter(([n,c])=>SELL_PRICES[n]&&c>0);
+  const sellEl=document.getElementById('sellGrid');
+  if(!sellable.length){sellEl.innerHTML='<p class="no-sell">Rien à vendre pour l\'instant.</p>';return;}
+  sellEl.innerHTML='<div class="sell-grid">'+sellable.map(([n,c])=>{
+    const p=SELL_PRICES[n];
+    return'<div class="sitem">'
+      +'<div><div class="sitem-name">'+n+'</div><div class="sitem-count">'+c+' en stock · '+p+' or/unité</div></div>'
+      +'<div style="display:flex;gap:5px;align-items:center;">'
+      +'<button class="sell-btn" onclick="sellItem(\''+n+'\',1)">−1</button>'
+      +'<button class="sell-btn" onclick="sellItem(\''+n+'\','+c+')">Tout</button>'
+      +'</div></div>';
+  }).join('')+'</div>';
 }
 
-function addLog(m,tp=''){
-  const t=nowStr();
-  G.log.unshift({t,m,tp});
-  if(G.log.length>20) G.log.pop();
-  renderLog();
+function renderEquipment(){
+  const el=document.getElementById('equipGrid');
+  if(!G.equipment.length){el.innerHTML='<p class="empty-txt">Aucun équipement.</p>';return;}
+  el.innerHTML=G.equipment.map(e=>'<div class="eitem'+(e.rare?' rare-equip':'')+'">'
+    +'<div class="eitem-name">'+e.name+'</div>'
+    +'<div class="eitem-effect">'+e.effect+'</div>'
+    +'<div class="eitem-start">'+e.desc+'</div>'
+    +'</div>').join('');
 }
 
-function renderLog(){
-  document.getElementById('log').innerHTML=G.log.map(e=>{
-    const cls=e.tp==='r'?'lr':e.tp==='l'?'ll':e.tp==='ev'?'lev':e.tp==='offline'?'loffline':'';
-    return '<div class="le"><span class="lt">'+e.t+'</span><span class="'+cls+'">'+e.m+'</span></div>';
+// --- Activities ---
+function renderActList(){
+  const qty=parseInt(document.getElementById('qtyInput').value)||1;
+  document.getElementById('actList').innerHTML=ACTS.map(act=>{
+    const lk=!unlocked(act);
+    return'<div class="arow'+(lk?' locked-row':'')+'">'
+      +'<div class="arow-info">'
+      +'<div class="arow-name">'+act.name+'</div>'
+      +'<div class="arow-meta"><span>'+SN[act.sk]+'</span> · <span>'+fmtDur(act.dur)+'</span> · <span>'+act.xp+' XP</span>'+(lk?' · <span style="color:var(--red)">Niv.'+act.req+' '+SN[act.rsk]+'</span>':'')+'</div>'
+      +'</div>'
+      +'<span class="arow-sk '+SKC[act.sk]+'">'+SN[act.sk].toUpperCase().slice(0,3)+'</span>'
+      +'<button class="add-btn" '+(lk?'disabled':'')+' onclick="addToQueue(\''+act.id+'\','+qty+')">+'+qty+'</button>'
+      +'</div>';
   }).join('');
 }
 
-function renderInv(){
-  const el=document.getElementById('inv');
-  const en=Object.entries(G.inv);
-  el.innerHTML=en.length?en.map(([n,c])=>'<span class="chip">'+c+'× '+n+'</span>').join(''):'<span class="empty-txt">Aucun objet pour l\'instant</span>';
-}
-
-function unlocked(act){ return !act.rsk || G.sk[act.rsk]>=act.req; }
-
-function renderSlots(){
-  const ms = maxSlots();
-  document.getElementById('slot-badge').textContent = ms===2 ? '2 EMPLACEMENTS' : '1 EMPLACEMENT';
-
-  let html = '';
-  for(let i=0;i<2;i++){
-    if(i >= ms){
-      html += '<div class="slot-locked"><span class="slot-lock-msg">Emplacement 2 — Atteins le niveau 5 dans n\'importe quelle compétence pour débloquer.</span></div>';
-      continue;
+function renderQueue(){
+  const el=document.getElementById('queueList');
+  if(!G.queue.length){el.innerHTML='<div class="queue-empty">Aucune activité planifiée.</div>';document.getElementById('etaLine').textContent='File vide.';return;}
+  const now=Date.now();
+  el.innerHTML=G.queue.map((actId,i)=>{
+    const act=ACTS.find(a=>a.id===actId);if(!act)return'';
+    if(i===0&&G.queueStart){
+      const elapsed=Math.max(0,now-G.queueStart);
+      const remaining=Math.max(0,act.dur-elapsed);
+      const pct=Math.min(100,Math.round(elapsed/act.dur*100));
+      return'<div class="qitem active-item"><span class="qitem-num">1</span><span class="qitem-name">'+act.name+'</span><span class="qitem-dur">'+fmtDur(remaining)+'</span><button class="qitem-rm" onclick="removeFromQueue(0)">×</button><div class="qitem-prog" style="width:'+pct+'%"></div></div>';
     }
-    const slot = G.slots[i];
-    const act = slot.actId ? ACTS.find(a=>a.id===slot.actId) : null;
-
-    html += '<div class="slot" id="slot-'+i+'">';
-    html += '<div class="slot-hd">EMPLACEMENT '+(i+1)+'</div>';
-
-    if(!act){
-      // Show activity picker
-      html += '<div class="act-select">';
-      ACTS.forEach(a=>{
-        const lk = !unlocked(a);
-        const taken = G.slots.some((sl,si)=>si!==i&&sl.actId===a.id);
-        const disabled = lk || taken;
-        html += '<div class="aopt'+(disabled?' locked-opt':'')+'" onclick="selectAct('+i+',\''+a.id+'\')">'
-          +'<div class="aopt-name">'+a.name+'</div>'
-          +'<div class="aopt-meta">'+a.tier+' · <span>'+fmtDur(a.dur)+'</span> · <span>'+a.xp+' XP</span>'+(lk?' · <span style="color:var(--red)">Niv.'+a.req+' '+SN[a.rsk]+'</span>':''+(taken?' · <span style="color:var(--ink3)">En cours</span>':''))+'</div>'
-          +'</div>';
-      });
-      html += '</div>';
-      html += '<div class="slot-status">Aucune activité sélectionnée.</div>';
-    } else {
-      const now = Date.now();
-      const elapsed = now - slot.startedAt;
-      const remaining = Math.max(0, act.dur - (elapsed % act.dur));
-      const pct = Math.min(100, ((elapsed % act.dur) / act.dur)*100);
-      const eta = new Date(now + remaining);
-
-      html += '<div class="active-panel">'
-        +'<div class="active-name">'+act.name+'</div>'
-        +'<div class="active-eta">Prochain cycle dans '+fmtDur(remaining)+' ('+fmtTime(eta)+')</div>'
-        +'<div class="ptr"><div class="pfill" style="width:'+Math.round(pct)+'%"></div></div>'
-        +'</div>';
-      html += '<div class="slot-actions" style="margin-top:.6rem;">'
-        +'<button class="btn-stop" onclick="stopSlot('+i+')">Arrêter</button>'
-        +'<span class="slot-status">'+SN[act.sk]+' · '+act.xp+' XP/cycle</span>'
-        +'</div>';
-    }
-    html += '</div>';
-  }
-  document.getElementById('slots-wrap').innerHTML = html;
+    return'<div class="qitem"><span class="qitem-num">'+(i+1)+'</span><span class="qitem-name">'+act.name+'</span><span class="qitem-dur">'+fmtDur(act.dur)+'</span><button class="qitem-rm" onclick="removeFromQueue('+i+')">×</button></div>';
+  }).join('');
+  document.getElementById('etaLine').textContent='Fin estimée dans '+fmtDur(totalQueueMs())+' ('+fmtETA(totalQueueMs())+')';
 }
 
-function selectAct(slotIdx, actId){
-  const act = ACTS.find(a=>a.id===actId);
-  if(!act||!unlocked(act)) return;
-  const taken = G.slots.some((sl,si)=>si!==slotIdx&&sl.actId===actId);
-  if(taken) return;
-  G.slots[slotIdx] = {actId:actId, startedAt:Date.now()};
-  addLog('Emplacement '+(slotIdx+1)+' : tu commences '+act.name+'.','');
-  save();
-  renderSlots();
+function addToQueue(actId,qty){
+  const act=ACTS.find(a=>a.id===actId);if(!act||!unlocked(act))return;
+  for(let i=0;i<qty;i++)G.queue.push(actId);
+  if(!G.queueStart&&G.queue.length)G.queueStart=Date.now();
+  save();renderQueue();renderActList();
 }
+function removeFromQueue(idx){G.queue.splice(idx,1);if(idx===0)G.queueStart=G.queue.length?Date.now():null;if(!G.queue.length)G.queueStart=null;save();renderQueue();}
+function clearQueue(){G.queue=[];G.queueStart=null;addLog('File d\'attente vidée.','');save();renderQueue();renderLog();}
 
-function stopSlot(slotIdx){
-  const slot = G.slots[slotIdx];
-  if(!slot.actId) return;
-  const act = ACTS.find(a=>a.id===slot.actId);
-  addLog('Tu interromps : '+(act?act.name:'l\'activité')+'.','');
-  G.slots[slotIdx] = {actId:null, startedAt:null};
-  save();
-  renderSlots();
-}
-
-// Tick every 30s — check if a cycle completed while tab is open
+// --- Tick ---
 function tick(){
-  const now = Date.now();
-  let changed = false;
-  G.slots.forEach((slot,idx)=>{
-    if(!slot.actId||!slot.startedAt) return;
-    const act = ACTS.find(a=>a.id===slot.actId);
-    if(!act) return;
-    const elapsed = now - slot.startedAt;
-    const cycles = Math.floor(elapsed / act.dur);
-    if(cycles < 1) return;
-
-    changed = true;
-    let totalXp = act.xp * cycles;
-    let totalGold = 0;
-    let lootSummary = {};
-    for(let i=0;i<cycles;i++){
-      totalGold += rand(act.ga,act.gb);
-      act.loot.forEach(l=>{const q=rand(l.a,l.b);if(q>0)lootSummary[l.n]=(lootSummary[l.n]||0)+q;});
-    }
-    addXp(act.sk, totalXp);
-    G.gold += totalGold;
-    Object.entries(lootSummary).forEach(([n,q])=>{G.inv[n]=(G.inv[n]||0)+q;});
-    slot.startedAt = slot.startedAt + (cycles * act.dur);
-
-    let line = cycles+'× '+act.name+' — +'+totalXp+' XP '+SN[act.sk];
-    const lp = Object.entries(lootSummary).map(([n,q])=>q+'× '+n);
-    if(lp.length) line+=', '+lp.join(', ');
-    if(totalGold>0) line+=', '+totalGold+' or';
-    addLog(line,'r');
-  });
-  if(changed){ renderInv(); renderSlots(); Object.keys(G.sk).forEach(updSkill); save(); }
-  else { renderSlots(); } // update progress bars
+  const now=Date.now();let changed=false;
+  while(G.queue.length&&G.queueStart){
+    const act=headAct();if(!act)break;
+    if(now-G.queueStart>=act.dur){rewardCycle(act);if(G.queue.length)G.queueStart=now;changed=true;}else break;
+  }
+  if(changed){save();renderInv();renderLog();Object.keys(G.sk).forEach(updSkill);document.getElementById('gval').textContent=G.gold;renderActList();if(currentTab==='market')renderMarket();}
+  renderQueue();
 }
 
-// Init
-document.getElementById('rbtn').onclick = ()=>{
+// --- Tabs ---
+function showTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['activities','market','equipment'][i]===tab));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  if(tab==='market')renderMarket();
+  if(tab==='equipment')renderEquipment();
+}
+
+// --- Init ---
+document.getElementById('rbtn').onclick=()=>{
   if(confirm('Recommencer depuis le début ? Ta progression sera effacée.')){
-    clearInterval(tickInterval);
-    G = def();
-    save();
+    clearInterval(tickIv);G=def();save();
     Object.keys(G.sk).forEach(updSkill);
     document.getElementById('gval').textContent='0';
-    renderInv();renderSlots();renderLog();
-    tickInterval = setInterval(tick, 30000);
+    renderInv();renderActList();renderQueue();renderLog();renderEquipment();
+    tickIv=setInterval(tick,10000);
   }
 };
+document.getElementById('qtyInput').addEventListener('input',renderActList);
 
-// Boot sequence
 processOffline();
 Object.keys(G.sk).forEach(updSkill);
-document.getElementById('gval').textContent = G.gold;
-renderInv();
-renderSlots();
-renderLog();
-// Update gold display reactively
-setInterval(()=>{ document.getElementById('gval').textContent=G.gold; },2000);
-tickInterval = setInterval(tick, 30000);
+document.getElementById('gval').textContent=G.gold;
+renderInv();renderActList();renderQueue();renderLog();renderEquipment();
+tickIv=setInterval(tick,10000);
 </script>
 </body>
 </html>
