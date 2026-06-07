@@ -719,8 +719,12 @@ async function mergeSupabaseScores(playerId){
   G.sk.a=Math.max(G.sk.a||1, scores.skill_craft||1);
   G.sk.v=Math.max(G.sk.v||1, scores.skill_lore||1);
   G.gold=Math.max(G.gold||0, scores.gold||0);
-  // Fix XP bars — if level increased, reset XP to 0 for that level
-  // (we don't store XP in Supabase, so we can't recover exact XP)
+  // Push the merged (highest) values back to Supabase immediately
+  await sb.from('scores').upsert({
+    player_id:playerId,
+    skill_combat:G.sk.c,skill_survival:G.sk.s,skill_craft:G.sk.a,skill_lore:G.sk.v,
+    gold:G.gold,updated_at:new Date().toISOString()
+  },{onConflict:'player_id'});
 }
 
 async function loginPlayer(){
@@ -899,8 +903,9 @@ function startGame(){
     setTimeout(showNextPendingEvent, 1500);
   }
   clearInterval(tickIv);
+  clearInterval(window._syncIv);
   tickIv=setInterval(tick,10000);
-  setInterval(syncScores,300000); // sync leaderboard every 5min
+  window._syncIv=setInterval(syncScores,60000); // sync every minute
 }
 
 // --- Age & Background ---
