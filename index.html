@@ -255,11 +255,11 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
       <div class="hindrance-grid" id="hindrance-grid">
         <div class="hcard" data-h="Traumatisme" onclick="selectHindrance(this)">
           <div class="hcard-name">Le Traumatisé</div>
-          <div class="hcard-desc">Ancien soldat. Les flashbacks arrivent sans prévenir. Combat +4, Survie +2.</div>
+          <div class="hcard-desc">Ancien soldat. Les flashbacks arrivent sans prévenir. Combat +4, Instinct +2.</div>
         </div>
         <div class="hcard" data-h="Agoraphobie" onclick="selectHindrance(this)">
           <div class="hcard-name">L'Anxieux</div>
-          <div class="hcard-desc">Opère dans l'ombre. Les foules l'épuisent, la nuit lui appartient. Survie +4, Savoir +2.</div>
+          <div class="hcard-desc">Opère dans l'ombre. Les foules l'épuisent, la nuit lui appartient. Instinct +4, Savoir +2.</div>
         </div>
         <div class="hcard" data-h="Solitude" onclick="selectHindrance(this)">
           <div class="hcard-name">L'Artisan Reclus</div>
@@ -297,7 +297,7 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
 
   <div class="stats">
     <div class="sc"><div class="slbl">COMBAT</div><div class="snum" id="lc">1</div><div class="xtr"><div class="xfill" id="bc"></div></div><div class="xtxt" id="xc">0/100</div></div>
-    <div class="sc"><div class="slbl">SURVIE</div><div class="snum" id="ls">1</div><div class="xtr"><div class="xfill" id="bs"></div></div><div class="xtxt" id="xs">0/100</div></div>
+    <div class="sc"><div class="slbl">INSTINCT</div><div class="snum" id="ls">1</div><div class="xtr"><div class="xfill" id="bs"></div></div><div class="xtxt" id="xs">0/100</div></div>
     <div class="sc"><div class="slbl">ARTISANAT</div><div class="snum" id="la">1</div><div class="xtr"><div class="xfill" id="ba"></div></div><div class="xtxt" id="xa">0/100</div></div>
     <div class="sc"><div class="slbl">SAVOIR</div><div class="snum" id="lv">1</div><div class="xtr"><div class="xfill" id="bv"></div></div><div class="xtxt" id="xv">0/100</div></div>
   </div>
@@ -362,7 +362,7 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
       <table class="lb-table">
         <thead><tr>
           <th>#</th><th>JOUEUR</th><th>PERSONNAGE</th>
-          <th>COMBAT</th><th>SURVIE</th><th>ARTISANAT</th><th>SAVOIR</th><th>OR</th>
+          <th>COMBAT</th><th>INSTINCT</th><th>ARTISANAT</th><th>SAVOIR</th><th>OR</th>
         </tr></thead>
         <tbody id="lbBody"><tr><td colspan="8" style="font-style:italic;color:var(--ink3);padding:1rem;">Chargement...</td></tr></tbody>
       </table>
@@ -403,16 +403,34 @@ const MAX_OFF=24*3600*1000;
 const H=3600*1000;
 
 const ACTS=[
-  {id:'wood',  name:'Couper du bois',        sk:'s',tier:'Base',          dur:1*H,  xp:80,  loot:[{n:'Bois',a:2,b:5}],                       ga:0,gb:2,  req:0,rsk:null},
-  {id:'guard', name:'Ronde de nuit',          sk:'c',tier:'Base',          dur:1*H,  xp:90,  loot:[{n:'Ration',a:0,b:2}],                      ga:3,gb:8,  req:0,rsk:null},
-  {id:'study', name:'Étudier les parchemins', sk:'v',tier:'Base',          dur:1*H,  xp:80,  loot:[{n:'Parchemin',a:0,b:1}],                   ga:0,gb:0,  req:0,rsk:null},
-  {id:'craft0',name:'Travaux de menuiserie',  sk:'a',tier:'Base',          dur:1*H,  xp:80,  loot:[{n:'Planche brute',a:1,b:3}],               ga:1,gb:3,  req:0,rsk:null},
-  {id:'hunt',  name:'Chasse au gibier',       sk:'s',tier:'Intermédiaire', dur:2*H,  xp:200, loot:[{n:'Viande',a:2,b:5},{n:'Peau',a:1,b:3}],  ga:2,gb:6,  req:3,rsk:'s'},
-  {id:'forge', name:'Apprenti forgeron',      sk:'a',tier:'Intermédiaire', dur:2*H,  xp:210, loot:[{n:'Clou de fer',a:3,b:8}],                 ga:4,gb:10, req:2,rsk:'a'},
-  {id:'shadow',name:'Courses discrètes',      sk:'v',tier:'Avancée',       dur:4*H,  xp:480, loot:[{n:'Pièce anonyme',a:2,b:4}],               ga:10,gb:25,req:3,rsk:'v'},
+  // TIER BASE — 1h, niveau 1, commun
+  {id:'maraud', name:'Maraudage dans les quartiers bas', sk:'s',tier:'Base',          dur:1*H, xp:80,  loot:[{n:'Ration volée',a:1,b:3},{n:'Objet récupéré',a:0,b:1}],    ga:1,gb:4,  req:0, rsk:null, excl:null},
+  {id:'guard',  name:'Ronde de nuit',                    sk:'c',tier:'Base',          dur:1*H, xp:90,  loot:[{n:'Ration',a:0,b:2}],                                        ga:3,gb:8,  req:0, rsk:null, excl:null},
+  {id:'study',  name:'Étudier les parchemins',           sk:'v',tier:'Base',          dur:1*H, xp:80,  loot:[{n:'Parchemin',a:0,b:1}],                                     ga:0,gb:0,  req:0, rsk:null, excl:null},
+  {id:'craft0', name:'Travaux de menuiserie',            sk:'a',tier:'Base',          dur:1*H, xp:80,  loot:[{n:'Planche brute',a:1,b:3}],                                 ga:1,gb:3,  req:0, rsk:null, excl:null},
+  // TIER INTERMÉDIAIRE — 2h, niveau 4, commun
+  {id:'smuggle',name:'Contrebande',                      sk:'s',tier:'Intermédiaire', dur:2*H, xp:200, loot:[{n:'Marchandise illégale',a:1,b:2},{n:'Information',a:0,b:1}], ga:5,gb:12, req:4, rsk:'s',  excl:null},
+  {id:'train',  name:'Entraînement aux armes',           sk:'c',tier:'Intermédiaire', dur:2*H, xp:200, loot:[{n:'Pierre à aiguiser',a:0,b:1}],                              ga:2,gb:6,  req:4, rsk:'c',  excl:null},
+  {id:'forge',  name:'Apprenti forgeron',                sk:'a',tier:'Intermédiaire', dur:2*H, xp:210, loot:[{n:'Clou de fer',a:3,b:8}],                                   ga:4,gb:10, req:4, rsk:'a',  excl:null},
+  {id:'copy',   name:'Copie de manuscrits',              sk:'v',tier:'Intermédiaire', dur:2*H, xp:200, loot:[{n:'Parchemin annoté',a:1,b:2}],                               ga:3,gb:8,  req:4, rsk:'v',  excl:null},
+  // TIER AVANCÉ COMMUN — 4h, niveau 10, commun
+  {id:'explo',  name:'Expédition en territoire hostile', sk:'s',tier:'Avancée',       dur:4*H, xp:480, loot:[{n:'Herbes rares',a:1,b:3},{n:'Carte incomplète',a:0,b:1}],    ga:8,gb:20, req:10,rsk:'s',  excl:null},
+  {id:'escort', name:'Escorte armée',                    sk:'c',tier:'Avancée',       dur:4*H, xp:480, loot:[{n:'Pièce de soldat',a:2,b:4}],                                ga:10,gb:25,req:10,rsk:'c',  excl:null},
+  {id:'custom', name:'Commande sur mesure',              sk:'a',tier:'Avancée',       dur:4*H, xp:480, loot:[{n:'Alliage rare',a:1,b:2}],                                   ga:8,gb:18, req:10,rsk:'a',  excl:null},
+  {id:'archive',name:'Déchiffrer les archives',          sk:'v',tier:'Avancée',       dur:4*H, xp:480, loot:[{n:'Code chiffré',a:1,b:2},{n:'Traité interdit',a:0,b:1}],     ga:6,gb:15, req:10,rsk:'v',  excl:null},
+  // TIER AVANCÉ EXCLUSIF — 4h, niveau 10, un par hindrance
+  {id:'shadow', name:'Filature nocturne',                sk:'s',tier:'Exclusive',     dur:4*H, xp:520, loot:[{n:'Dague de lancer',a:0,b:1},{n:'Fausse identité',a:0,b:1}],  ga:12,gb:30,req:10,rsk:'s',  excl:'Agoraphobie'},
+  {id:'purge',  name:'Purge des déserteurs',             sk:'c',tier:'Exclusive',     dur:4*H, xp:520, loot:[{n:'Armure percée',a:0,b:1},{n:'Pièce de soldat',a:2,b:5}],    ga:15,gb:35,req:10,rsk:'c',  excl:'Traumatisme'},
+  {id:'sforge', name:'Forge secrète',                    sk:'a',tier:'Exclusive',     dur:4*H, xp:520, loot:[{n:'Alliage rare',a:1,b:3},{n:'Fer étoilé brut',a:0,b:1}],     ga:10,gb:25,req:10,rsk:'a',  excl:'Solitude'},
+  {id:'network',name:'Réseau des murmures',              sk:'v',tier:'Exclusive',     dur:4*H, xp:520, loot:[{n:'Traité interdit',a:0,b:1},{n:'Encre secrète',a:1,b:2}],    ga:15,gb:40,req:10,rsk:'v',  excl:'Imposteur'},
 ];
 
-const SELL_PRICES={'Bois':1,'Planche brute':2,'Viande':3,'Peau':4,'Clou de fer':2,'Parchemin':3,'Ration':2,'Pièce anonyme':5};
+const SELL_PRICES={
+  'Ration volée':1,'Objet récupéré':2,'Marchandise illégale':4,'Information':5,
+  'Planche brute':2,'Clou de fer':2,'Parchemin':3,'Parchemin annoté':5,
+  'Ration':2,'Pierre à aiguiser':3,'Herbes rares':6,'Carte incomplète':8,
+  'Pièce de soldat':3,'Alliage rare':10,'Code chiffré':8,'Traité interdit':12,
+};
 
 const DAILY_POOL=[
   {id:'d1',name:'Ration de voyage',      desc:'Sustentation pour les longues routes.',        effect:'Prérequis : Chasse avancée (1/cycle)',         price:5, stock:5},
@@ -447,15 +465,15 @@ const RARE_POOL=[
   {id:'r6',name:"Sceau d'Aldric Renart",  desc:'Tu reconnais cette empreinte sans savoir pourquoi.', effect:'Déclenche une quête (Combat 40+)',     price:0,  slot:'sceau',equip:true},
 ];
 
-// Lottery loot tables per skill
+// Lottery loot tables — commun/rare par compétence
 const LOTTERY_LOOT={
-  c:['Épée rouillée','Bouclier fendu','Armure percée','Dague de qualité','Épée du garde','Armure de plates (rare)'],
-  s:['Peau de loup','Viande fumée','Herbes rares','Arc de maître','Bottes de trappeur','Cape de forestier (rare)'],
-  a:['Outils usés','Clous de fer fins','Bois exotique','Marteau de forge','Alliage rare','Armure sur mesure (rare)'],
-  v:['Parchemin annoté','Carte incomplète','Encre secrète','Grimoire de poche','Code chiffré','Traité interdit (rare)'],
+  c:{common:['Ration de soldat','Bouclier cabossé','Pierre à aiguiser','Équipement de garde usé'],rare:['Épée du capitaine','Armure de plates légère','Bouclier de tournoi']},
+  s:{common:['Ration volée','Vêtement de rechange','Corde de rechange','Fiole vide'],rare:["Manteau du Contrebandier","Carte des passages secrets","Sifflet de signal"]},
+  a:{common:['Clous de fer fins','Bois exotique','Chiffon de forge','Cire à cacheter'],rare:['Marteau de maître forge','Alliage rare raffiné','Armure sur mesure']},
+  v:{common:['Parchemin annoté','Encre de qualité','Carte incomplète','Plume de scribe'],rare:['Grimoire de poche','Code chiffré royal','Traité interdit']},
 };
 
-const SN={c:'Combat',s:'Survie',a:'Artisanat',v:'Savoir'};
+const SN={c:'Combat',s:'Instinct',a:'Artisanat',v:'Savoir'};
 const SKC={c:'sk-c',s:'sk-s',a:'sk-a',v:'sk-v'};
 const UI={c:{l:'lc',b:'bc',x:'xc'},s:{l:'ls',b:'bs',x:'xs'},a:{l:'la',b:'ba',x:'xa'},v:{l:'lv',b:'bv',x:'xv'}};
 const START_EQUIP_BY_HINDRANCE={
@@ -740,7 +758,10 @@ function xpN(lv){return lv*100;}
 function fmtDur(ms){if(ms<=0)return '0min';const h=Math.floor(ms/H),m=Math.floor((ms%H)/60000);if(h>0&&m>0)return h+'h '+m+'min';if(h>0)return h+'h';return m+'min';}
 function fmtETA(ms){const d=new Date(Date.now()+ms);return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');}
 function nowStr(){const d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');}
-function unlocked(act){return !act.rsk||G.sk[act.rsk]>=act.req;}
+function unlocked(act){
+  if(act.excl&&PLAYER&&act.excl!==PLAYER.hindrance)return false;
+  return !act.rsk||G.sk[act.rsk]>=act.req;
+}
 function getDaySeed(){const d=new Date();return d.getFullYear()*10000+d.getMonth()*100+d.getDate();}
 function getWeekSeed(){const d=new Date();const jan1=new Date(d.getFullYear(),0,1);return d.getFullYear()*1000+Math.floor((d-jan1)/604800000);}
 function getRareSeed(){return Math.floor((Date.now()-new Date(2024,0,1))/(86400000*3));}
@@ -757,7 +778,7 @@ function addXpSilent(sk,amt){
 function addXp(sk,amt){addXpSilent(sk,amt);updSkill(sk);}
 function checkEvents(sk,lv){
   const EVTS=[
-    {sk:'s',lv:2,m:"Un contrebandier remarque que tu connais tout le monde... mais disparais toujours avant minuit."},
+    {sk:'s',lv:2,m:"Un contrebandier remarque que tu connais tout le monde... mais disparais toujours avant minuit. Il hoche la tête avec respect."},
     {sk:'c',lv:3,m:"On t'offre une place dans la garde du jour. Tu déclènes poliment. Deux fois."},
     {sk:'v',lv:4,m:"Tu lis les gens mieux que les livres — leurs peurs, leurs secrets."},
     {sk:'s',lv:5,m:"Les bas-fonds murmurent ton nom. Dit avec un sourire, jamais sûr si c'est une menace."},
@@ -1034,6 +1055,12 @@ async function enterLottery(sk){
   if(!G.lotteryEntries[key])G.lotteryEntries[key]=[];
   G.lotteryEntries[key].push(sk);
 
+  // Give common loot immediately — everyone gets something
+  const loot=LOTTERY_LOOT[sk];
+  const commonItem=loot.common[Math.floor(Math.random()*loot.common.length)];
+  G.inv[commonItem]=(G.inv[commonItem]||0)+1;
+  addLog('Tu participes à la loterie de '+SN[sk]+' (niveau '+G.sk[sk]+') et reçois : '+commonItem+'.','buy');
+
   await sb.from('lottery').insert({
     player_id:PLAYER.id,
     draw_date:new Date().toISOString().split('T')[0],
@@ -1042,19 +1069,22 @@ async function enterLottery(sk){
     won:false
   });
 
-  addLog('Tu participes à la loterie de '+SN[sk]+' (niveau '+G.sk[sk]+').','buy');
-  save();renderLog();renderLottery();
+  save();renderInv();renderLog();renderLottery();
 }
 async function renderLottery(){
   const grid=document.getElementById('lotGrid');
   grid.innerHTML=['c','s','a','v'].map(sk=>{
     const lv=G.sk[sk];
     const entered=hasEnteredLottery(sk);
-    const chancePct=Math.min(100,Math.round(lv*2));
+    const chancePct=Math.min(95,Math.round(lv*2));
+    const loot=LOTTERY_LOOT[sk];
+    const commonSample=loot.common.slice(0,2).join(', ');
+    const rareSample=loot.rare[0];
     return'<div class="lot-card">'
       +'<div class="lot-card-name">'+SN[sk]+' — Niveau '+lv+'</div>'
-      +'<div class="lot-card-chances">Chances estimées : ~'+chancePct+'%</div>'
-      +'<div class="lot-card-chance-bar"><div class="lot-card-chance-fill" style="width:'+chancePct+'%"></div></div>'
+      +'<div class="lot-card-chances">Garanti : <span style="color:var(--ink2)">'+commonSample+'...</span></div>'
+      +'<div class="lot-card-chances" style="margin-top:2px;">Rare (~'+chancePct+'%) : <span style="color:var(--gold)">'+rareSample+'</span></div>'
+      +'<div class="lot-card-chance-bar" style="margin-top:6px;"><div class="lot-card-chance-fill" style="width:'+chancePct+'%"></div></div>'
       +'<button class="lot-enter-btn" '+(entered?'disabled':'')+' onclick="enterLottery(\''+sk+'\')">'+(entered?'Participé ✓':'Participer')+'</button>'
       +'</div>';
   }).join('');
@@ -1064,7 +1094,7 @@ async function renderLottery(){
   const{data}=await sb.from('lottery').select('*,players(character_name)').eq('won',true).order('created_at',{ascending:false}).limit(10);
   const resEl=document.getElementById('lotResults');
   if(!data||!data.length){resEl.innerHTML='<div class="lot-result-item">Aucun gagnant pour l\'instant.</div>';return;}
-  resEl.innerHTML=data.map(r=>'<div class="lot-result-item won">'+r.players.character_name+' a remporté un lot de '+SN[r.skill_entered]+' !</div>').join('');
+  resEl.innerHTML=data.map(r=>'<div class="lot-result-item won">'+r.players.character_name+' a remporté un lot rare de '+SN[r.skill_entered]+' !</div>').join('');
 }
 
 // --- Tick ---
