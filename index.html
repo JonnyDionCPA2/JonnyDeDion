@@ -253,21 +253,21 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
     <div class="field">
       <label>HINDRANCE — Ce qui te définit autant que ce qui te retient</label>
       <div class="hindrance-grid" id="hindrance-grid">
+        <div class="hcard" data-h="Traumatisme" onclick="selectHindrance(this)">
+          <div class="hcard-name">Le Traumatisé</div>
+          <div class="hcard-desc">Ancien soldat. Les flashbacks arrivent sans prévenir. Combat +4, Survie +2.</div>
+        </div>
         <div class="hcard" data-h="Agoraphobie" onclick="selectHindrance(this)">
           <div class="hcard-name">L'Anxieux</div>
-          <div class="hcard-desc">Opère dans l'ombre. Les foules l'épuisent, la nuit lui appartient.</div>
+          <div class="hcard-desc">Opère dans l'ombre. Les foules l'épuisent, la nuit lui appartient. Survie +4, Savoir +2.</div>
+        </div>
+        <div class="hcard" data-h="Solitude" onclick="selectHindrance(this)">
+          <div class="hcard-name">L'Artisan Reclus</div>
+          <div class="hcard-desc">Crée des choses magnifiques que personne ne verra jamais. Artisanat +4, Savoir +2.</div>
         </div>
         <div class="hcard" data-h="Imposteur" onclick="selectHindrance(this)">
           <div class="hcard-name">L'Imposteur</div>
-          <div class="hcard-desc">Vit dans la peur d'être démasqué. Le charme comme seule armure.</div>
-        </div>
-        <div class="hcard" data-h="Traumatisme" onclick="selectHindrance(this)">
-          <div class="hcard-name">Le Traumatisé</div>
-          <div class="hcard-desc">Ancien soldat. Les flashbacks arrivent sans prévenir.</div>
-        </div>
-        <div class="hcard" data-h="Solitude" onclick="selectHindrance(this)">
-          <div class="hcard-name">Le Solitaire</div>
-          <div class="hcard-desc">Le savoir comme refuge. Les gens, comme bruit de fond.</div>
+          <div class="hcard-desc">Vit dans la peur d'être démasqué. Le charme comme seule armure. Savoir +4, Artisanat +2.</div>
         </div>
       </div>
     </div>
@@ -440,7 +440,7 @@ const WEEKLY_POOL=[
 ];
 const RARE_POOL=[
   {id:'r1',name:'Épée de qualité',        desc:'Forgée par un maître oublié.',                effect:'+2 jets de Combat',                           price:200,slot:'arme',equip:true},
-  {id:'r2',name:'Manteau du passeur',     desc:"Il a appartenu à quelqu'un qui n'en a plus besoin.", effect:'+2 jets de Savoir, accès marché noir', price:180,slot:'manteau',equip:true},
+  {id:'r2',name:"Manteau de l'Ombrier",     desc:"Son dernier propriétaire a été retrouvé sans lui. Et sans vie.", effect:'+2 jets de Savoir, accès marché noir', price:180,slot:'manteau',equip:true},
   {id:'r3',name:'Outils de maître',       desc:'La version supérieure de tes outils.',        effect:'+2 jets crochetage et infiltration',          price:160,slot:'outils_maitre',equip:true},
   {id:'r4',name:'Grimoire incomplet',     desc:'Les pages manquantes valent plus.',           effect:'Prérequis quête Savoir 50',                   price:250,slot:'grimoire',equip:true},
   {id:'r5',name:'Fer étoilé',             desc:'Le métal qui tombe du ciel.',                 effect:'Prérequis craft objet légendaire',            price:300,slot:null,equip:false},
@@ -458,18 +458,45 @@ const LOTTERY_LOOT={
 const SN={c:'Combat',s:'Survie',a:'Artisanat',v:'Savoir'};
 const SKC={c:'sk-c',s:'sk-s',a:'sk-a',v:'sk-v'};
 const UI={c:{l:'lc',b:'bc',x:'xc'},s:{l:'ls',b:'bs',x:'xs'},a:{l:'la',b:'ba',x:'xa'},v:{l:'lv',b:'bv',x:'xv'}};
-const START_EQUIP=[
-  {id:'start1',name:'Outils de crochetage',desc:"Usés mais fiables. Tu les as depuis l'enfance.",effect:'Crochetage et infiltration de base',slot:'outils',rare:false},
-  {id:'start2',name:'Cape usée',desc:'Trop grande à 14 ans. Elle te va mieux maintenant.',effect:'Discrétion mineure',slot:'cape_base',rare:false},
-];
+const START_EQUIP_BY_HINDRANCE={
+  'Agoraphobie':[
+    {id:'start1',name:'Outils de crochetage',desc:"Usés mais fiables. Tu les as depuis l'enfance.",effect:'Crochetage et infiltration de base',slot:'outils',rare:false},
+    {id:'start2',name:'Cape usée',desc:"Trop grande pour toi. Tu nages dedans, mais elle cache bien ta silhouette dans l'ombre.",effect:'Discrétion mineure',slot:'cape_base',rare:false},
+  ],
+  'Traumatisme':[
+    {id:'start1',name:'Épée ébréchée',desc:"Elle a servi. Trop. Les entailles sur la lame racontent des histoires que tu préfères oublier.",effect:'+1 Combat dans les confrontations directes',slot:'arme',rare:false},
+    {id:'start2',name:'Armure de cuir déchirée',desc:"Rapiécée trois fois. Elle tient encore, comme toi.",effect:'Protection mineure en Combat',slot:'armure',rare:false},
+  ],
+  'Solitude':[
+    {id:'start1',name:'Outils de menuisier usés',desc:"Hérités de personne en particulier. Tu les as trouvés, ou peut-être qu'ils t'ont trouvé.",effect:'+1 Artisanat sur les travaux de bois',slot:'outils',rare:false},
+    {id:'start2',name:'Tablier de cuir',desc:"Brûlé par endroits. Chaque marque correspond à quelque chose que tu as créé.",effect:'Protection mineure lors du travail en forge',slot:'tablier',rare:false},
+  ],
+  'Imposteur':[
+    {id:'start1',name:'Vêtements de qualité moyenne',desc:"Assez bien coupés pour passer inaperçu dans les cercles supérieurs. Pas assez pour y être accepté.",effect:'+1 jets de Savoir dans les interactions sociales',slot:'vetements',rare:false},
+    {id:'start2',name:'Faux cachet de cire',desc:"Les armoiries sont floues. Personne ne regarde vraiment.",effect:'Permet de falsifier des documents simples',slot:'cachet',rare:false},
+  ],
+};
+const START_EQUIP=START_EQUIP_BY_HINDRANCE['Agoraphobie']; // fallback
 
-function def(){return{
-  sk:{c:1,s:1,a:1,v:1},xp:{c:0,s:0,a:0,v:0},
-  inv:{},gold:0,seen:[],equipment:[...START_EQUIP],
-  queue:[],queueStart:null,lastSeen:Date.now(),
-  marketStock:{},lotteryEntries:{},
-  log:[{t:'—',m:"Tu commences ta vie dans la Ruelle des Murmures. Que vas-tu faire ?",tp:''}]
-};}
+const HINDRANCE_STATS={
+  'Traumatisme': {c:4,s:2,a:1,v:1},
+  'Agoraphobie': {c:1,s:4,a:1,v:2},
+  'Solitude':    {c:1,s:1,a:4,v:2},
+  'Imposteur':   {c:1,s:1,a:2,v:4},
+};
+
+function def(hindrance){
+  const stats=HINDRANCE_STATS[hindrance]||{c:1,s:1,a:1,v:1};
+  const equip=START_EQUIP_BY_HINDRANCE[hindrance]||START_EQUIP_BY_HINDRANCE['Agoraphobie'];
+  return{
+    sk:{c:stats.c,s:stats.s,a:stats.a,v:stats.v},
+    xp:{c:0,s:0,a:0,v:0},
+    inv:{},gold:0,seen:[],equipment:[...equip],
+    queue:[],queueStart:null,lastSeen:Date.now(),
+    marketStock:{},lotteryEntries:{},
+    log:[{t:'—',m:"Tu commences ta vie dans la Ruelle des Murmures. Que vas-tu faire ?",tp:''}]
+  };
+}
 
 let G=null;
 let PLAYER=null; // {id, username, character_name, hindrance}
@@ -510,7 +537,7 @@ async function loginPlayer(){
   PLAYER=player;
   const saved=localStorage.getItem(KEY+'_pid_'+player.id);
   G=saved?JSON.parse(saved):def();
-  if(!G.equipment)G.equipment=[...START_EQUIP];
+  if(!G.equipment||!G.equipment.length)G.equipment=[...(START_EQUIP_BY_HINDRANCE[player?player.hindrance:PLAYER?.hindrance]||START_EQUIP_BY_HINDRANCE['Agoraphobie'])];
   if(!G.queue)G.queue=[];
   if(!G.marketStock)G.marketStock={};
   if(!G.lotteryEntries)G.lotteryEntries={};
@@ -548,7 +575,7 @@ async function createPlayer(){
     PLAYER=existing;
     const saved=localStorage.getItem(KEY+'_pid_'+existing.id);
     G=saved?JSON.parse(saved):def();
-    if(!G.equipment)G.equipment=[...START_EQUIP];
+    if(!G.equipment||!G.equipment.length)G.equipment=[...(START_EQUIP_BY_HINDRANCE[player?player.hindrance:PLAYER?.hindrance]||START_EQUIP_BY_HINDRANCE['Agoraphobie'])];
     if(!G.queue)G.queue=[];
     if(!G.marketStock)G.marketStock={};
     if(!G.lotteryEntries)G.lotteryEntries={};
@@ -577,11 +604,16 @@ async function createPlayer(){
     return;
   }
 
-  // Create scores row
-  await sb.from('scores').insert({player_id:player.id,skill_combat:1,skill_survival:1,skill_craft:1,skill_lore:1,gold:0});
+  // Create scores row with starting stats
+  const startStats=HINDRANCE_STATS[selectedHindrance]||{c:1,s:1,a:1,v:1};
+  await sb.from('scores').insert({
+    player_id:player.id,
+    skill_combat:startStats.c,skill_survival:startStats.s,
+    skill_craft:startStats.a,skill_lore:startStats.v,gold:0
+  });
 
   PLAYER=player;
-  G=def();
+  G=def(selectedHindrance);
   localStorage.setItem(KEY+'_pid',player.id);
   localStorage.setItem(KEY+'_pid_'+player.id,JSON.stringify(G));
   startGame();
@@ -596,7 +628,7 @@ async function loadPlayer(pid){
   PLAYER=player;
   const saved=localStorage.getItem(KEY+'_pid_'+player.id);
   G=saved?JSON.parse(saved):def();
-  if(!G.equipment)G.equipment=[...START_EQUIP];
+  if(!G.equipment||!G.equipment.length)G.equipment=[...(START_EQUIP_BY_HINDRANCE[player?player.hindrance:PLAYER?.hindrance]||START_EQUIP_BY_HINDRANCE['Agoraphobie'])];
   if(!G.queue)G.queue=[];
   if(!G.marketStock)G.marketStock={};
   if(!G.lotteryEntries)G.lotteryEntries={};
@@ -612,7 +644,7 @@ async function tryAutoLogin(){
   PLAYER=player;
   const saved=localStorage.getItem(KEY+'_pid_'+player.id);
   G=saved?JSON.parse(saved):def();
-  if(!G.equipment)G.equipment=[...START_EQUIP];
+  if(!G.equipment||!G.equipment.length)G.equipment=[...(START_EQUIP_BY_HINDRANCE[player?player.hindrance:PLAYER?.hindrance]||START_EQUIP_BY_HINDRANCE['Agoraphobie'])];
   if(!G.queue)G.queue=[];
   if(!G.marketStock)G.marketStock={};
   if(!G.lotteryEntries)G.lotteryEntries={};
@@ -633,8 +665,14 @@ function startGame(){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('creation-screen').style.display='none';
   document.getElementById('game-screen').style.display='block';
+  const HINDRANCE_LABELS={
+    'Traumatisme':'Le Traumatisé — Ancien soldat',
+    'Agoraphobie':'L\'Anxieux — Opère dans l\'ombre',
+    'Solitude':'L\'Artisan Reclus — Crée dans le silence',
+    'Imposteur':'L\'Imposteur — Le charme comme armure',
+  };
   document.getElementById('charName').textContent=PLAYER.character_name;
-  document.getElementById('hindranceTag').textContent='⚑ '+PLAYER.hindrance+' — Opère dans l\'ombre';
+  document.getElementById('hindranceTag').textContent='⚑ '+(HINDRANCE_LABELS[PLAYER.hindrance]||PLAYER.hindrance);
   processOffline();
   Object.keys(G.sk).forEach(updSkill);
   updateAgeAndBackground();
@@ -719,7 +757,7 @@ function addXpSilent(sk,amt){
 function addXp(sk,amt){addXpSilent(sk,amt);updSkill(sk);}
 function checkEvents(sk,lv){
   const EVTS=[
-    {sk:'s',lv:2,m:"Un passeur remarque que tu connais tout le monde... mais disparais toujours avant minuit."},
+    {sk:'s',lv:2,m:"Un contrebandier remarque que tu connais tout le monde... mais disparais toujours avant minuit."},
     {sk:'c',lv:3,m:"On t'offre une place dans la garde du jour. Tu déclènes poliment. Deux fois."},
     {sk:'v',lv:4,m:"Tu lis les gens mieux que les livres — leurs peurs, leurs secrets."},
     {sk:'s',lv:5,m:"Les bas-fonds murmurent ton nom. Dit avec un sourire, jamais sûr si c'est une menace."},
@@ -1056,7 +1094,7 @@ function showTab(tab){
 // --- Reset ---
 document.getElementById('rbtn').onclick=()=>{
   if(confirm('Recommencer depuis le début ? Ta progression locale sera effacée.')){
-    clearInterval(tickIv);G=def();save();
+    clearInterval(tickIv);G=def(PLAYER?PLAYER.hindrance:null);save();
     Object.keys(G.sk).forEach(updSkill);
     document.getElementById('gval').textContent='0';
     renderInv();renderActList();renderQueue();renderLog();renderEquipment();
