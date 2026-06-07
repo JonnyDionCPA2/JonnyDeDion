@@ -510,7 +510,7 @@ function def(hindrance){
     sk:{c:stats.c,s:stats.s,a:stats.a,v:stats.v},
     xp:{c:0,s:0,a:0,v:0},
     inv:{},gold:0,seen:[],equipment:[...equip],
-    queue:[],queueStart:null,lastSeen:Date.now(),
+    queue:[],queueStart:null,lastSeen:Date.now(),lastLotteryCheck:0,
     marketStock:{},lotteryEntries:{},
     log:[{t:'—',m:"Tu commences ta vie dans la Ruelle des Murmures. Que vas-tu faire ?",tp:''}]
   };
@@ -697,6 +697,7 @@ function startGame(){
   document.getElementById('gval').textContent=G.gold;
   renderInv();renderActList();renderQueue();renderLog();renderEquipment();
   syncScores();
+  checkLotteryResults();
   clearInterval(tickIv);
   tickIv=setInterval(tick,10000);
   setInterval(syncScores,300000); // sync leaderboard every 5min
@@ -1055,12 +1056,6 @@ async function enterLottery(sk){
   if(!G.lotteryEntries[key])G.lotteryEntries[key]=[];
   G.lotteryEntries[key].push(sk);
 
-  // Give common loot immediately — everyone gets something
-  const loot=LOTTERY_LOOT[sk];
-  const commonItem=loot.common[Math.floor(Math.random()*loot.common.length)];
-  G.inv[commonItem]=(G.inv[commonItem]||0)+1;
-  addLog('Tu participes à la loterie de '+SN[sk]+' (niveau '+G.sk[sk]+') et reçois : '+commonItem+'.','buy');
-
   await sb.from('lottery').insert({
     player_id:PLAYER.id,
     draw_date:new Date().toISOString().split('T')[0],
@@ -1069,7 +1064,42 @@ async function enterLottery(sk){
     won:false
   });
 
-  save();renderInv();renderLog();renderLottery();
+  addLog('Tu t\'inscris à la loterie de '+SN[sk]+' (niveau '+G.sk[sk]+'). Les résultats tombent au prochain tirage.','buy');
+  save();renderLog();renderLottery();
+}
+
+// Check lottery results since last visit
+async function checkLotteryResults(){
+  if(!PLAYER)return;
+  const lastCheck=G.lastLotteryCheck||0;
+  const now=Date.now();
+  // Only check if last check was more than 12h ago
+  if(now-lastCheck<12*3600*1000)return;
+  G.lastLotteryCheck=now;
+
+  const{data:results}=await sb.from('lottery')
+    .select('*')
+    .eq('player_id',PLAYER.id)
+    .not('reward','is',null)
+    .gt('created_at',new Date(lastCheck).toISOString())
+    .order('created_at',{ascending:false})
+    .limit(10);
+
+  if(!results||!results.length)return;
+
+  results.forEach(r=>{
+    // Add item to inventory
+    G.inv[r.reward]=(G.inv[r.reward]||0)+1;
+    if(r.won){
+      addLog('🏆 Loterie de '+SN[r.skill_entered]+' — Tu as remporté l\'article rare : '+r.reward+' !','l');
+    } else {
+      addLog('Loterie de '+SN[r.skill_entered]+' — Tu reçois : '+r.reward+'.','r');
+    }
+  });
+
+  if(results.length>0){
+    save();renderInv();renderLog();
+  }
 }
 async function renderLottery(){
   const grid=document.getElementById('lotGrid');
