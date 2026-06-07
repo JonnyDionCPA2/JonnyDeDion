@@ -551,6 +551,21 @@ function showCreateScreen(){
 }
 
 // --- Login existing player ---
+
+// Merge Supabase scores into local G state if Supabase has higher levels
+async function mergeSupabaseScores(playerId){
+  const{data:scores}=await sb.from('scores').select('*').eq('player_id',playerId).single();
+  if(!scores)return;
+  // Use the highest value between local and Supabase for each skill
+  G.sk.c=Math.max(G.sk.c||1, scores.skill_combat||1);
+  G.sk.s=Math.max(G.sk.s||1, scores.skill_survival||1);
+  G.sk.a=Math.max(G.sk.a||1, scores.skill_craft||1);
+  G.sk.v=Math.max(G.sk.v||1, scores.skill_lore||1);
+  G.gold=Math.max(G.gold||0, scores.gold||0);
+  // Fix XP bars — if level increased, reset XP to 0 for that level
+  // (we don't store XP in Supabase, so we can't recover exact XP)
+}
+
 async function loginPlayer(){
   const username=document.getElementById('inp-login-username').value.trim().toLowerCase();
   if(!username)return;
@@ -568,12 +583,14 @@ async function loginPlayer(){
   }
   PLAYER=player;
   const saved=localStorage.getItem(KEY+'_pid_'+player.id);
-  G=saved?JSON.parse(saved):def();
-  if(!G.equipment||!G.equipment.length)G.equipment=[...(START_EQUIP_BY_HINDRANCE[player?player.hindrance:PLAYER?.hindrance]||START_EQUIP_BY_HINDRANCE['Agoraphobie'])];
+  G=saved?JSON.parse(saved):def(player.hindrance);
+  if(!G.equipment||!G.equipment.length)G.equipment=[...(START_EQUIP_BY_HINDRANCE[player.hindrance]||START_EQUIP_BY_HINDRANCE['Agoraphobie'])];
   if(!G.queue)G.queue=[];
   if(!G.marketStock)G.marketStock={};
   if(!G.lotteryEntries)G.lotteryEntries={};
+  await mergeSupabaseScores(player.id);
   localStorage.setItem(KEY+'_pid',player.id);
+  localStorage.setItem(KEY+'_pid_'+player.id,JSON.stringify(G));
   startGame();
 }
 
@@ -659,12 +676,14 @@ async function loadPlayer(pid){
   }
   PLAYER=player;
   const saved=localStorage.getItem(KEY+'_pid_'+player.id);
-  G=saved?JSON.parse(saved):def();
-  if(!G.equipment||!G.equipment.length)G.equipment=[...(START_EQUIP_BY_HINDRANCE[player?player.hindrance:PLAYER?.hindrance]||START_EQUIP_BY_HINDRANCE['Agoraphobie'])];
+  G=saved?JSON.parse(saved):def(player.hindrance);
+  if(!G.equipment||!G.equipment.length)G.equipment=[...(START_EQUIP_BY_HINDRANCE[player.hindrance]||START_EQUIP_BY_HINDRANCE['Agoraphobie'])];
   if(!G.queue)G.queue=[];
   if(!G.marketStock)G.marketStock={};
   if(!G.lotteryEntries)G.lotteryEntries={};
+  await mergeSupabaseScores(player.id);
   localStorage.setItem(KEY+'_pid',player.id);
+  localStorage.setItem(KEY+'_pid_'+player.id,JSON.stringify(G));
   startGame();
 }
 
@@ -675,11 +694,13 @@ async function tryAutoLogin(){
   if(!player)return false;
   PLAYER=player;
   const saved=localStorage.getItem(KEY+'_pid_'+player.id);
-  G=saved?JSON.parse(saved):def();
-  if(!G.equipment||!G.equipment.length)G.equipment=[...(START_EQUIP_BY_HINDRANCE[player?player.hindrance:PLAYER?.hindrance]||START_EQUIP_BY_HINDRANCE['Agoraphobie'])];
+  G=saved?JSON.parse(saved):def(player.hindrance);
+  if(!G.equipment||!G.equipment.length)G.equipment=[...(START_EQUIP_BY_HINDRANCE[player.hindrance]||START_EQUIP_BY_HINDRANCE['Agoraphobie'])];
   if(!G.queue)G.queue=[];
   if(!G.marketStock)G.marketStock={};
   if(!G.lotteryEntries)G.lotteryEntries={};
+  await mergeSupabaseScores(player.id);
+  localStorage.setItem(KEY+'_pid_'+player.id,JSON.stringify(G));
   startGame();
   return true;
 }
