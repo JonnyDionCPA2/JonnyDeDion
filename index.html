@@ -44,7 +44,11 @@ h1.site-title{font-family:'Cinzel',serif;font-size:0.85rem;letter-spacing:.18em;
 .hcard{border:1px solid var(--border);border-radius:3px;padding:.75rem 1rem;cursor:pointer;transition:all .15s;background:rgba(255,255,255,.3);}
 .hcard:hover{background:rgba(26,74,58,.05);border-color:rgba(26,74,58,.3);}
 .hcard.selected{background:rgba(26,74,58,.08);border-color:rgba(26,74,58,.4);}
-.hcard-name{font-family:'Cinzel',serif;font-size:0.8rem;font-weight:500;color:var(--ink);margin-bottom:3px;}
+.hcard-name{font-family:'Cinzel',serif;font-size:0.85rem;font-weight:500;color:var(--ink);margin-bottom:4px;}
+.hcard-quote{font-size:0.75rem;font-style:italic;color:var(--ink3);line-height:1.4;margin-bottom:6px;}
+.hcard-strengths{font-size:0.72rem;color:var(--ink2);line-height:1.6;margin-bottom:5px;}
+.hcard-nuance{font-size:0.68rem;color:var(--ink3);font-style:italic;margin-bottom:5px;}
+.hcard-stats{font-family:'Cinzel',serif;font-size:0.68rem;letter-spacing:.05em;color:var(--teal);}
 .hcard-desc{font-size:0.75rem;font-style:italic;color:var(--ink3);line-height:1.4;}
 .create-btn{width:100%;margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.85rem;letter-spacing:.1em;color:#fff;background:var(--teal);border:none;border-radius:2px;padding:.7rem;cursor:pointer;}
 .create-btn:hover{background:#0d3328;}
@@ -206,6 +210,18 @@ h1.site-title{font-family:'Cinzel',serif;font-size:0.85rem;letter-spacing:.18em;
 .foot{padding:.45rem 1.75rem;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:0.7rem;font-family:'Cinzel',serif;letter-spacing:.05em;color:var(--ink3);}
 .dot{width:5px;height:5px;border-radius:50%;background:var(--teal);display:inline-block;}
 .rbtn{margin-left:auto;font-size:0.7rem;font-family:'Cinzel',serif;color:var(--red);background:none;border:1px solid rgba(107,26,26,.2);border-radius:2px;padding:2px 7px;cursor:pointer;}
+/* Event modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem;}
+.modal-box{background:linear-gradient(135deg,#f7f0dc,#ede4c5);border:1px solid rgba(90,60,20,0.3);border-radius:3px;max-width:520px;width:100%;padding:2rem;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+.modal-eyebrow{font-family:'Cinzel',serif;font-size:0.7rem;letter-spacing:.12em;color:var(--ink3);margin-bottom:.5rem;}
+.modal-title{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--ink);margin-bottom:1rem;line-height:1.4;}
+.modal-desc{font-size:0.95rem;font-style:italic;color:var(--ink2);line-height:1.6;margin-bottom:1.5rem;}
+.modal-choices{display:flex;flex-direction:column;gap:8px;}
+.modal-choice{background:rgba(255,255,255,.4);border:1px solid var(--border);border-radius:3px;padding:.75rem 1rem;cursor:pointer;font-size:0.9rem;color:var(--ink2);transition:all .15s;text-align:left;}
+.modal-choice:hover{background:rgba(26,74,58,.07);border-color:rgba(26,74,58,.3);color:var(--ink);}
+.modal-result{font-size:0.9rem;color:var(--teal);font-style:italic;margin-top:1rem;padding:.75rem;background:rgba(26,74,58,.06);border-radius:2px;display:none;}
+.modal-continue{font-family:'Cinzel',serif;font-size:0.8rem;color:#fff;background:var(--teal);border:none;border-radius:2px;padding:.5rem 1.2rem;cursor:pointer;margin-top:1rem;display:none;}
+
 footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spacing:.1em;color:rgba(196,150,42,.3);position:relative;z-index:1;}
 
 @media(max-width:600px){
@@ -214,6 +230,15 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
   .stats{grid-template-columns:repeat(2,1fr);}
   .hindrance-grid{grid-template-columns:1fr;}
 }
+
+/* Event Modal */
+.event-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem;}
+.event-modal{background:linear-gradient(135deg,#f7f0dc,#ede4c5);border:1px solid rgba(90,60,20,0.35);border-radius:4px;max-width:500px;width:100%;padding:2rem;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+.event-modal-title{font-family:'Cinzel',serif;font-size:0.8rem;letter-spacing:.12em;color:var(--ink3);margin-bottom:1rem;}
+.event-modal-text{font-size:1rem;line-height:1.7;color:var(--ink);margin-bottom:1.5rem;font-style:italic;}
+.event-modal-choices{display:flex;flex-direction:column;gap:8px;}
+.event-choice-btn{font-family:'Cinzel',serif;font-size:0.8rem;letter-spacing:.04em;padding:.7rem 1rem;border:1px solid var(--border);border-radius:2px;background:rgba(255,255,255,.4);cursor:pointer;text-align:left;color:var(--ink);transition:background .15s;}
+.event-choice-btn:hover{background:rgba(26,74,58,.08);border-color:rgba(26,74,58,.3);}
 </style>
 </head>
 <body>
@@ -251,23 +276,27 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
       <input type="text" id="inp-charname" placeholder="ex: Jonny de Dion" maxlength="30">
     </div>
     <div class="field">
-      <label>HINDRANCE — Ce qui te définit autant que ce qui te retient</label>
+      <label>ARCHÉTYPE — Qui es-tu vraiment ?</label>
       <div class="hindrance-grid" id="hindrance-grid">
         <div class="hcard" data-h="Traumatisme" onclick="selectHindrance(this)">
           <div class="hcard-name">Le Traumatisé</div>
-          <div class="hcard-desc">Ancien soldat. Les flashbacks arrivent sans prévenir. Combat +4, Instinct +2.</div>
+          <div class="hcard-desc" style="font-style:italic;margin-bottom:6px;">"Il a survécu à des choses qui auraient brisé les autres."</div>
+          <div class="hcard-desc">✦ Combat dominant — expérience militaire inégalée<br>✦ Accès aux fraternités de vétérans et contrats dangereux<br><span style="color:var(--ink3);font-size:0.7rem;">Certains souvenirs remontent au mauvais moment</span></div>
         </div>
         <div class="hcard" data-h="Agoraphobie" onclick="selectHindrance(this)">
           <div class="hcard-name">L'Anxieux</div>
-          <div class="hcard-desc">Opère dans l'ombre. Les foules l'épuisent, la nuit lui appartient. Instinct +4, Savoir +2.</div>
+          <div class="hcard-desc" style="font-style:italic;margin-bottom:6px;">"Il voit ce que les autres ne regardent pas."</div>
+          <div class="hcard-desc">✦ Instinct dominant — maître des ruelles et de la discrétion<br>✦ Accès aux activités nocturnes et réseaux clandestins<br><span style="color:var(--ink3);font-size:0.7rem;">Les grandes foules lui coûtent plus cher en énergie</span></div>
         </div>
         <div class="hcard" data-h="Solitude" onclick="selectHindrance(this)">
           <div class="hcard-name">L'Artisan Reclus</div>
-          <div class="hcard-desc">Crée des choses magnifiques que personne ne verra jamais. Artisanat +4, Savoir +2.</div>
+          <div class="hcard-desc" style="font-style:italic;margin-bottom:6px;">"Ses mains créent ce que les autres ne peuvent qu'imaginer."</div>
+          <div class="hcard-desc">✦ Artisanat dominant — qualité d'ouvrage hors du commun<br>✦ Accès à la forge secrète et aux commandes inavouables<br><span style="color:var(--ink3);font-size:0.7rem;">Le monde social demande un effort que la forge ne demande pas</span></div>
         </div>
         <div class="hcard" data-h="Imposteur" onclick="selectHindrance(this)">
           <div class="hcard-name">L'Imposteur</div>
-          <div class="hcard-desc">Vit dans la peur d'être démasqué. Le charme comme seule armure. Savoir +4, Artisanat +2.</div>
+          <div class="hcard-desc" style="font-style:italic;margin-bottom:6px;">"Il est celui que tu veux qu'il soit."</div>
+          <div class="hcard-desc">✦ Savoir dominant — lit les gens comme des livres ouverts<br>✦ Accès au réseau des murmures et aux cercles nobles<br><span style="color:var(--ink3);font-size:0.7rem;">Vivre dans le mensonge a un coût que lui seul connaît</span></div>
         </div>
       </div>
     </div>
@@ -362,7 +391,7 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
       <table class="lb-table">
         <thead><tr>
           <th>#</th><th>JOUEUR</th><th>PERSONNAGE</th><th style="color:var(--gold)">TOTAL</th>
-          <th>COMBAT</th><th>INSTINCT</th><th>ARTISANAT</th><th>SAVOIR</th><th>OR</th>
+          <th>COMBAT</th><th>INSTINCT</th><th>ARTISANAT</th><th>SAVOIR</th>
         </tr></thead>
         <tbody id="lbBody"><tr><td colspan="8" style="font-style:italic;color:var(--ink3);padding:1rem;">Chargement...</td></tr></tbody>
       </table>
@@ -385,10 +414,31 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
     </div>
   </div>
 
-  <div class="sec"><span>JOURNAL DE WESTMARCHE</span></div>
+  <!-- Event Modal -->
+<div class="modal-overlay" id="eventModal" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-eyebrow" id="modalEyebrow">ÉVÉNEMENT</div>
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-desc" id="modalDesc"></div>
+    <div class="modal-choices" id="modalChoices"></div>
+    <div class="modal-result" id="modalResult"></div>
+    <button class="modal-continue" id="modalContinue" onclick="closeEventModal()">Continuer</button>
+  </div>
+</div>
+
+<div class="sec"><span>JOURNAL DE WESTMARCHE</span></div>
   <div class="log-area" id="log"></div>
   <div class="foot"><span class="dot"></span><span>Sauvegardé · Calcul hors-ligne actif (max 24h)</span><button class="rbtn" id="rbtn">Recommencer</button></div>
 </div>
+</div>
+
+<!-- Event Modal -->
+<div class="event-modal-overlay" id="eventModal" style="display:none;">
+  <div class="event-modal">
+    <div class="event-modal-title">⚑ UN ÉVÉNEMENT S'EST PRODUIT</div>
+    <div class="event-modal-text" id="eventModalText"></div>
+    <div class="event-modal-choices" id="eventModalChoices"></div>
+  </div>
 </div>
 <footer>© Westmarche — Un projet de Jonny de Dion</footer>
 
@@ -481,12 +531,119 @@ const LOTTERY_LOOT={
   v:{common:['Parchemin annoté','Encre de qualité','Carte incomplète','Plume de scribe'],rare:['Grimoire de poche','Code chiffré royal','Traité interdit']},
 };
 
+// Activity events — 0.1% chance per hour per cycle
+const ACT_EVENTS={
+  'maraud':[
+    {id:'m1', desc:"En fouillant une ruelle, tu tombes sur une bourse oubliée derrière une caisse.", choices:[
+      {text:"La prendre discrètement", reward:{gold:8}, msg:"8 pièces d'or — quelqu'un aura une mauvaise surprise."},
+      {text:"La laisser en place", reward:{xp:{s:20}}, msg:"Tu t'éloignes. La discrétion a ses propres récompenses."}
+    ]},
+    {id:'m2', desc:"Un gamin te suit depuis dix minutes. Trop méthodique pour être innocent.", choices:[
+      {text:"L'interpeller et l'intimider", reward:{gold:3}, msg:"Il vide ses poches. Pas grand-chose, mais le message est passé."},
+      {text:"Le semer dans les ruelles", reward:{xp:{s:30}}, msg:"Il perd ta trace après deux tournants. Tu souris."}
+    ]},
+    {id:'m3', desc:"Tu trouves un message chiffré glissé sous une porte. Destinataire inconnu.", choices:[
+      {text:"Le garder — ça vaut peut-être quelque chose", reward:{item:'Code chiffré',qty:1}, msg:"Tu le glisses dans ta cape. Quelqu'un le cherchera."},
+      {text:"Le livrer quand même — sans l'ouvrir", reward:{xp:{v:25}}, msg:"La réputation d'être fiable vaut plus que l'or."}
+    ]},
+  ],
+  'guard':[
+    {id:'g1', desc:"Un marchand te glisse une pièce pour 'ne pas avoir vu' sa charrette passer.", choices:[
+      {text:"Accepter", reward:{gold:12}, msg:"L'or a changé de mains. La nuit continue."},
+      {text:"Refuser et noter la charrette", reward:{xp:{c:25}}, msg:"Ta réputation d'incorruptibilité grandit discrètement."}
+    ]},
+    {id:'g2', desc:"Tu entends des bruits suspects derrière une auberge. Deux silhouettes.", choices:[
+      {text:"Intervenir directement", reward:{xp:{c:35}}, msg:"Ils fuient. Rien de grave, mais tu as montré ta présence."},
+      {text:"Observer sans intervenir", reward:{item:'Information',qty:1}, msg:"Tu en sais plus sur qui se retrouve dans les ruelles la nuit."}
+    ]},
+    {id:'g3', desc:"Un voyageur épuisé te demande où dormir pour pas cher. Il a l'air honnête.", choices:[
+      {text:"L'orienter vers l'auberge du Vieux Pont", reward:{xp:{c:15}}, msg:"Il te remercie chaleureusement. Un visage de plus qui te connaît."},
+      {text:"L'ignorer — ce n'est pas ton rôle", reward:{gold:0}, msg:"Tu continues ta ronde. Certaines nuits sont comme ça."}
+    ]},
+  ],
+  'smuggle':[
+    {id:'s1', desc:"Ton contact habituel n'est pas au rendez-vous. À sa place, un inconnu qui dit le bon mot de passe.", choices:[
+      {text:"Lui faire confiance et livrer", reward:{gold:15}, msg:"La livraison se passe bien. Peut-être trop bien."},
+      {text:"Rebrousser chemin et attendre", reward:{xp:{s:40}}, msg:"Le lendemain, tu apprends que c'était un piège. Bien joué."}
+    ]},
+    {id:'s2', desc:"Dans la marchandise, tu trouves quelque chose que tu n'étais pas censé voir — une liste de noms.", choices:[
+      {text:"La garder", reward:{item:'Information',qty:2}, msg:"Ces noms valent quelque chose. Tu ne sais pas encore à qui."},
+      {text:"La brûler immédiatement", reward:{xp:{s:30}}, msg:"Certaines choses sont trop dangereuses à savoir."}
+    ]},
+    {id:'s3', desc:"Un garde te reconnaît. Il hésite. Vous vous connaissez vaguement.", choices:[
+      {text:"Jouer la carte de la familiarité", reward:{gold:0,xp:{v:35}}, msg:"Il te laisse passer avec un sourire forcé. Tu lui devras quelque chose."},
+      {text:"Lui glisser quelques pièces", reward:{gold:-8}, msg:"Il regarde ailleurs. L'or fait des amis vite."}
+    ]},
+  ],
+  'study':[
+    {id:'st1', desc:"Le moine s'endort pendant la leçon. Ses clés sont sur la table.", choices:[
+      {text:"Fouiller la bibliothèque interdite", reward:{item:'Parchemin annoté',qty:2}, msg:"Tu trouves des textes que peu ont lus. Précieux."},
+      {text:"Le laisser dormir et continuer seul", reward:{xp:{v:30}}, msg:"L'autodidacte apprend parfois plus vite que l'élève."}
+    ]},
+    {id:'st2', desc:"Un autre étudiant te propose d'échanger des notes. Il semble savoir plus que toi.", choices:[
+      {text:"Accepter l'échange", reward:{xp:{v:40}}, msg:"Ses notes valent de l'or. Tu apprends deux fois plus vite ce soir."},
+      {text:"Refuser — tu apprends mieux seul", reward:{xp:{v:20}}, msg:"Peut-être. Ou peut-être que tu aurais dû accepter."}
+    ]},
+  ],
+  'craft0':[
+    {id:'c1', desc:"Un client passe et admire ton travail. Il offre de te payer double si tu termines ce soir.", choices:[
+      {text:"Accepter et travailler plus vite", reward:{gold:10}, msg:"L'or arrive. La qualité, un peu moins. Il ne remarquera peut-être pas."},
+      {text:"Refuser — ton travail mérite le temps qu'il faut", reward:{xp:{a:30}}, msg:"Il repart déçu. Le lendemain, il revient avec un ami."}
+    ]},
+    {id:'c2', desc:"Tu trouves un outil de qualité supérieure oublié dans l'atelier.", choices:[
+      {text:"Le garder", reward:{item:'Pierre à aiguiser',qty:1}, msg:"Quelqu'un le cherchera. Probablement."},
+      {text:"Le signaler", reward:{xp:{a:20}}, msg:"Le maître artisan t'offre un sourire et un conseil précieux."}
+    ]},
+  ],
+  'train':[
+    {id:'t1', desc:"Un vétéran t'observe s'entraîner. Il secoue la tête, puis s'approche.", choices:[
+      {text:"Accepter ses conseils", reward:{xp:{c:50}}, msg:"En dix minutes, il corrige une erreur que tu faisais depuis des mois."},
+      {text:"L'ignorer poliment", reward:{xp:{c:15}}, msg:"Tu continues à ta façon. C'est correct. Pas plus."}
+    ]},
+    {id:'t2', desc:"Un autre soldat te défie à un duel d'entraînement. Il a l'air confiant.", choices:[
+      {text:"Accepter le duel", reward:{xp:{c:40}}, msg:"Tu perds, mais tu apprends. C'est parfois la même chose."},
+      {text:"Décliner gracieusement", reward:{gold:0}, msg:"Il hausse les épaules. Tu gardes tes forces."}
+    ]},
+  ],
+  'forge':[
+    {id:'f1', desc:"Le fer que tu travailles révèle une veine d'alliage rare.", choices:[
+      {text:"Le prélever discrètement", reward:{item:'Alliage rare',qty:1}, msg:"Tu glisses le morceau dans ta poche. Ça vaut plus que ta journée."},
+      {text:"Le signaler au maître forgeron", reward:{xp:{a:40}}, msg:"Il t'apprend une technique en remerciement. Mieux que l'argent."}
+    ]},
+    {id:'f2', desc:"Une commande anonyme arrive — des outils dont la forme est... inhabituelle.", choices:[
+      {text:"Accepter et forger sans poser de questions", reward:{gold:18}, msg:"L'or arrive. Ce que ces outils feront ne te regarde pas."},
+      {text:"Refuser la commande", reward:{xp:{a:25}}, msg:"Certaines pièces d'or coûtent trop cher."}
+    ]},
+  ],
+  'copy':[
+    {id:'cp1', desc:"Le texte que tu copies contient une phrase qui n'a pas sa place dans un manuel de théologie.", choices:[
+      {text:"La recopier fidèlement", reward:{item:'Traité interdit',qty:1}, msg:"Tu copies tout. Quelqu'un voulait que ça disparaisse."},
+      {text:"La sauter et n'en parler à personne", reward:{xp:{v:35}}, msg:"Certains secrets sont plus sûrs dans l'oubli."}
+    ]},
+    {id:'cp2', desc:"Un clerc te demande de rédiger une lettre 'personnelle' pour lui. Il est embarrassé.", choices:[
+      {text:"Accepter et rédiger avec tact", reward:{gold:8}, msg:"Il te remercie maladroitement. La lettre partira ce soir."},
+      {text:"Accepter mais lire attentivement", reward:{item:'Information',qty:1}, msg:"Les secrets des autres sont une monnaie comme une autre."}
+    ]},
+  ],
+};
+
+// Check for activity events during offline calculation
+function rollActivityEvent(actId, hoursElapsed){
+  const pool = ACT_EVENTS[actId];
+  if(!pool) return null;
+  // 0.1% chance per hour = 0.001 per hour
+  const eventChance = 1 - Math.pow(0.999, hoursElapsed);
+  if(Math.random() > eventChance) return null;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
 const LOTTERY_NAMES={
   c:"Les Frères d'Armes",
   s:'La Fraternité des Ruelles',
   a:'La Foire du Maître',
   v:'Le Cercle des Scribes',
 };
+
 const SN={c:'Combat',s:'Instinct',a:'Artisanat',v:'Savoir'};
 const SKC={c:'sk-c',s:'sk-s',a:'sk-a',v:'sk-v'};
 const UI={c:{l:'lc',b:'bc',x:'xc'},s:{l:'ls',b:'bs',x:'xs'},a:{l:'la',b:'ba',x:'xa'},v:{l:'lv',b:'bv',x:'xv'}};
@@ -524,7 +681,7 @@ function def(hindrance){
     sk:{c:stats.c,s:stats.s,a:stats.a,v:stats.v},
     xp:{c:0,s:0,a:0,v:0},
     inv:{},gold:0,seen:[],equipment:[...equip],
-    queue:[],queueStart:null,lastSeen:Date.now(),lastLotteryCheck:0,
+    queue:[],queueStart:null,lastSeen:Date.now(),lastLotteryCheck:0,pendingEvents:[],choiceHistory:[],pendingEvents:[],choiceMemory:{},
     marketStock:{},lotteryEntries:{},
     log:[{t:'—',m:"Tu commences ta vie dans la Ruelle des Murmures. Que vas-tu faire ?",tp:''}]
   };
@@ -588,6 +745,8 @@ async function loginPlayer(){
   if(!G.queue)G.queue=[];
   if(!G.marketStock)G.marketStock={};
   if(!G.lotteryEntries)G.lotteryEntries={};
+  if(!G.pendingEvents)G.pendingEvents=[];
+  if(!G.choiceMemory)G.choiceMemory={};
   await mergeSupabaseScores(player.id);
   localStorage.setItem(KEY+'_pid',player.id);
   localStorage.setItem(KEY+'_pid_'+player.id,JSON.stringify(G));
@@ -719,20 +878,26 @@ function startGame(){
   document.getElementById('creation-screen').style.display='none';
   document.getElementById('game-screen').style.display='block';
   const HINDRANCE_LABELS={
-    'Traumatisme':'Le Traumatisé — Ancien soldat',
-    'Agoraphobie':'L\'Anxieux — Opère dans l\'ombre',
-    'Solitude':'L\'Artisan Reclus — Crée dans le silence',
-    'Imposteur':'L\'Imposteur — Le charme comme armure',
+    'Traumatisme':'Le Traumatisé — Il a survécu à des choses qui auraient brisé les autres',
+    'Agoraphobie':'L\'Anxieux — Il voit ce que les autres ne regardent pas',
+    'Solitude':'L\'Artisan Reclus — Ses mains créent ce que les autres ne peuvent qu\'imaginer',
+    'Imposteur':'L\'Imposteur — Il est celui que tu veux qu\'il soit',
   };
   document.getElementById('charName').textContent=PLAYER.character_name;
   document.getElementById('hindranceTag').textContent='⚑ '+(HINDRANCE_LABELS[PLAYER.hindrance]||PLAYER.hindrance);
   processOffline();
   Object.keys(G.sk).forEach(updSkill);
   updateAgeAndBackground();
+  // Show any pending events from offline period
+  setTimeout(processEventQueue, 1500);
   document.getElementById('gval').textContent=G.gold;
   renderInv();renderActList();renderQueue();renderLog();renderEquipment();
   syncScores();
   checkLotteryResults();
+  // Show pending events from offline play
+  if(G.pendingEvents&&G.pendingEvents.length>0){
+    setTimeout(showNextPendingEvent, 1500);
+  }
   clearInterval(tickIv);
   tickIv=setInterval(tick,10000);
   setInterval(syncScores,300000); // sync leaderboard every 5min
@@ -886,6 +1051,7 @@ function processOffline(){
       summary[act.name].xp+=act.xp;summary[act.name].gold+=g;
       act.loot.forEach(l=>{const q=rand(l.a,l.b);if(q>0){G.inv[l.n]=(G.inv[l.n]||0)+q;summary[act.name].loot[l.n]=(summary[act.name].loot[l.n]||0)+q;}});
       addXpSilent(act.sk,act.xp);
+      rollOfflineEvents(act.id, 1);
       G.queue.shift();G.queueStart=G.queue.length?Date.now():null;
     } else {G.queueStart=G.queueStart?G.queueStart-timeLeft:now-timeLeft;break;}
   }
@@ -1051,7 +1217,7 @@ function clearQueue(){G.queue=[];G.queueStart=null;addLog('File d\'attente vidé
 // --- Leaderboard ---
 async function renderLeaderboard(){
   const{data}=await sb.from('scores').select('*,players(username,character_name,hindrance)').order('skill_combat',{ascending:false});
-  if(!data){document.getElementById('lbBody').innerHTML='<tr><td colspan="9">Erreur de chargement.</td></tr>';return;}
+  if(!data){document.getElementById('lbBody').innerHTML='<tr><td colspan="8">Erreur de chargement.</td></tr>';return;}
   const sorted=data.sort((a,b)=>{
     const totalB=b.skill_combat+b.skill_survival+b.skill_craft+b.skill_lore;
     const totalA=a.skill_combat+a.skill_survival+a.skill_craft+a.skill_lore;
@@ -1060,7 +1226,7 @@ async function renderLeaderboard(){
   document.getElementById('lbBody').innerHTML=sorted.map((row,i)=>{
     const isMe=PLAYER&&row.player_id===PLAYER.id;
     const total=row.skill_combat+row.skill_survival+row.skill_craft+row.skill_lore;
-    return'<tr class="'+(isMe?'me':'')+'"><td class="lb-rank">'+(i+1)+'</td><td>'+row.players.username+'</td><td>'+row.players.character_name+'</td><td style="font-weight:500;color:var(--gold)">'+total+'</td><td>'+row.skill_combat+'</td><td>'+row.skill_survival+'</td><td>'+row.skill_craft+'</td><td>'+row.skill_lore+'</td><td class="lb-gold">'+row.gold+'</td></tr>';
+    return'<tr class="'+(isMe?'me':'')+'"><td class="lb-rank">'+(i+1)+'</td><td>'+row.players.username+'</td><td>'+row.players.character_name+'</td><td style="font-weight:500;color:var(--gold)">'+total+'</td><td>'+row.skill_combat+'</td><td>'+row.skill_survival+'</td><td>'+row.skill_craft+'</td><td>'+row.skill_lore+'</td></tr>';
   }).join('');
 }
 
@@ -1190,6 +1356,56 @@ async function renderLottery(){
   resEl.innerHTML=data.map(r=>'<div class="lot-result-item won">'+r.players.character_name+' a remporté un item rare de '+LOTTERY_NAMES[r.skill_entered]+' !</div>').join('');
 }
 
+
+// --- Event Resolution ---
+function showNextPendingEvent(){
+  if(!G.pendingEvents||!G.pendingEvents.length)return;
+  const ev=G.pendingEvents[0];
+  document.getElementById('eventModalText').textContent=ev.text;
+  const choicesEl=document.getElementById('eventModalChoices');
+  choicesEl.innerHTML=ev.choices.map((c,i)=>
+    '<button class="event-choice-btn" onclick="resolveEvent('+i+')">'+c.label+'</button>'
+  ).join('');
+  document.getElementById('eventModal').style.display='flex';
+}
+
+function resolveEvent(choiceIdx){
+  if(!G.pendingEvents||!G.pendingEvents.length)return;
+  const ev=G.pendingEvents.shift();
+  const choice=ev.choices[choiceIdx];
+  const r=choice.reward||{};
+
+  // Apply rewards
+  if(r.gold){G.gold+=r.gold;document.getElementById('gval').textContent=G.gold;}
+  if(r.xp){Object.entries(r.xp).forEach(([sk,amt])=>{addXp(sk,amt);updSkill(sk);});}
+  if(r.item){G.inv[r.item]=(G.inv[r.item]||0)+(r.qty||1);renderInv();}
+
+  // Apply costs
+  if(choice.cost&&choice.cost.gold){
+    if(G.gold>=choice.cost.gold){G.gold-=choice.cost.gold;document.getElementById('gval').textContent=G.gold;}
+  }
+
+  addLog('⚑ '+choice.log,'ev');
+  save();renderLog();
+
+  // Hide modal and show next event if any
+  document.getElementById('eventModal').style.display='none';
+  if(G.pendingEvents.length>0){
+    setTimeout(showNextPendingEvent, 800);
+  }
+}
+
+// Check for events during offline cycles
+function rollOfflineEvents(actId, cycles){
+  // Each cycle has 0.1% chance — roll once per 10 cycles for performance
+  const rolls=Math.ceil(cycles/10);
+  for(let i=0;i<rolls;i++){
+    if(Math.random()<0.001*Math.min(cycles,10)){
+      queuePendingEvent(actId, Date.now());
+    }
+  }
+}
+
 // --- Tick ---
 function tick(){
   const now=Date.now();let changed=false;
@@ -1225,6 +1441,68 @@ document.getElementById('rbtn').onclick=()=>{
   }
 };
 document.getElementById('qtyInput').addEventListener('input',renderActList);
+
+// --- Event Modal ---
+let eventQueue=[];
+
+function queueEvent(evt, actName){
+  eventQueue.push({evt, actName});
+}
+
+function processEventQueue(){
+  if(!eventQueue.length) return;
+  showEventModal(eventQueue.shift());
+}
+
+function showEventModal(item){
+  const{evt, actName}=item;
+  document.getElementById('eventModal').style.display='flex';
+  document.getElementById('modalEyebrow').textContent='ÉVÉNEMENT — '+actName.toUpperCase();
+  document.getElementById('modalDesc').textContent=evt.desc;
+  document.getElementById('modalResult').style.display='none';
+  document.getElementById('modalContinue').style.display='none';
+  document.getElementById('modalChoices').innerHTML=evt.choices.map((c,i)=>
+    '<button class="modal-choice" onclick="resolveChoice('+i+')">'+c.text+'</button>'
+  ).join('');
+  // Store current event for resolution
+  window._currentModalEvent=item;
+}
+
+function resolveChoice(idx){
+  const{evt,actName}=window._currentModalEvent;
+  const choice=evt.choices[idx];
+
+  // Apply rewards
+  if(choice.reward){
+    if(choice.reward.gold&&choice.reward.gold>0){G.gold+=choice.reward.gold;document.getElementById('gval').textContent=G.gold;}
+    if(choice.reward.gold&&choice.reward.gold<0){G.gold=Math.max(0,G.gold+choice.reward.gold);document.getElementById('gval').textContent=G.gold;}
+    if(choice.reward.xp){Object.entries(choice.reward.xp).forEach(([sk,amt])=>{addXp(sk,amt);});}
+    if(choice.reward.item){G.inv[choice.reward.item]=(G.inv[choice.reward.item]||0)+(choice.reward.qty||1);}
+  }
+
+  // Record choice in history for future narrative use
+  if(!G.choiceHistory)G.choiceHistory=[];
+  G.choiceHistory.push({eventId:evt.id,choiceIdx:idx,ts:Date.now()});
+
+  // Show result
+  document.getElementById('modalChoices').innerHTML='';
+  const resEl=document.getElementById('modalResult');
+  resEl.textContent=choice.msg;
+  resEl.style.display='block';
+  document.getElementById('modalContinue').style.display='inline-block';
+
+  addLog('Événement — '+actName+' : '+choice.msg,'ev');
+  renderInv();renderLog();save();
+}
+
+function closeEventModal(){
+  document.getElementById('eventModal').style.display='none';
+  window._currentModalEvent=null;
+  // Process next event in queue if any
+  if(eventQueue.length>0){
+    setTimeout(()=>showEventModal(eventQueue.shift()),300);
+  }
+}
 
 // --- Boot ---
 (async()=>{
