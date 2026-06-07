@@ -373,8 +373,8 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
   <div class="page" id="page-lottery">
     <div class="lot-wrap">
       <div class="lot-section">
-        <div class="lot-hd">Loterie de Westmarche</div>
-        <div class="lot-desc">Deux tirages par semaine — le mercredi et le samedi à minuit. Tes chances de gagner sont proportionnelles à ton niveau dans chaque compétence. Choisis la compétence pour laquelle tu veux concourir.</div>
+        <div class="lot-hd">Loteries de Westmarche</div>
+        <div class="lot-desc">Deux tirages par semaine — le mercredi et le samedi à minuit. Choisis <strong>une seule</strong> loterie par tirage. Tes chances de gagner l'item rare sont proportionnelles à ton niveau.</div>
         <div class="lot-grid" id="lotGrid"></div>
         <div class="lot-next" id="lotNext"></div>
       </div>
@@ -473,6 +473,12 @@ const LOTTERY_LOOT={
   v:{common:['Parchemin annoté','Encre de qualité','Carte incomplète','Plume de scribe'],rare:['Grimoire de poche','Code chiffré royal','Traité interdit']},
 };
 
+const LOTTERY_NAMES={
+  c:"Les Frères d'Armes",
+  s:'La Fraternité des Ruelles',
+  a:'La Foire du Maître',
+  v:'Le Cercle des Scribes',
+};
 const SN={c:'Combat',s:'Instinct',a:'Artisanat',v:'Savoir'};
 const SKC={c:'sk-c',s:'sk-s',a:'sk-a',v:'sk-v'};
 const UI={c:{l:'lc',b:'bc',x:'xc'},s:{l:'ls',b:'bs',x:'xs'},a:{l:'la',b:'ba',x:'xa'},v:{l:'lv',b:'bv',x:'xv'}};
@@ -1036,6 +1042,15 @@ function hasEnteredLottery(sk){
   const key=getLotteryDrawKey();
   return G.lotteryEntries&&G.lotteryEntries[key]&&G.lotteryEntries[key].includes(sk);
 }
+function hasEnteredAnyLottery(){
+  const key=getLotteryDrawKey();
+  return G.lotteryEntries&&G.lotteryEntries[key]&&G.lotteryEntries[key].length>0;
+}
+function getEnteredLottery(){
+  const key=getLotteryDrawKey();
+  if(!G.lotteryEntries||!G.lotteryEntries[key]||!G.lotteryEntries[key].length)return null;
+  return G.lotteryEntries[key][0];
+}
 function getNextDraw(){
   const now=new Date();
   const day=now.getDay();
@@ -1050,7 +1065,7 @@ function getNextDraw(){
   return h+'h '+m+'min';
 }
 async function enterLottery(sk){
-  if(hasEnteredLottery(sk))return;
+  if(hasEnteredAnyLottery())return; // only one lottery per draw
   const key=getLotteryDrawKey();
   if(!G.lotteryEntries)G.lotteryEntries={};
   if(!G.lotteryEntries[key])G.lotteryEntries[key]=[];
@@ -1103,28 +1118,42 @@ async function checkLotteryResults(){
 }
 async function renderLottery(){
   const grid=document.getElementById('lotGrid');
+  const anyEntered=hasEnteredAnyLottery();
+  const enteredSk=getEnteredLottery();
+
+  // Header message
+  const headerMsg=anyEntered
+    ? '<div class="lot-desc" style="color:var(--teal);font-style:normal;">Tu es inscrit à <strong>'+LOTTERY_NAMES[enteredSk]+'</strong> pour ce tirage. Les résultats tombent au prochain tirage.</div>'
+    : '<div class="lot-desc">Choisis <strong>une seule</strong> loterie par tirage. Tous les participants reçoivent un item commun garanti. Un item rare est tiré parmi les inscrits selon leur niveau.</div>';
+  document.querySelector('.lot-desc') && (document.querySelector('.lot-desc').outerHTML = headerMsg);
+
   grid.innerHTML=['c','s','a','v'].map(sk=>{
     const lv=G.sk[sk];
-    const entered=hasEnteredLottery(sk);
+    const isEntered=hasEnteredLottery(sk);
+    const isBlocked=anyEntered&&!isEntered;
     const chancePct=Math.min(95,Math.round(lv*2));
     const loot=LOTTERY_LOOT[sk];
     const commonSample=loot.common.slice(0,2).join(', ');
     const rareSample=loot.rare[0];
-    return'<div class="lot-card">'
-      +'<div class="lot-card-name">'+SN[sk]+' — Niveau '+lv+'</div>'
+    return'<div class="lot-card" style="'+(isBlocked?'opacity:0.35;':'')+(isEntered?'border-color:rgba(26,74,58,.4);background:rgba(26,74,58,.06);':'')+'">'
+      +'<div class="lot-card-name" style="font-size:0.85rem;">'+LOTTERY_NAMES[sk]+'</div>'
+      +'<div style="font-size:0.7rem;color:var(--ink3);margin-bottom:4px;">'+SN[sk]+' · Niveau '+lv+'</div>'
       +'<div class="lot-card-chances">Garanti : <span style="color:var(--ink2)">'+commonSample+'...</span></div>'
       +'<div class="lot-card-chances" style="margin-top:2px;">Rare (~'+chancePct+'%) : <span style="color:var(--gold)">'+rareSample+'</span></div>'
       +'<div class="lot-card-chance-bar" style="margin-top:6px;"><div class="lot-card-chance-fill" style="width:'+chancePct+'%"></div></div>'
-      +'<button class="lot-enter-btn" '+(entered?'disabled':'')+' onclick="enterLottery(\''+sk+'\')">'+(entered?'Participé ✓':'Participer')+'</button>'
+      +'<button class="lot-enter-btn" style="margin-top:8px;" '+(anyEntered||isBlocked?'disabled':'')+' onclick="enterLottery(\''+sk+'\')">'
+      +(isEntered?'✓ Inscrit':isBlocked?'Non disponible':'S\'inscrire')
+      +'</button>'
       +'</div>';
   }).join('');
+
   document.getElementById('lotNext').textContent='Prochain tirage dans : '+getNextDraw();
 
   // Load recent results
   const{data}=await sb.from('lottery').select('*,players(character_name)').eq('won',true).order('created_at',{ascending:false}).limit(10);
   const resEl=document.getElementById('lotResults');
   if(!data||!data.length){resEl.innerHTML='<div class="lot-result-item">Aucun gagnant pour l\'instant.</div>';return;}
-  resEl.innerHTML=data.map(r=>'<div class="lot-result-item won">'+r.players.character_name+' a remporté un lot rare de '+SN[r.skill_entered]+' !</div>').join('');
+  resEl.innerHTML=data.map(r=>'<div class="lot-result-item won">'+r.players.character_name+' a remporté un item rare de '+LOTTERY_NAMES[r.skill_entered]+' !</div>').join('');
 }
 
 // --- Tick ---
