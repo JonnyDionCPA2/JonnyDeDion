@@ -361,7 +361,7 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
     <div class="lb-wrap">
       <table class="lb-table">
         <thead><tr>
-          <th>#</th><th>JOUEUR</th><th>PERSONNAGE</th>
+          <th>#</th><th>JOUEUR</th><th>PERSONNAGE</th><th style="color:var(--gold)">TOTAL</th>
           <th>COMBAT</th><th>INSTINCT</th><th>ARTISANAT</th><th>SAVOIR</th><th>OR</th>
         </tr></thead>
         <tbody id="lbBody"><tr><td colspan="8" style="font-style:italic;color:var(--ink3);padding:1rem;">Chargement...</td></tr></tbody>
@@ -404,7 +404,7 @@ const H=3600*1000;
 
 const ACTS=[
   // TIER BASE — 1h, niveau 1, commun
-  {id:'maraud', name:'Maraudage dans les quartiers bas', sk:'s',tier:'Base',          dur:1*H, xp:80,  loot:[{n:'Ration volée',a:1,b:3},{n:'Objet récupéré',a:0,b:1}],    ga:1,gb:4,  req:0, rsk:null, excl:null},
+  {id:'maraud', name:'Maraudage dans les quartiers bas', sk:'s',tier:'Base',          dur:1*H, xp:80,  loot:[{n:'Ration volée',a:1,b:3},{n:'Vêtement de rechange',a:0,b:1}],    ga:1,gb:4,  req:0, rsk:null, excl:null},
   {id:'guard',  name:'Ronde de nuit',                    sk:'c',tier:'Base',          dur:1*H, xp:90,  loot:[{n:'Ration',a:0,b:2}],                                        ga:3,gb:8,  req:0, rsk:null, excl:null},
   {id:'study',  name:'Étudier les parchemins',           sk:'v',tier:'Base',          dur:1*H, xp:80,  loot:[{n:'Parchemin',a:0,b:1}],                                     ga:0,gb:0,  req:0, rsk:null, excl:null},
   {id:'craft0', name:'Travaux de menuiserie',            sk:'a',tier:'Base',          dur:1*H, xp:80,  loot:[{n:'Planche brute',a:1,b:3}],                                 ga:1,gb:3,  req:0, rsk:null, excl:null},
@@ -426,10 +426,18 @@ const ACTS=[
 ];
 
 const SELL_PRICES={
-  'Ration volée':1,'Objet récupéré':2,'Marchandise illégale':4,'Information':5,
-  'Planche brute':2,'Clou de fer':2,'Parchemin':3,'Parchemin annoté':5,
-  'Ration':2,'Pierre à aiguiser':3,'Herbes rares':6,'Carte incomplète':8,
-  'Pièce de soldat':3,'Alliage rare':10,'Code chiffré':8,'Traité interdit':12,
+  // Activités
+  'Ration volée':1,'Vêtement de rechange':2,'Marchandise illégale':5,'Information':8,
+  'Ration':2,'Planche brute':2,'Clou de fer':2,'Parchemin':3,'Parchemin annoté':5,
+  'Pierre à aiguiser':3,'Herbes rares':6,'Carte incomplète':8,
+  'Pièce de soldat':3,'Alliage rare':10,'Code chiffré':10,'Traité interdit':12,
+  'Encre secrète':8,'Dague de lancer':6,'Fausse identité':10,'Fer étoilé brut':20,
+  'Armure percée':4,
+  // Loterie commun
+  'Ration de soldat':2,'Bouclier cabossé':4,'Équipement de garde usé':3,
+  'Corde de rechange':2,'Fiole vide':1,'Bois exotique':5,
+  'Chiffon de forge':1,'Cire à cacheter':2,'Encre de qualité':4,'Plume de scribe':2,
+  'Sifflet de signal':8,'Carte des passages secrets':15,
 };
 
 const DAILY_POOL=[
@@ -1022,11 +1030,16 @@ function clearQueue(){G.queue=[];G.queueStart=null;addLog('File d\'attente vidé
 // --- Leaderboard ---
 async function renderLeaderboard(){
   const{data}=await sb.from('scores').select('*,players(username,character_name,hindrance)').order('skill_combat',{ascending:false});
-  if(!data){document.getElementById('lbBody').innerHTML='<tr><td colspan="8">Erreur de chargement.</td></tr>';return;}
-  const sorted=data.sort((a,b)=>(b.skill_combat+b.skill_survival+b.skill_craft+b.skill_lore)-(a.skill_combat+a.skill_survival+a.skill_craft+a.skill_lore));
+  if(!data){document.getElementById('lbBody').innerHTML='<tr><td colspan="9">Erreur de chargement.</td></tr>';return;}
+  const sorted=data.sort((a,b)=>{
+    const totalB=b.skill_combat+b.skill_survival+b.skill_craft+b.skill_lore;
+    const totalA=a.skill_combat+a.skill_survival+a.skill_craft+a.skill_lore;
+    return totalB-totalA;
+  });
   document.getElementById('lbBody').innerHTML=sorted.map((row,i)=>{
     const isMe=PLAYER&&row.player_id===PLAYER.id;
-    return'<tr class="'+(isMe?'me':'')+'"><td class="lb-rank">'+(i+1)+'</td><td>'+row.players.username+'</td><td>'+row.players.character_name+'</td><td>'+row.skill_combat+'</td><td>'+row.skill_survival+'</td><td>'+row.skill_craft+'</td><td>'+row.skill_lore+'</td><td class="lb-gold">'+row.gold+'</td></tr>';
+    const total=row.skill_combat+row.skill_survival+row.skill_craft+row.skill_lore;
+    return'<tr class="'+(isMe?'me':'')+'"><td class="lb-rank">'+(i+1)+'</td><td>'+row.players.username+'</td><td>'+row.players.character_name+'</td><td style="font-weight:500;color:var(--gold)">'+total+'</td><td>'+row.skill_combat+'</td><td>'+row.skill_survival+'</td><td>'+row.skill_craft+'</td><td>'+row.skill_lore+'</td><td class="lb-gold">'+row.gold+'</td></tr>';
   }).join('');
 }
 
