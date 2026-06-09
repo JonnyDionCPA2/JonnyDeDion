@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <title>Chroniques de Westmarche</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -280,23 +282,31 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
       <div class="hindrance-grid" id="hindrance-grid">
         <div class="hcard" data-h="Traumatisme" onclick="selectHindrance(this)">
           <div class="hcard-name">Le Traumatisé</div>
-          <div class="hcard-desc" style="font-style:italic;margin-bottom:6px;">"Il a survécu à des choses qui auraient brisé les autres."</div>
-          <div class="hcard-desc">✦ Combat dominant — expérience militaire inégalée<br>✦ Accès aux fraternités de vétérans et contrats dangereux<br><span style="color:var(--ink3);font-size:0.7rem;">Certains souvenirs remontent au mauvais moment</span></div>
+          <div class="hcard-quote">"Il a survécu à des choses qui auraient brisé les autres."</div>
+          <div class="hcard-strengths">✦ Combat dominant — expérience militaire inégalée<br>✦ Accès aux fraternités de vétérans et contrats dangereux</div>
+          <div class="hcard-nuance">Certains souvenirs remontent au mauvais moment.</div>
+          <div class="hcard-stats">Combat +4 · Instinct +2</div>
         </div>
         <div class="hcard" data-h="Agoraphobie" onclick="selectHindrance(this)">
           <div class="hcard-name">L'Anxieux</div>
-          <div class="hcard-desc" style="font-style:italic;margin-bottom:6px;">"Il voit ce que les autres ne regardent pas."</div>
-          <div class="hcard-desc">✦ Instinct dominant — maître des ruelles et de la discrétion<br>✦ Accès aux activités nocturnes et réseaux clandestins<br><span style="color:var(--ink3);font-size:0.7rem;">Les grandes foules lui coûtent plus cher en énergie</span></div>
+          <div class="hcard-quote">"Il voit ce que les autres ne regardent pas."</div>
+          <div class="hcard-strengths">✦ Instinct dominant — maître des ruelles et de la discrétion<br>✦ Accès aux activités nocturnes et réseaux clandestins</div>
+          <div class="hcard-nuance">Les grandes foules lui coûtent plus cher en énergie narrative.</div>
+          <div class="hcard-stats">Instinct +4 · Savoir +2</div>
         </div>
         <div class="hcard" data-h="Solitude" onclick="selectHindrance(this)">
           <div class="hcard-name">L'Artisan Reclus</div>
-          <div class="hcard-desc" style="font-style:italic;margin-bottom:6px;">"Ses mains créent ce que les autres ne peuvent qu'imaginer."</div>
-          <div class="hcard-desc">✦ Artisanat dominant — qualité d'ouvrage hors du commun<br>✦ Accès à la forge secrète et aux commandes inavouables<br><span style="color:var(--ink3);font-size:0.7rem;">Le monde social demande un effort que la forge ne demande pas</span></div>
+          <div class="hcard-quote">"Ses mains créent ce que les autres ne peuvent qu'imaginer."</div>
+          <div class="hcard-strengths">✦ Artisanat dominant — qualité d'ouvrage hors du commun<br>✦ Accès à la forge secrète et aux commandes inavouables</div>
+          <div class="hcard-nuance">Le monde social lui demande un effort que la forge ne demande pas.</div>
+          <div class="hcard-stats">Artisanat +4 · Savoir +2</div>
         </div>
         <div class="hcard" data-h="Imposteur" onclick="selectHindrance(this)">
           <div class="hcard-name">L'Imposteur</div>
-          <div class="hcard-desc" style="font-style:italic;margin-bottom:6px;">"Il est celui que tu veux qu'il soit."</div>
-          <div class="hcard-desc">✦ Savoir dominant — lit les gens comme des livres ouverts<br>✦ Accès au réseau des murmures et aux cercles nobles<br><span style="color:var(--ink3);font-size:0.7rem;">Vivre dans le mensonge a un coût que lui seul connaît</span></div>
+          <div class="hcard-quote">"Il est celui que tu veux qu'il soit."</div>
+          <div class="hcard-strengths">✦ Savoir dominant — lit les gens comme des livres ouverts<br>✦ Accès au réseau des murmures et aux cercles nobles</div>
+          <div class="hcard-nuance">Vivre dans le mensonge a un coût que lui seul connaît.</div>
+          <div class="hcard-stats">Savoir +4 · Artisanat +2</div>
         </div>
       </div>
     </div>
@@ -1177,7 +1187,9 @@ function renderQueue(){
       +'</div>';
   });
   el.innerHTML=html;
-  document.getElementById('etaLine').textContent='Fin dans '+fmtDur(totalQueueMs())+' ('+fmtETA(totalQueueMs())+')';
+  const totalQ=queueTotalMs();
+  const remaining=Math.max(0,24*H-totalQ);
+  document.getElementById('etaLine').textContent='Fin dans '+fmtDur(totalQueueMs())+' ('+fmtETA(totalQueueMs())+') · '+fmtDur(remaining)+' disponible';
 }
 
 function adjustGroup(groupIdx,delta){
@@ -1210,11 +1222,29 @@ function removeGroup(startIdx,endIdx){
   if(!G.queue.length)G.queueStart=null;
   save();renderQueue();
 }
+function queueTotalMs(){
+  return G.queue.reduce((s,id)=>{const a=ACTS.find(x=>x.id===id);return s+(a?a.dur:0);},0);
+}
+
 function addToQueue(actId,qty){
   const act=ACTS.find(a=>a.id===actId);if(!act||!unlocked(act))return;
-  for(let i=0;i<qty;i++)G.queue.push(actId);
-  if(!G.queueStart&&G.queue.length)G.queueStart=Date.now();
-  save();renderQueue();renderActList();
+  const MAX_MS=24*H;
+  let added=0;
+  for(let i=0;i<qty;i++){
+    if(queueTotalMs()+act.dur>MAX_MS){
+      if(added===0){
+        addLog('File pleine — maximum 24h de contenu planifiable.','ev');
+        renderLog();
+      }
+      break;
+    }
+    G.queue.push(actId);
+    added++;
+  }
+  if(added>0){
+    if(!G.queueStart&&G.queue.length)G.queueStart=Date.now();
+    save();renderQueue();renderActList();
+  }
 }
 function removeFromQueue(idx){G.queue.splice(idx,1);if(idx===0)G.queueStart=G.queue.length?Date.now():null;if(!G.queue.length)G.queueStart=null;save();renderQueue();}
 function clearQueue(){G.queue=[];G.queueStart=null;addLog('File d\'attente vidée.','');save();renderQueue();renderLog();}
