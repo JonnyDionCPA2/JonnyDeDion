@@ -471,8 +471,6 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
     </div>
   </div>
 
-<div class="sec"><span>JOURNAL DE WESTMARCHE — <span style="font-size:0.65rem;letter-spacing:.05em;">5 dernières entrées</span></span></div>
-  <div class="log-area" id="log"></div>
   <div class="foot"><span class="dot"></span><span>Sauvegardé · Calcul hors-ligne actif (max 24h)</span><button class="rbtn" id="rbtn">Recommencer</button></div>
 </div>
 </div>
@@ -1054,11 +1052,6 @@ function updSkill(sk){
 // --- Log ---
 function addLog(m,tp=''){G.log.unshift({t:nowStr(),m,tp});if(G.log.length>25)G.log.pop();}
 function renderLog(){
-  // Mini log — last 5 entries only
-  document.getElementById('log').innerHTML=G.log.slice(0,5).map(e=>{
-    const cls=e.tp==='r'?'lr':e.tp==='l'?'ll':e.tp==='ev'?'lev':e.tp==='off'?'loff':e.tp==='buy'?'lbuy':e.tp==='sell'?'lsell':'';
-    return'<div class="le"><span class="lt">'+e.t+'</span><span class="'+cls+'">'+e.m+'</span></div>';
-  }).join('');
   // Update full journal if visible
   if(document.getElementById('page-journal').classList.contains('active'))renderJournalFull();
 }
