@@ -1050,7 +1050,7 @@ function updSkill(sk){
 }
 
 // --- Log ---
-function addLog(m,tp=''){G.log.unshift({t:nowStr(),m,tp});if(G.log.length>25)G.log.pop();}
+function addLog(m,tp=''){G.log.unshift({t:nowStr(),m,tp});if(G.log.length>200)G.log.pop();}
 function renderLog(){
   // Update full journal if visible
   if(document.getElementById('page-journal').classList.contains('active'))renderJournalFull();
