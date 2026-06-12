@@ -224,6 +224,32 @@ h1.site-title{font-family:'Cinzel',serif;font-size:0.85rem;letter-spacing:.18em;
 .modal-result{font-size:0.9rem;color:var(--teal);font-style:italic;margin-top:1rem;padding:.75rem;background:rgba(26,74,58,.06);border-radius:2px;display:none;}
 .modal-continue{font-family:'Cinzel',serif;font-size:0.8rem;color:#fff;background:var(--teal);border:none;border-radius:2px;padding:.5rem 1.2rem;cursor:pointer;margin-top:1rem;display:none;}
 
+/* Journal full page */
+.journal-wrap{padding:1.25rem 2rem;}
+.journal-filter{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;}
+.jf-btn{font-family:'Cinzel',serif;font-size:0.7rem;letter-spacing:.08em;color:var(--ink3);background:none;border:1px solid var(--border);border-radius:2px;padding:4px 12px;cursor:pointer;transition:all .12s;}
+.jf-btn:hover{background:rgba(90,60,20,.05);}
+.jf-btn.active{color:var(--ink);background:rgba(90,60,20,.07);border-color:rgba(90,60,20,.3);}
+.journal-entry{font-size:0.9rem;line-height:1.7;padding:.4rem 0;border-bottom:1px solid rgba(90,60,20,.07);color:var(--ink2);display:flex;gap:8px;}
+.journal-entry:last-child{border-bottom:none;}
+.je-time{font-size:0.7rem;font-family:'Cinzel',serif;color:var(--ink3);white-space:nowrap;padding-top:2px;min-width:42px;}
+.je-text{flex:1;}
+.je-r{color:var(--teal);}
+.je-l{color:var(--gold);font-style:italic;}
+.je-ev{color:var(--red);font-style:italic;}
+.je-off{color:#8a6a20;font-style:italic;}
+.je-buy{color:var(--gold);}
+
+/* Decision area under queue */
+.decision-area{border-top:1px solid var(--border);padding:.75rem 1rem;display:none;}
+.decision-area.visible{display:block;}
+.decision-eyebrow{font-family:'Cinzel',serif;font-size:0.68rem;letter-spacing:.1em;color:var(--red);margin-bottom:.4rem;}
+.decision-desc{font-size:0.85rem;font-style:italic;color:var(--ink2);line-height:1.5;margin-bottom:.75rem;}
+.decision-choices{display:flex;flex-direction:column;gap:6px;}
+.decision-btn{background:rgba(255,255,255,.4);border:1px solid var(--border);border-radius:2px;padding:.5rem .75rem;cursor:pointer;font-size:0.82rem;color:var(--ink2);text-align:left;transition:all .12s;font-family:'Crimson Pro',serif;}
+.decision-btn:hover{background:rgba(26,74,58,.07);border-color:rgba(26,74,58,.3);color:var(--ink);}
+.decision-result{font-size:0.82rem;color:var(--teal);font-style:italic;margin-top:.6rem;padding:.5rem .75rem;background:rgba(26,74,58,.05);border-radius:2px;display:none;}
+
 footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spacing:.1em;color:rgba(196,150,42,.3);position:relative;z-index:1;}
 
 @media(max-width:600px){
@@ -350,6 +376,7 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
     <div class="tab" onclick="showTab('equipment')">ÉQUIPEMENT</div>
     <div class="tab" onclick="showTab('leaderboard')">CLASSEMENT</div>
     <div class="tab" onclick="showTab('lottery')">LOTERIE</div>
+    <div class="tab" onclick="showTab('journal')">JOURNAL</div>
   </div>
 
   <div class="page active" id="page-activities">
@@ -368,6 +395,13 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
           <span class="qty-label">FOIS</span>
         </div>
         <div class="eta-line" id="etaLine">Planifie des activités pour commencer.</div>
+        <!-- Decision area for activity events -->
+        <div class="decision-area" id="decisionArea">
+          <div class="decision-eyebrow">⚑ ÉVÉNEMENT</div>
+          <div class="decision-desc" id="decisionDesc"></div>
+          <div class="decision-choices" id="decisionChoices"></div>
+          <div class="decision-result" id="decisionResult"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -424,19 +458,20 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
     </div>
   </div>
 
-  <!-- Event Modal -->
-<div class="modal-overlay" id="eventModal" style="display:none;">
-  <div class="modal-box">
-    <div class="modal-eyebrow" id="modalEyebrow">ÉVÉNEMENT</div>
-    <div class="modal-title" id="modalTitle"></div>
-    <div class="modal-desc" id="modalDesc"></div>
-    <div class="modal-choices" id="modalChoices"></div>
-    <div class="modal-result" id="modalResult"></div>
-    <button class="modal-continue" id="modalContinue" onclick="closeEventModal()">Continuer</button>
+    <!-- Journal full page -->
+  <div class="page" id="page-journal">
+    <div class="journal-wrap">
+      <div class="journal-filter">
+        <button class="jf-btn active" onclick="filterJournal('all')" id="jf-all">TOUT</button>
+        <button class="jf-btn" onclick="filterJournal('ev')" id="jf-ev">ÉVÉNEMENTS</button>
+        <button class="jf-btn" onclick="filterJournal('r')" id="jf-r">RÉCOMPENSES</button>
+        <button class="jf-btn" onclick="filterJournal('l')" id="jf-l">NIVEAUX</button>
+      </div>
+      <div id="journal-full"></div>
+    </div>
   </div>
-</div>
 
-<div class="sec"><span>JOURNAL DE WESTMARCHE</span></div>
+<div class="sec"><span>JOURNAL DE WESTMARCHE — <span style="font-size:0.65rem;letter-spacing:.05em;">5 dernières entrées</span></span></div>
   <div class="log-area" id="log"></div>
   <div class="foot"><span class="dot"></span><span>Sauvegardé · Calcul hors-ligne actif (max 24h)</span><button class="rbtn" id="rbtn">Recommencer</button></div>
 </div>
@@ -641,8 +676,8 @@ const ACT_EVENTS={
 function rollActivityEvent(actId, hoursElapsed){
   const pool = ACT_EVENTS[actId];
   if(!pool) return null;
-  // 0.1% chance per hour = 0.001 per hour
-  const eventChance = 1 - Math.pow(0.999, hoursElapsed);
+  // 1% chance per hour (temp for testing, final: ~0.21%/h = 5%/day)
+  const eventChance = 1 - Math.pow(0.99, hoursElapsed);
   if(Math.random() > eventChance) return null;
   return pool[Math.floor(Math.random()*pool.length)];
 }
@@ -1019,9 +1054,32 @@ function updSkill(sk){
 // --- Log ---
 function addLog(m,tp=''){G.log.unshift({t:nowStr(),m,tp});if(G.log.length>25)G.log.pop();}
 function renderLog(){
-  document.getElementById('log').innerHTML=G.log.map(e=>{
+  // Mini log — last 5 entries only
+  document.getElementById('log').innerHTML=G.log.slice(0,5).map(e=>{
     const cls=e.tp==='r'?'lr':e.tp==='l'?'ll':e.tp==='ev'?'lev':e.tp==='off'?'loff':e.tp==='buy'?'lbuy':e.tp==='sell'?'lsell':'';
     return'<div class="le"><span class="lt">'+e.t+'</span><span class="'+cls+'">'+e.m+'</span></div>';
+  }).join('');
+  // Update full journal if visible
+  if(document.getElementById('page-journal').classList.contains('active'))renderJournalFull();
+}
+
+let _journalFilter='all';
+function filterJournal(type){
+  _journalFilter=type;
+  document.querySelectorAll('.jf-btn').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('jf-'+type);
+  if(btn)btn.classList.add('active');
+  renderJournalFull();
+}
+
+function renderJournalFull(){
+  const el=document.getElementById('journal-full');
+  if(!el)return;
+  const entries=_journalFilter==='all'?G.log:G.log.filter(e=>e.tp===_journalFilter);
+  if(!entries.length){el.innerHTML='<div style="font-size:0.9rem;font-style:italic;color:var(--ink3);padding:.5rem 0;">Aucune entrée pour ce filtre.</div>';return;}
+  el.innerHTML=entries.map(e=>{
+    const cls=e.tp==='r'?'je-r':e.tp==='l'?'je-l':e.tp==='ev'?'je-ev':e.tp==='off'?'je-off':e.tp==='buy'?'je-buy':'';
+    return'<div class="journal-entry"><span class="je-time">'+e.t+'</span><span class="je-text '+cls+'">'+e.m+'</span></div>';
   }).join('');
 }
 
@@ -1455,7 +1513,7 @@ function tick(){
 // --- Tabs ---
 function showTab(tab){
   currentTab=tab;
-  const tabs=['activities','market','equipment','leaderboard','lottery'];
+  const tabs=['activities','market','equipment','leaderboard','lottery','journal'];
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs[i]===tab));
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+tab).classList.add('active');
@@ -1463,6 +1521,7 @@ function showTab(tab){
   if(tab==='equipment')renderEquipment();
   if(tab==='leaderboard')renderLeaderboard();
   if(tab==='lottery')renderLottery();
+  if(tab==='journal')renderJournalFull();
 }
 
 // --- Reset ---
@@ -1477,34 +1536,41 @@ document.getElementById('rbtn').onclick=()=>{
 };
 document.getElementById('qtyInput').addEventListener('input',renderActList);
 
-// --- Event Modal ---
-let eventQueue=[];
+// --- Decision Area (inline under queue) ---
+let _pendingDecisions=[];
+let _currentDecision=null;
 
 function queueEvent(evt, actName){
-  eventQueue.push({evt, actName});
+  _pendingDecisions.push({evt, actName});
 }
 
 function processEventQueue(){
-  if(!eventQueue.length) return;
-  showEventModal(eventQueue.shift());
+  if(!_pendingDecisions.length)return;
+  showDecision(_pendingDecisions[0]);
 }
 
-function showEventModal(item){
-  const{evt, actName}=item;
-  document.getElementById('eventModal').style.display='flex';
-  document.getElementById('modalEyebrow').textContent='ÉVÉNEMENT — '+actName.toUpperCase();
-  document.getElementById('modalDesc').textContent=evt.desc;
-  document.getElementById('modalResult').style.display='none';
-  document.getElementById('modalContinue').style.display='none';
-  document.getElementById('modalChoices').innerHTML=evt.choices.map((c,i)=>
-    '<button class="modal-choice" onclick="resolveChoice('+i+')">'+c.text+'</button>'
+function showDecision(item){
+  _currentDecision=item;
+  const{evt,actName}=item;
+  const area=document.getElementById('decisionArea');
+  area.classList.add('visible');
+  document.getElementById('decisionDesc').textContent=evt.desc;
+  document.getElementById('decisionResult').style.display='none';
+  document.getElementById('decisionChoices').innerHTML=evt.choices.map((c,i)=>
+    '<button class="decision-btn" onclick="resolveDecision('+i+')">'+c.text+'</button>'
   ).join('');
-  // Store current event for resolution
-  window._currentModalEvent=item;
+  // Switch to activities tab so player sees it
+  showTab('activities');
+  // Scroll to decision area
+  setTimeout(()=>{
+    const el=document.getElementById('decisionArea');
+    if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});
+  },300);
 }
 
-function resolveChoice(idx){
-  const{evt,actName}=window._currentModalEvent;
+function resolveDecision(idx){
+  if(!_currentDecision)return;
+  const{evt,actName}=_currentDecision;
   const choice=evt.choices[idx];
 
   // Apply rewards
@@ -1515,28 +1581,29 @@ function resolveChoice(idx){
     if(choice.reward.item){G.inv[choice.reward.item]=(G.inv[choice.reward.item]||0)+(choice.reward.qty||1);}
   }
 
-  // Record choice in history for future narrative use
+  // Record choice in history
   if(!G.choiceHistory)G.choiceHistory=[];
   G.choiceHistory.push({eventId:evt.id,choiceIdx:idx,ts:Date.now()});
 
-  // Show result
-  document.getElementById('modalChoices').innerHTML='';
-  const resEl=document.getElementById('modalResult');
+  // Show result inline
+  document.getElementById('decisionChoices').innerHTML='';
+  const resEl=document.getElementById('decisionResult');
   resEl.textContent=choice.msg;
   resEl.style.display='block';
-  document.getElementById('modalContinue').style.display='inline-block';
 
   addLog('Événement — '+actName+' : '+choice.msg,'ev');
   renderInv();renderLog();save();
-}
 
-function closeEventModal(){
-  document.getElementById('eventModal').style.display='none';
-  window._currentModalEvent=null;
-  // Process next event in queue if any
-  if(eventQueue.length>0){
-    setTimeout(()=>showEventModal(eventQueue.shift()),300);
-  }
+  // Remove from queue and show next after delay
+  _pendingDecisions.shift();
+  _currentDecision=null;
+  setTimeout(()=>{
+    if(_pendingDecisions.length>0){
+      showDecision(_pendingDecisions[0]);
+    } else {
+      document.getElementById('decisionArea').classList.remove('visible');
+    }
+  },2500);
 }
 
 // --- Boot ---
