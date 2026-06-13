@@ -953,7 +953,7 @@ const INTRO_SEQUENCES={
     prologue:[
       "Westmarche. Une ville qui se couche tard et dort mal. Tu as 14 ans, tu connais chaque ombre entre la Ruelle des Murmures et le marché bas.",
       "Les gens t'aiment sans te connaître. C'est comme ça que tu veux que ça reste.",
-      "Il y a sept ans, tu avais 7 ans. Une nuit dans la ruelle derrière l'auberge du Vieux Pont. Une silhouette en manteau sombre. Un bruit sourd. Et toi — trop petit, trop seul, trop effrayé pour comprendre ce que tu voyais."
+      "Tu avais sept ans. C'est l'âge où les choses qu'on voit restent. Une nuit dans la ruelle derrière l'auberge du Vieux Pont. Une silhouette en manteau sombre. Un bruit sourd. Et toi — trop petit, trop seul, trop effrayé pour comprendre."
     ],
     choices:[
       {
@@ -1935,7 +1935,7 @@ function renderIntroStep(){
   else if(_introState.step===4){
     textEl.textContent=seq.revelation;
     document.getElementById('intro-item-name').textContent=seq.item.name;
-    document.getElementById('intro-item-desc').textContent=seq.item.desc+'\n\n'+seq.item.effect;
+    document.getElementById('intro-item-desc').textContent=seq.item.desc;
     itemEl.style.display='block';
     cont.textContent='Commencer mon histoire →';
   }
