@@ -1142,7 +1142,7 @@ function updSkill(sk){
   const mod=getModifier(lv);
   const modStr=fmtMod(mod);
   const col=modColor(mod);
-  document.getElementById(UI[sk].l).innerHTML=lv+' <span style="font-size:0.75rem;color:'+col+';font-family:'Cinzel',serif;">'+modStr+'</span>';
+  document.getElementById(UI[sk].l).innerHTML=lv+' <span style="font-size:0.75rem;color:'+col+';font-family:Cinzel,serif;">'+modStr+'</span>';
   document.getElementById(UI[sk].b).style.width=Math.round(xp/n*100)+'%';
   document.getElementById(UI[sk].x).textContent=xp+'/'+n;
 }
