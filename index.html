@@ -273,6 +273,26 @@ h1.site-title{font-family:'Cinzel',serif;font-size:0.85rem;letter-spacing:.18em;
 .pt-val{font-family:'Cinzel',serif;font-size:0.85rem;color:var(--gold);min-width:30px;font-weight:500;}
 .pt-desc{font-size:0.78rem;font-style:italic;color:var(--ink3);}
 
+/* Intro narrative screen */
+.intro-overlay{position:fixed;inset:0;background:rgba(26,15,5,0.97);z-index:200;display:flex;align-items:center;justify-content:center;padding:2rem;}
+.intro-box{max-width:640px;width:100%;display:flex;flex-direction:column;gap:1.5rem;}
+.intro-eyebrow{font-family:'Cinzel',serif;font-size:0.7rem;letter-spacing:.18em;color:rgba(196,150,42,.5);text-transform:uppercase;}
+.intro-text{font-family:'Crimson Pro',serif;font-size:1.1rem;color:rgba(245,240,224,.85);line-height:1.8;font-style:italic;}
+.intro-question{font-family:'Cinzel',serif;font-size:1rem;color:rgba(245,240,224,.95);line-height:1.5;margin-top:.5rem;}
+.intro-choices{display:flex;flex-direction:column;gap:10px;margin-top:.5rem;}
+.intro-choice{background:rgba(255,255,255,.04);border:1px solid rgba(196,150,42,.2);border-radius:3px;padding:.85rem 1.2rem;cursor:pointer;transition:all .2s;text-align:left;}
+.intro-choice:hover{background:rgba(196,150,42,.08);border-color:rgba(196,150,42,.45);}
+.intro-choice-text{font-family:'Cinzel',serif;font-size:0.85rem;color:rgba(245,240,224,.9);}
+.intro-choice-flavor{font-size:0.78rem;font-style:italic;color:rgba(196,150,42,.6);margin-top:4px;display:none;}
+.intro-choice.selected .intro-choice-flavor{display:block;}
+.intro-divider{height:1px;background:rgba(196,150,42,.15);}
+.intro-continue{font-family:'Cinzel',serif;font-size:0.8rem;letter-spacing:.1em;color:rgba(26,15,5,1);background:rgba(196,150,42,.8);border:none;border-radius:2px;padding:.6rem 1.5rem;cursor:pointer;align-self:flex-end;transition:background .15s;}
+.intro-continue:hover{background:rgba(196,150,42,1);}
+.intro-continue:disabled{opacity:.3;cursor:not-allowed;}
+.intro-item-reveal{background:rgba(196,150,42,.07);border:1px solid rgba(196,150,42,.25);border-radius:3px;padding:1rem 1.25rem;}
+.intro-item-name{font-family:'Cinzel',serif;font-size:1rem;color:rgba(196,150,42,.9);margin-bottom:.4rem;}
+.intro-item-desc{font-size:0.85rem;font-style:italic;color:rgba(245,240,224,.7);line-height:1.6;}
+
 footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spacing:.1em;color:rgba(196,150,42,.3);position:relative;z-index:1;}
 
 @media(max-width:600px){
@@ -368,6 +388,22 @@ footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spac
 </div>
 
 <!-- Game Screen -->
+<!-- Intro Narrative Screen -->
+<div class="intro-overlay" id="intro-screen" style="display:none;">
+  <div class="intro-box">
+    <div class="intro-eyebrow" id="intro-eyebrow">Westmarche · Ton histoire commence</div>
+    <div class="intro-text" id="intro-text"></div>
+    <div class="intro-divider" id="intro-divider" style="display:none;"></div>
+    <div class="intro-question" id="intro-question" style="display:none;"></div>
+    <div class="intro-choices" id="intro-choices"></div>
+    <div class="intro-item-reveal" id="intro-item-reveal" style="display:none;">
+      <div class="intro-item-name" id="intro-item-name"></div>
+      <div class="intro-item-desc" id="intro-item-desc"></div>
+    </div>
+    <button class="intro-continue" id="intro-continue" onclick="introNext()">Continuer →</button>
+  </div>
+</div>
+
 <div class="wrap" id="game-screen">
 <div class="parch">
   <div class="hd">
@@ -911,6 +947,92 @@ const HINDRANCE_STATS={
   'Imposteur':   {c:1,s:1,a:2,v:4},
 };
 
+// Narrative introduction sequences by hindrance
+const INTRO_SEQUENCES={
+  'Agoraphobie':{
+    prologue:[
+      "Westmarche. Une ville qui se couche tard et dort mal. Tu as 14 ans, tu connais chaque ombre entre la Ruelle des Murmures et le marché bas.",
+      "Les gens t'aiment sans te connaître. C'est comme ça que tu veux que ça reste.",
+      "Il y a sept ans, tu avais 7 ans. Une nuit dans la ruelle derrière l'auberge du Vieux Pont. Une silhouette en manteau sombre. Un bruit sourd. Et toi — trop petit, trop seul, trop effrayé pour comprendre ce que tu voyais."
+    ],
+    choices:[
+      {
+        id:'c1',
+        question:"Cette nuit-là, qu'est-ce que tu as fait ?",
+        options:[
+          {
+            id:'A',
+            text:"Tu as couru sans regarder derrière",
+            flavor:"Tes jambes t'ont sauvé. Ta mémoire, moins. Tu ne te souviens que du froid et du bruit de tes pieds sur les pavés.",
+            reward:{subskill:{sk:'s',name:'Discrétion',amount:1}}
+          },
+          {
+            id:'B',
+            text:"Tu t'es caché et tu as tout regardé",
+            flavor:"Tu as retenu ton souffle pendant ce qui t'a semblé une éternité. Tu as tout vu. Assez pour ne plus jamais dormir dans cette ruelle.",
+            reward:{subskill:{sk:'s',name:'Perception',amount:1}}
+          }
+        ]
+      },
+      {
+        id:'c2',
+        question:null, // set dynamically based on c1
+        options:{
+          'A':{
+            question:"Depuis cette nuit-là, tu évites ce quartier. Mais ce matin, quelqu'un a glissé une note sous ta porte. 'Je sais ce que tu as vu.' Qu'est-ce que tu fais ?",
+            options:[
+              {
+                id:'A1',
+                text:"Tu ignores la note et sors par les toits",
+                flavor:"Si quelqu'un te cherche, il ne te trouvera pas. C'est ton terrain.",
+                reward:{subskill:{sk:'s',name:'Discrétion',amount:1}}
+              },
+              {
+                id:'A2',
+                text:"Tu vas au rendez-vous indiqué",
+                flavor:"La curiosité a toujours été ton vrai problème. Tu y vas quand même.",
+                reward:{subskill:{sk:'s',name:'Opportunisme',amount:1}}
+              }
+            ]
+          },
+          'B':{
+            question:"Tu n'as jamais parlé de cette nuit. Mais ce soir, en fouillant la ruelle par habitude, quelque chose brille entre deux pavés.",
+            options:[
+              {
+                id:'B1',
+                text:"Tu le prends sans réfléchir",
+                flavor:"D'abord prendre, réfléchir ensuite. Ça t'a toujours bien servi.",
+                reward:{subskill:{sk:'s',name:'Opportunisme',amount:1}}
+              },
+              {
+                id:'B2',
+                text:"Tu l'examines longuement avant de toucher",
+                flavor:"Tu lis les situations comme les autres lisent les visages. Quelque chose dans cet objet te trouble.",
+                reward:{subskill:{sk:'s',name:'Perception',amount:1}}
+              }
+            ]
+          }
+        }
+      }
+    ],
+    convergence:{
+      'A1':"Sur les toits ce matin, tu as failli trébucher sur quelque chose. Un petit paquet enveloppé dans un chiffon sombre, posé là comme si quelqu'un savait que tu passerais par là. Il n'y a personne.",
+      'A2':"Au rendez-vous, personne. Juste une table renversée et, dessous, un objet enveloppé dans un chiffon sombre. Quelqu'un voulait que tu l'aies — mais ne voulait pas être vu.",
+      'B1':"L'objet dans ta main est froid, plus lourd que sa taille le laisse croire. Tu réalises en l'examinant que tu l'as peut-être pris à quelqu'un qui le cherche encore.",
+      'B2':"L'objet que tu examines est plus vieux que toi. Il a voyagé, changé de mains. Et quelque chose dans sa forme te rappelle vaguement cette nuit — sans que tu puisses expliquer pourquoi."
+    },
+    revelation:"Une moitié de médaillon en fer sombre. L'autre moitié manque. Les armoiries ont été partiellement martelées — on distingue à peine la silhouette d'un renard. Tu ne sais pas ce que c'est. Tu le mets autour de ton cou. Depuis ce moment, tu as l'impression que quelqu'un te regarde.",
+    item:{
+      id:'medallion',
+      name:'Le Médaillon Brisé',
+      desc:"Une moitié de médaillon en fer sombre. Les armoiries martelées laissent deviner la silhouette d'un renard. Tu le portes sans savoir pourquoi. Depuis que tu l'as au cou, tu as l'impression que quelqu'un te regarde.",
+      effect:'Déclencheur de la rencontre avec Aldric Renart (Combat 40+)',
+      slot:'medallion',
+      rare:true
+    }
+  }
+};
+
 const START_SUBSKILLS={
   'Traumatisme': {c:{'Brutalité':2,'Stratégie':1},s:{},a:{},v:{}},
   'Agoraphobie': {c:{},s:{'Discrétion':2,'Perception':1},a:{},v:{}},
@@ -1080,7 +1202,7 @@ async function createPlayer(){
   G=def(selectedHindrance);
   localStorage.setItem(KEY+'_pid',player.id);
   localStorage.setItem(KEY+'_pid_'+player.id,JSON.stringify(G));
-  startGame();
+  startIntro(selectedHindrance);
 }
 
 async function loadPlayer(pid){
@@ -1741,6 +1863,135 @@ document.getElementById('rbtn').onclick=()=>{
   }
 };
 document.getElementById('qtyInput').addEventListener('input',renderActList);
+
+// --- Narrative Introduction Engine ---
+let _introState={
+  step:0,prologueIdx:0,c1choice:null,c2choice:null,seq:null,rewards:[]
+};
+
+function startIntro(hindrance){
+  const seq=INTRO_SEQUENCES[hindrance];
+  if(!seq){startGame();return;}
+  _introState={step:0,prologueIdx:0,c1choice:null,c2choice:null,seq,rewards:[]};
+  document.getElementById('intro-screen').style.display='flex';
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('creation-screen').style.display='none';
+  document.getElementById('game-screen').style.display='none';
+  renderIntroStep();
+}
+
+function renderIntroStep(){
+  const seq=_introState.seq;
+  const cont=document.getElementById('intro-continue');
+  const choicesEl=document.getElementById('intro-choices');
+  const questionEl=document.getElementById('intro-question');
+  const dividerEl=document.getElementById('intro-divider');
+  const itemEl=document.getElementById('intro-item-reveal');
+  const textEl=document.getElementById('intro-text');
+  choicesEl.innerHTML='';
+  questionEl.style.display='none';
+  dividerEl.style.display='none';
+  itemEl.style.display='none';
+  cont.disabled=false;
+
+  if(_introState.step===0){
+    document.getElementById('intro-eyebrow').textContent='Westmarche · Ton histoire commence';
+    textEl.textContent=seq.prologue[_introState.prologueIdx];
+    cont.textContent=_introState.prologueIdx<seq.prologue.length-1?'Continuer →':'Et cette nuit-là... →';
+  }
+  else if(_introState.step===1){
+    const c=seq.choices[0];
+    textEl.textContent='';
+    questionEl.textContent=c.question;
+    questionEl.style.display='block';
+    dividerEl.style.display='block';
+    choicesEl.innerHTML=c.options.map((opt,i)=>
+      '<div class="intro-choice" id="ichoice-'+i+'" onclick="selectIntroChoice(1,\''+opt.id+'\','+i+')">'
+      +'<div class="intro-choice-text">'+opt.text+'</div>'
+      +'<div class="intro-choice-flavor">'+opt.flavor+'</div>'
+      +'</div>'
+    ).join('');
+    cont.disabled=true;cont.textContent='Fais ton choix →';
+  }
+  else if(_introState.step===2){
+    const c2data=seq.choices[1].options[_introState.c1choice];
+    textEl.textContent='';
+    questionEl.textContent=c2data.question;
+    questionEl.style.display='block';
+    dividerEl.style.display='block';
+    choicesEl.innerHTML=c2data.options.map((opt,i)=>
+      '<div class="intro-choice" id="ichoice-'+i+'" onclick="selectIntroChoice(2,\''+opt.id+'\','+i+')">'
+      +'<div class="intro-choice-text">'+opt.text+'</div>'
+      +'<div class="intro-choice-flavor">'+opt.flavor+'</div>'
+      +'</div>'
+    ).join('');
+    cont.disabled=true;cont.textContent='Fais ton choix →';
+  }
+  else if(_introState.step===3){
+    document.getElementById('intro-eyebrow').textContent='Westmarche · Ce que tu trouves';
+    textEl.textContent=seq.convergence[_introState.c2choice];
+    cont.textContent='Regarder de plus près →';
+  }
+  else if(_introState.step===4){
+    textEl.textContent=seq.revelation;
+    document.getElementById('intro-item-name').textContent=seq.item.name;
+    document.getElementById('intro-item-desc').textContent=seq.item.desc+'\n\n'+seq.item.effect;
+    itemEl.style.display='block';
+    cont.textContent='Commencer mon histoire →';
+  }
+  else if(_introState.step===5){
+    applyIntroRewards();
+    document.getElementById('intro-screen').style.display='none';
+    startGame();
+  }
+}
+
+function selectIntroChoice(choiceNum,optId,idx){
+  document.querySelectorAll('.intro-choice').forEach(el=>el.classList.remove('selected'));
+  document.getElementById('ichoice-'+idx).classList.add('selected');
+  document.getElementById('intro-continue').disabled=false;
+  document.getElementById('intro-continue').textContent='Continuer →';
+  const seq=_introState.seq;
+  if(choiceNum===1){
+    _introState.c1choice=optId;
+    const opt=seq.choices[0].options.find(o=>o.id===optId);
+    if(opt&&opt.reward)_introState.rewards.push(opt.reward);
+  } else {
+    _introState.c2choice=optId;
+    const c2opts=seq.choices[1].options[_introState.c1choice].options;
+    const opt=c2opts.find(o=>o.id===optId);
+    if(opt&&opt.reward)_introState.rewards.push(opt.reward);
+  }
+}
+
+function introNext(){
+  if(_introState.step===0){
+    if(_introState.prologueIdx<_introState.seq.prologue.length-1){_introState.prologueIdx++;}
+    else{_introState.step=1;}
+  } else if(_introState.step===1){
+    if(!_introState.c1choice)return;
+    _introState.step=2;
+  } else if(_introState.step===2){
+    if(!_introState.c2choice)return;
+    _introState.step=3;
+  } else {
+    _introState.step++;
+  }
+  renderIntroStep();
+}
+
+function applyIntroRewards(){
+  _introState.rewards.forEach(r=>{
+    if(r.subskill)addSubskill(r.subskill.sk,r.subskill.name,r.subskill.amount);
+  });
+  const item=_introState.seq.item;
+  if(item){
+    G.equipment=G.equipment.filter(e=>e.slot!==item.slot);
+    G.equipment.push({id:item.id,name:item.name,desc:item.desc,effect:item.effect,slot:item.slot,rare:item.rare});
+  }
+  G.choiceHistory.push({eventId:'intro',c1:_introState.c1choice,c2:_introState.c2choice,ts:Date.now()});
+  save();
+}
 
 function renderPersonnage(){
   const el=document.getElementById('subskill-grid');
