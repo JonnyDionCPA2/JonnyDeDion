@@ -266,6 +266,7 @@ h1.site-title{font-family:'Cinzel',serif;font-size:0.85rem;letter-spacing:.18em;
 .subskill-bar{height:3px;background:rgba(90,60,20,.1);border-radius:1px;}
 .subskill-fill{height:100%;border-radius:1px;background:var(--gold);transition:width .5s;}
 .subskill-fill.specialized{background:var(--teal);}
+.subskill-fill.limited{background:var(--red);}
 .perso-thresholds{display:flex;flex-direction:column;gap:6px;margin-top:.6rem;}
 .perso-thresh{display:flex;align-items:center;gap:12px;padding:.4rem .6rem;background:rgba(255,255,255,.3);border:1px solid var(--border);border-radius:2px;}
 .pt-name{font-family:'Cinzel',serif;font-size:0.75rem;color:var(--ink);min-width:160px;}
@@ -725,6 +726,83 @@ function rollActivityEvent(actId, hoursElapsed){
   return pool[Math.floor(Math.random()*pool.length)];
 }
 
+// Hindrance malus system for D20 narrative checks
+const HINDRANCE_MALUS={
+  'Agoraphobie': {
+    type:'auto_fail',
+    chance:0.05,
+    msg:"L'anxiété prend le dessus. Tu te figes au mauvais moment."
+  },
+  'Traumatisme': {
+    type:'disadvantage',
+    chance:0.07,
+    msg:"Un souvenir remonte sans prévenir. Ta main tremble légèrement."
+  },
+  'Solitude': {
+    type:'social_penalty',
+    penalty:-2,
+    msg:"Les mots ne viennent pas naturellement. Tu te sens hors de ta zone."
+  },
+  'Imposteur': {
+    type:'npc_block',
+    chance:0.20,
+    msg:"Ce personnage te regarde avec méfiance. Il ne te fait pas confiance."
+  },
+};
+
+// Apply hindrance malus to a D20 roll
+// Returns {blocked, autoFail, penalty, msg} 
+function applyHindranceMalus(hindrance, isSocial=false){
+  const malus=HINDRANCE_MALUS[hindrance];
+  if(!malus)return{blocked:false,autoFail:false,penalty:0,msg:''};
+  
+  if(malus.type==='auto_fail'&&Math.random()<malus.chance)
+    return{blocked:false,autoFail:true,penalty:0,msg:malus.msg};
+  
+  if(malus.type==='disadvantage'&&Math.random()<malus.chance)
+    return{blocked:false,autoFail:false,disadvantage:true,penalty:0,msg:malus.msg};
+  
+  if(malus.type==='social_penalty'&&isSocial)
+    return{blocked:false,autoFail:false,penalty:malus.penalty,msg:malus.msg};
+  
+  if(malus.type==='npc_block'&&Math.random()<malus.chance)
+    return{blocked:true,autoFail:false,penalty:0,msg:malus.msg};
+  
+  return{blocked:false,autoFail:false,penalty:0,msg:''};
+}
+
+// Core D20 narrative check
+// skillKey: 'c','s','a','v' | subskillName: string | threshold: number | isSocial: bool
+function narrativeCheck(skillKey, subskillName, threshold, isSocial=false){
+  const hindrance=PLAYER?PLAYER.hindrance:'';
+  const malus=applyHindranceMalus(hindrance, isSocial);
+  
+  if(malus.blocked) return{success:false,roll:0,total:0,blocked:true,msg:malus.msg};
+  if(malus.autoFail) return{success:false,roll:0,total:0,autoFail:true,msg:malus.msg};
+  
+  const mod=getModifier(G.sk[skillKey]);
+  const sub=getSubskill(skillKey,subskillName);
+  
+  let roll1=Math.floor(Math.random()*20)+1;
+  let roll=roll1;
+  
+  if(malus.disadvantage){
+    const roll2=Math.floor(Math.random()*20)+1;
+    roll=Math.min(roll1,roll2); // take lower
+  }
+  
+  const total=roll+mod+sub+malus.penalty;
+  const success=total>=threshold;
+  
+  return{
+    success,roll,total,mod,sub,
+    disadvantage:malus.disadvantage||false,
+    penalty:malus.penalty||0,
+    malusMsg:malus.msg||'',
+    threshold
+  };
+}
+
 const LOTTERY_NAMES={
   c:"Les Frères d'Armes",
   s:'La Fraternité des Ruelles',
@@ -760,12 +838,33 @@ const SUBSKILLS={
   a:['Précision','Improvisation','Patience'],
   v:['Mémoire','Manipulation','Déduction'],
 };
-// Max subskill score by hindrance (2 specialized at 10, rest at 5)
+// Max subskill score by hindrance
+// Specialized (10): 2 per archetype | Neutral (5) | Limited by hindrance (3): 1 per archetype
 const SUBSKILL_CAPS={
-  'Traumatisme': {c:{'Brutalité':10,'Discipline':5,'Stratégie':10},s:{'Discrétion':5,'Perception':5,'Opportunisme':5},a:{'Précision':5,'Improvisation':5,'Patience':5},v:{'Mémoire':5,'Manipulation':5,'Déduction':5}},
-  'Agoraphobie': {c:{'Brutalité':5,'Discipline':5,'Stratégie':5},s:{'Discrétion':10,'Perception':10,'Opportunisme':5},a:{'Précision':5,'Improvisation':5,'Patience':5},v:{'Mémoire':5,'Manipulation':5,'Déduction':5}},
-  'Solitude':    {c:{'Brutalité':5,'Discipline':5,'Stratégie':5},s:{'Discrétion':5,'Perception':5,'Opportunisme':5},a:{'Précision':10,'Improvisation':5,'Patience':10},v:{'Mémoire':5,'Manipulation':5,'Déduction':5}},
-  'Imposteur':   {c:{'Brutalité':5,'Discipline':5,'Stratégie':5},s:{'Discrétion':5,'Perception':5,'Opportunisme':5},a:{'Précision':5,'Improvisation':5,'Patience':5},v:{'Mémoire':5,'Manipulation':10,'Déduction':10}},
+  'Traumatisme': {
+    c:{'Brutalité':10,'Discipline':5,'Stratégie':10},
+    s:{'Discrétion':5,'Perception':5,'Opportunisme':5},
+    a:{'Précision':5,'Improvisation':5,'Patience':5},
+    v:{'Mémoire':5,'Manipulation':3,'Déduction':5}
+  },
+  'Agoraphobie': {
+    c:{'Brutalité':3,'Discipline':5,'Stratégie':5},
+    s:{'Discrétion':10,'Perception':10,'Opportunisme':5},
+    a:{'Précision':5,'Improvisation':5,'Patience':5},
+    v:{'Mémoire':5,'Manipulation':5,'Déduction':5}
+  },
+  'Solitude': {
+    c:{'Brutalité':5,'Discipline':5,'Stratégie':5},
+    s:{'Discrétion':5,'Perception':3,'Opportunisme':5},
+    a:{'Précision':10,'Improvisation':5,'Patience':10},
+    v:{'Mémoire':5,'Manipulation':5,'Déduction':5}
+  },
+  'Imposteur': {
+    c:{'Brutalité':5,'Discipline':5,'Stratégie':5},
+    s:{'Discrétion':5,'Perception':5,'Opportunisme':5},
+    a:{'Précision':5,'Improvisation':5,'Patience':3},
+    v:{'Mémoire':5,'Manipulation':10,'Déduction':10}
+  },
 };
 function getSubskillCap(hindrance,sk,subname){
   if(!SUBSKILL_CAPS[hindrance])return 5;
@@ -812,14 +911,28 @@ const HINDRANCE_STATS={
   'Imposteur':   {c:1,s:1,a:2,v:4},
 };
 
+const START_SUBSKILLS={
+  'Traumatisme': {c:{'Brutalité':2,'Stratégie':1},s:{},a:{},v:{}},
+  'Agoraphobie': {c:{},s:{'Discrétion':2,'Perception':1},a:{},v:{}},
+  'Solitude':    {c:{},s:{},a:{'Précision':2,'Patience':1},v:{}},
+  'Imposteur':   {c:{},s:{},a:{},v:{'Manipulation':2,'Déduction':1}},
+};
+
 function def(hindrance){
   const stats=HINDRANCE_STATS[hindrance]||{c:1,s:1,a:1,v:1};
   const equip=START_EQUIP_BY_HINDRANCE[hindrance]||START_EQUIP_BY_HINDRANCE['Agoraphobie'];
+  const startSubs=START_SUBSKILLS[hindrance]||{c:{},s:{},a:{},v:{}};
   return{
     sk:{c:stats.c,s:stats.s,a:stats.a,v:stats.v},
     xp:{c:0,s:0,a:0,v:0},
     inv:{},gold:0,seen:[],equipment:[...equip],
-    queue:[],queueStart:null,lastSeen:Date.now(),lastLotteryCheck:0,pendingEvents:[],choiceHistory:[],subskills:{},pendingEvents:[],choiceMemory:{},
+    queue:[],queueStart:null,lastSeen:Date.now(),lastLotteryCheck:0,pendingEvents:[],choiceHistory:[],
+    subskills:{
+      c:{...startSubs.c},
+      s:{...startSubs.s},
+      a:{...startSubs.a},
+      v:{...startSubs.v},
+    },pendingEvents:[],choiceMemory:{},
     marketStock:{},lotteryEntries:{},
     log:[{t:'—',m:"Tu commences ta vie dans la Ruelle des Murmures. Que vas-tu faire ?",tp:''}]
   };
@@ -849,6 +962,7 @@ function showCreateScreen(){
 
 // Merge Supabase scores into local G state if Supabase has higher levels
 async function mergeSupabaseScores(playerId){
+  if(!G.subskills)G.subskills={c:{},s:{},a:{},v:{}};
   const{data:scores}=await sb.from('scores').select('*').eq('player_id',playerId).single();
   if(!scores)return;
   // Use the highest value between local and Supabase for each skill
@@ -1643,12 +1757,17 @@ function renderPersonnage(){
       const score=getSubskill(sk,sub);
       const cap=getSubskillCap(hindrance,sk,sub);
       const pct=Math.round((score/cap)*100);
-      const isSpec=cap>5;
+      const isSpec=cap>=10;
+      const isLimited=cap<=3;
+      let barClass='subskill-fill';
+      if(isSpec)barClass+=' specialized';
+      if(isLimited)barClass+=' limited';
+      let capLabel=cap===10?'★':cap===3?'⚑':'';
       return'<div class="subskill-row">'
-        +'<div class="subskill-name"><span>'+sub+'</span>'
+        +'<div class="subskill-name"><span>'+sub+(capLabel?' <span style="font-size:0.65rem;">'+capLabel+'</span>':'')+'</span>'
         +'<span><span class="subskill-score">'+score+'</span>'
         +'<span class="subskill-cap"> / '+cap+'</span></span></div>'
-        +'<div class="subskill-bar"><div class="subskill-fill'+(isSpec?' specialized':'')+'" style="width:'+pct+'%"></div></div>'
+        +'<div class="subskill-bar"><div class="'+barClass+'" style="width:'+pct+'%"></div></div>'
         +'</div>';
     }).join('');
     return'<div class="sk-group">'
