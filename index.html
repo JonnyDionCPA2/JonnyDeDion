@@ -1272,6 +1272,13 @@ function startGame(){
   renderInv();renderActList();renderQueue();renderLog();renderEquipment();
   syncScores();
   checkLotteryResults();
+  // Show intro if player hasn't completed it yet
+  if(!G.choiceHistory||!G.choiceHistory.find(e=>e.eventId==='intro')){
+    const h=PLAYER?PLAYER.hindrance:'';
+    if(INTRO_SEQUENCES[h]){
+      setTimeout(()=>startIntro(h),800);
+    }
+  }
   // Show pending events from offline play
   if(G.pendingEvents&&G.pendingEvents.length>0){
     setTimeout(showNextPendingEvent, 1500);
