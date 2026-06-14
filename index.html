@@ -293,6 +293,23 @@ h1.site-title{font-family:'Cinzel',serif;font-size:0.85rem;letter-spacing:.18em;
 .intro-item-name{font-family:'Cinzel',serif;font-size:1rem;color:rgba(196,150,42,.9);margin-bottom:.4rem;}
 .intro-item-desc{font-size:0.85rem;font-style:italic;color:rgba(245,240,224,.7);line-height:1.6;}
 
+/* Return summary popup */
+.return-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:150;display:flex;align-items:center;justify-content:center;padding:1rem;}
+.return-box{background:linear-gradient(135deg,#f7f0dc,#ede4c5);border:1px solid rgba(90,60,20,0.3);border-radius:3px;max-width:560px;width:100%;padding:2rem;box-shadow:0 20px 60px rgba(0,0,0,0.5);max-height:85vh;overflow-y:auto;}
+.return-eyebrow{font-family:'Cinzel',serif;font-size:0.7rem;letter-spacing:.12em;color:var(--ink3);margin-bottom:.75rem;}
+.return-title{font-family:'Cinzel',serif;font-size:1.2rem;color:var(--ink);margin-bottom:1.25rem;}
+.return-section{margin-bottom:1rem;}
+.return-section-hd{font-family:'Cinzel',serif;font-size:0.72rem;letter-spacing:.1em;color:var(--ink3);border-bottom:1px solid var(--border);padding-bottom:.3rem;margin-bottom:.6rem;}
+.return-levels{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.25rem;}
+.return-level-badge{font-family:'Cinzel',serif;font-size:0.78rem;background:rgba(196,150,42,.1);border:1px solid rgba(196,150,42,.3);border-radius:2px;padding:3px 10px;color:var(--gold);}
+.return-items{display:flex;flex-wrap:wrap;gap:6px;}
+.return-item{font-size:0.82rem;background:rgba(90,60,20,.07);border:1px solid var(--border);border-radius:2px;padding:2px 8px;color:var(--ink2);}
+.return-gold{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--gold);}
+.return-duration{font-size:0.85rem;font-style:italic;color:var(--ink3);margin-bottom:1rem;}
+.return-close{font-family:'Cinzel',serif;font-size:0.8rem;letter-spacing:.08em;color:#fff;background:var(--teal);border:none;border-radius:2px;padding:.55rem 1.5rem;cursor:pointer;width:100%;margin-top:.5rem;}
+.return-close:hover{background:#0d3328;}
+.return-none{font-size:0.85rem;font-style:italic;color:var(--ink3);}
+
 /* Audio player */
 .audio-player{position:fixed;bottom:1rem;right:1rem;z-index:50;display:flex;align-items:center;gap:8px;background:rgba(26,15,5,0.85);border:1px solid rgba(196,150,42,.25);border-radius:3px;padding:6px 12px;backdrop-filter:blur(4px);}
 .audio-btn{background:none;border:none;cursor:pointer;font-size:1rem;color:rgba(196,150,42,.7);padding:0;line-height:1;transition:color .15s;}
@@ -1454,6 +1471,13 @@ function rewardCycle(act){
 function processOffline(){
   const now=Date.now();let elapsed=Math.min(now-G.lastSeen,MAX_OFF);
   if(elapsed<60000||!G.queue.length)return;
+  
+  // Snapshot levels before processing
+  const levelsBefore={c:G.sk.c,s:G.sk.s,a:G.sk.a,v:G.sk.v};
+  const goldBefore=G.gold;
+  const itemsBefore={};
+  Object.entries(G.inv).forEach(([k,v])=>itemsBefore[k]=v);
+
   let cycles=0,summary={},timeLeft=elapsed;
   while(timeLeft>0&&G.queue.length){
     const act=headAct();if(!act)break;
@@ -1469,6 +1493,7 @@ function processOffline(){
       G.queue.shift();G.queueStart=G.queue.length?Date.now():null;
     } else {G.queueStart=G.queueStart?G.queueStart-timeLeft:now-timeLeft;break;}
   }
+
   if(cycles>0){
     addLog('Tu étais absent '+fmtDur(elapsed)+'. Résumé :','off');
     Object.entries(summary).forEach(([name,s])=>{
@@ -1478,7 +1503,64 @@ function processOffline(){
       if(s.gold>0)line+=', '+s.gold+' or';
       addLog(line,'r');
     });
+
+    // Build return summary
+    const levelsGained=[];
+    ['c','s','a','v'].forEach(sk=>{
+      for(let lv=levelsBefore[sk]+1;lv<=G.sk[sk];lv++){
+        levelsGained.push(SN[sk]+' '+lv);
+      }
+    });
+    const goldGained=G.gold-goldBefore;
+    const itemsGained={};
+    Object.entries(G.inv).forEach(([k,v])=>{
+      const before=itemsBefore[k]||0;
+      if(v>before)itemsGained[k]=v-before;
+    });
+    showReturnSummary(elapsed,levelsGained,goldGained,itemsGained);
   }
+}
+
+function showReturnSummary(elapsed,levelsGained,goldGained,itemsGained){
+  const overlay=document.getElementById('returnOverlay');
+  document.getElementById('returnTitle').textContent='Bienvenue de retour, '+( PLAYER?PLAYER.character_name:'voyageur')+'.';
+  document.getElementById('returnDuration').textContent='Tu étais absent depuis '+fmtDur(elapsed)+'.';
+
+  // Levels
+  const levelsEl=document.getElementById('returnLevels');
+  const levelsSec=document.getElementById('returnLevelsSection');
+  if(levelsGained.length){
+    levelsEl.innerHTML=levelsGained.map(l=>'<span class="return-level-badge">▲ '+l+'</span>').join('');
+    levelsSec.style.display='block';
+  } else {
+    levelsSec.style.display='none';
+  }
+
+  // Gold
+  const goldSec=document.getElementById('returnGoldSection');
+  if(goldGained>0){
+    document.getElementById('returnGold').textContent='+'+goldGained+' or';
+    goldSec.style.display='block';
+  } else {
+    goldSec.style.display='none';
+  }
+
+  // Items
+  const itemsEl=document.getElementById('returnItems');
+  const itemsSec=document.getElementById('returnItemsSection');
+  const itemEntries=Object.entries(itemsGained);
+  if(itemEntries.length){
+    itemsEl.innerHTML=itemEntries.map(([n,q])=>'<span class="return-item">'+q+'× '+n+'</span>').join('');
+    itemsSec.style.display='block';
+  } else {
+    itemsSec.style.display='none';
+  }
+
+  overlay.style.display='flex';
+}
+
+function closeReturnSummary(){
+  document.getElementById('returnOverlay').style.display='none';
 }
 
 // --- Market ---
@@ -2125,6 +2207,28 @@ function resolveDecision(idx){
   }
 })();
 </script>
+<!-- Return Summary Popup -->
+<div class="return-overlay" id="returnOverlay" style="display:none;">
+  <div class="return-box">
+    <div class="return-eyebrow">RAPPORT D'ABSENCE</div>
+    <div class="return-title" id="returnTitle">Bienvenue de retour</div>
+    <div class="return-duration" id="returnDuration"></div>
+    <div class="return-section" id="returnLevelsSection">
+      <div class="return-section-hd">NIVEAUX ATTEINTS</div>
+      <div class="return-levels" id="returnLevels"></div>
+    </div>
+    <div class="return-section" id="returnGoldSection">
+      <div class="return-section-hd">OR GAGNÉ</div>
+      <div class="return-gold" id="returnGold"></div>
+    </div>
+    <div class="return-section" id="returnItemsSection">
+      <div class="return-section-hd">ITEMS REÇUS</div>
+      <div class="return-items" id="returnItems"></div>
+    </div>
+    <button class="return-close" onclick="closeReturnSummary()">Reprendre l'aventure →</button>
+  </div>
+</div>
+
 <!-- Audio Player -->
 <div class="audio-player" id="audioPlayer">
   <span class="audio-label">♪</span>
