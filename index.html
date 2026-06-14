@@ -310,6 +310,28 @@ h1.site-title{font-family:'Cinzel',serif;font-size:0.85rem;letter-spacing:.18em;
 .return-close:hover{background:#0d3328;}
 .return-none{font-size:0.85rem;font-style:italic;color:var(--ink3);}
 
+/* Narrative event overlay */
+.nar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:180;display:flex;align-items:center;justify-content:center;padding:1.5rem;}
+.nar-box{background:linear-gradient(135deg,#f0e8cc,#e8ddb8);border:1px solid rgba(90,60,20,0.35);border-radius:3px;max-width:620px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 25px 70px rgba(0,0,0,0.6);}
+.nar-header{padding:1rem 1.5rem;border-bottom:1px solid rgba(90,60,20,0.2);display:flex;align-items:center;justify-content:space-between;}
+.nar-eyebrow{font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:.15em;color:var(--ink3);}
+.nar-title{font-family:'Cinzel',serif;font-size:1rem;color:var(--ink);margin-top:2px;}
+.nar-body{padding:1.5rem;}
+.nar-text{font-family:'Crimson Pro',serif;font-size:1rem;color:var(--ink2);line-height:1.8;margin-bottom:1.25rem;}
+.nar-choices{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem;}
+.nar-choice-btn{background:rgba(255,255,255,.35);border:1px solid rgba(90,60,20,.2);border-radius:2px;padding:.7rem 1rem;cursor:pointer;font-family:'Crimson Pro',serif;font-size:0.92rem;color:var(--ink2);text-align:left;transition:all .15s;}
+.nar-choice-btn:hover{background:rgba(26,74,58,.07);border-color:rgba(26,74,58,.3);color:var(--ink);}
+.nar-d20-section{background:rgba(90,60,20,.05);border:1px solid rgba(90,60,20,.15);border-radius:2px;padding:1rem;margin-bottom:1rem;}
+.nar-diff{font-family:'Cinzel',serif;font-size:0.72rem;letter-spacing:.06em;color:var(--ink3);margin-bottom:.75rem;}
+.nar-roll-btn{font-family:'Cinzel',serif;font-size:0.8rem;letter-spacing:.08em;color:#fff;background:var(--teal);border:none;border-radius:2px;padding:.55rem 1.25rem;cursor:pointer;transition:background .15s;}
+.nar-roll-btn:hover{background:#0d3328;}
+.nar-roll-btn:disabled{background:rgba(90,60,20,.2);cursor:not-allowed;color:var(--ink3);}
+.nar-result{margin-top:.85rem;padding:.85rem 1rem;border-radius:2px;font-size:0.88rem;line-height:1.6;}
+.nar-result.nar-success{background:rgba(26,74,58,.08);border:1px solid rgba(26,74,58,.25);color:var(--teal);}
+.nar-result.nar-fail{background:rgba(107,26,26,.06);border:1px solid rgba(107,26,26,.2);color:var(--red);}
+.nar-continue-btn{font-family:'Cinzel',serif;font-size:0.8rem;letter-spacing:.08em;color:#fff;background:var(--ink2);border:none;border-radius:2px;padding:.55rem 1.5rem;cursor:pointer;width:100%;margin-top:.5rem;transition:background .15s;}
+.nar-continue-btn:hover{background:var(--ink);}
+
 /* Audio player */
 .audio-player{position:fixed;bottom:1rem;right:1rem;z-index:50;display:flex;align-items:center;gap:8px;background:rgba(26,15,5,0.85);border:1px solid rgba(196,150,42,.25);border-radius:3px;padding:6px 12px;backdrop-filter:blur(4px);}
 .audio-btn{background:none;border:none;cursor:pointer;font-size:1rem;color:rgba(196,150,42,.7);padding:0;line-height:1;transition:color .15s;}
@@ -1301,8 +1323,11 @@ function startGame(){
     const h=PLAYER?PLAYER.hindrance:'';
     if(INTRO_SEQUENCES[h]){
       setTimeout(()=>startIntro(h),800);
+      return;
     }
   }
+  // Retroactive narrative event check — trigger if conditions met but event not done
+  setTimeout(()=>checkRetroactiveEvents(),2000);
   // Show pending events from offline play
   if(G.pendingEvents&&G.pendingEvents.length>0){
     setTimeout(showNextPendingEvent, 1500);
@@ -1403,6 +1428,11 @@ function checkEvents(sk,lv){
       setTimeout(()=>{addLog(ev.m,'ev');renderLog();},700);
     }
   });
+  // Ferrec mission — triggers at Instinct 5 for L'Anxieux only
+  if(sk==='s'&&lv===5&&PLAYER&&PLAYER.hindrance==='Agoraphobie'){
+    const done=G.choiceHistory&&G.choiceHistory.find(e=>e.eventId==='ferrec_mission');
+    if(!done)setTimeout(()=>startNarrativeEvent('ferrec_mission'),2000);
+  }
 }
 function updSkill(sk){
   const lv=G.sk[sk],xp=G.xp[sk],n=xpN(lv);
@@ -1519,6 +1549,229 @@ function processOffline(){
     });
     showReturnSummary(elapsed,levelsGained,goldGained,itemsGained);
   }
+}
+
+
+function checkRetroactiveEvents(){
+  if(!PLAYER)return;
+  // Ferrec mission — L'Anxieux, Instinct >= 5, not done yet
+  if(PLAYER.hindrance==='Agoraphobie'&&G.sk.s>=5){
+    const done=G.choiceHistory&&G.choiceHistory.find(e=>e.eventId==='ferrec_mission');
+    if(!done)startNarrativeEvent('ferrec_mission');
+  }
+}
+
+// --- Narrative Events with D20 ---
+const NARRATIVE_EVENTS={
+  'ferrec_mission':{
+    title:"La Mission de Ferrec",
+    steps:[
+      {id:'intro',type:'narration',
+        text:()=>{
+          const name=PLAYER?PLAYER.character_name:'toi';
+          return name+". Ferrec t'attendait au coin de la Ruelle du Sel — ce qui n'arrive jamais avant le coucher du soleil. Il était midi. Il avait l'air d'un homme qui n'avait pas dormi et qui ne comptait pas le faire de sitôt.\n\n\"J'ai besoin que tu livres ça ce soir. Pas de questions. Et surtout — tu n'ouvres pas.\" Il t'a tendu un colis enveloppé de toile brune. Le sceau de cire portait les armoiries d'une maison que tu ne reconnais pas — un animal svelte, griffes levées. Quelque chose dans sa forme te fait penser au médaillon sous ta chemise, sans que tu puisses dire pourquoi.";
+        },
+        continue:'Regarder le colis dans tes mains →'
+      },
+      {id:'choix_ouvrir',type:'choice',
+        text:"Le colis est dans tes mains. Ferrec a disparu dans la ruelle. Personne ne regarde.",
+        choices:[
+          {text:"Livrer sans toucher — Ferrec avait l'air sérieux",next:'trajet'},
+          {text:"Ouvrir discrètement — la curiosité a toujours été ton problème",next:'ouvrir'}
+        ]
+      },
+      {id:'ouvrir',type:'narration',
+        text:"Le sceau cède sous tes doigts. La lettre s'ouvre — et avant que tu aies pu lire un seul mot, le papier noircit depuis les bords vers le centre, comme consumé par une flamme invisible. En trois secondes, il ne reste que des cendres dans ta paume. Ta main est chaude. Pas brûlée — juste chaude, comme si tu avais tenu une bougie trop longtemps.\n\nTu regardes les cendres tomber entre tes doigts. Ferrec va être furieux. Et tu n'as toujours rien appris.",
+        continue:'Rentrer chez toi →',
+        terminal:true,
+        onComplete:(state)=>{
+          if(!G.choiceHistory)G.choiceHistory=[];
+          G.choiceHistory.push({eventId:'ferrec_mission',result:'lettre_ouverte',ts:Date.now()});
+          addLog('Mission de Ferrec — La lettre a brûlé dans tes mains. Pas de paiement.','ev');
+          save();
+        }
+      },
+      {id:'trajet',type:'narration',
+        text:"Westmarche la nuit. Tu connais ces rues mieux que quiconque — chaque passage, chaque ombre, chaque recoin où disparaître si quelqu'un te suit.\n\nCe soir, elles te semblent différentes. Tu sens un regard dans ton dos à deux reprises. Tu te retournes — personne. Ou personne que tu vois.\n\nTu te rappelles ce que Ferrec a dit. *Tu n'ouvres pas.* Pas : fais attention. Juste : tu n'ouvres pas. Comme si c'était la seule chose qui comptait vraiment.",
+        continue:"Continuer vers l'adresse →"
+      },
+      {id:'magasin',type:'choice',
+        text:"L'échoppe de Davan le tisserand. Tu y es passé cent fois. Mais ce soir, derrière le comptoir, ce n'est pas Davan. C'est quelqu'un que tu n'as jamais vu — calme, immobile, qui attend comme quelqu'un habitué à attendre.",
+        choices:[
+          {text:"Entrer directement — mieux vaut en finir",next:'entrer_direct'},
+          {text:"Observer depuis l'ombre avant d'entrer",next:'observer'}
+        ]
+      },
+      {id:'observer',type:'narration',
+        text:"Tu t'arrêtes dans l'ombre du porche d'en face. L'inconnu ne bouge pas. Il ne vérifie pas la porte, ne consulte pas l'heure, ne montre aucun signe d'impatience. Il sait que tu vas venir. C'est ça qui est inquiétant.\n\nAprès deux minutes, tu traverses.",
+        continue:"Entrer →",
+        onEnter:(state)=>{state.observedFirst=true;}
+      },
+      {id:'entrer_direct',type:'narration',
+        text:"Tu pousses la porte. L'inconnu lève les yeux — pas surpris, juste attendant. Tu poses le colis sur le comptoir.",
+        continue:'Continuer →'
+      },
+      {id:'jet_perception',type:'d20',
+        text:"L'inconnu saisit le colis. Ses mains sont précises, méthodiques. Avant de le glisser sous le comptoir, il vérifie l'intégrité du sceau.",
+        skill:'s',subskill:'Perception',threshold:8,difficultyName:'Rumeur de rue',
+        successText:"Tes yeux passent sur le sceau comme ils passent sur tout — vite, sans s'arrêter. Mais tu as enregistré. Ce n'est pas le même animal que celui du médaillon — les pattes sont différentes, la silhouette plus lourde. Mais la posture, l'œil gravé dans la cire... quelque chose résonne.",
+        failText:"Tu prends ta pièce et repars. Le sceau ne t'a rien dit de particulier.",
+        onSuccess:(state)=>{
+          state.sigil_noticed=true;
+          addSubskill('s','Perception',1);
+          G.choiceHistory.push({eventId:'ferrec_sigil_noticed',ts:Date.now()});
+        }
+      },
+      {id:'jet_discretion',type:'d20_conditional',
+        condition:(state)=>state.observedFirst===true,
+        skipText:"Tu récupères ta pièce et sors sans t'attarder.",
+        text:"Avant de partir, tu remarques quelque chose sur le montant de la porte — une marque gravée dans le bois, à hauteur de regard.",
+        skill:'s',subskill:'Discrétion',threshold:12,difficultyName:'Négociation tendue',
+        successText:"Tu fais glisser ton regard dessus sans ralentir le pas. Un lynx, gravé finement. Quelqu'un a voulu que ce soit là sans que ça paraisse.",
+        failText:"Tu essaies de regarder sans en avoir l'air. L'inconnu te fixe. Tu détournes les yeux et sors.",
+        onSuccess:(state)=>{
+          state.mark_seen=true;
+          G.choiceHistory.push({eventId:'ferrec_mark_seen',ts:Date.now()});
+        }
+      },
+      {id:'retour',type:'narration',
+        text:"Tu retrouves Ferrec là où tu l'as laissé. Il compte déjà les pièces de ton paiement sans te regarder.",
+        continue:"Lui parler →"
+      },
+      {id:'jet_opportunisme',type:'d20',
+        text:"Tu pourrais partir avec ton or et ne jamais repenser à cette nuit. Ou tu pourrais mentionner, l'air de rien, la marque sur la porte de l'échoppe.",
+        skill:'s',subskill:'Opportunisme',threshold:14,difficultyName:'Négociation tendue',
+        successText:"Tu mentionnes la marque, l'air de rien. Ferrec s'arrête de respirer pendant une demi-seconde. Puis il regarde le sol. Il fait signe que non. Il change de sujet et ne revient pas dessus de la soirée. Tu en sais plus maintenant que s'il t'avait répondu.",
+        failText:"Tu essaies de relancer Ferrec. Il te coupe d'un regard. 'T'as été payé. C'est fini.' Il part avant que tu aies le temps de répondre.",
+        onSuccess:(state)=>{
+          G.gold+=12;
+          document.getElementById('gval').textContent=G.gold;
+          G.choiceHistory.push({eventId:'ferrec_lynx_silence',ts:Date.now()});
+          addLog('Mission de Ferrec — Ferrec a payé pour ton silence. +12 or.','r');
+        },
+        onFail:(state)=>{
+          G.choiceHistory.push({eventId:'ferrec_ferrec_mefiant',ts:Date.now()});
+        }
+      },
+      {id:'fin',type:'narration',
+        text:"Tu rentres seul dans la Ruelle des Murmures. Le médaillon est froid contre ta peau.\n\nTu ne sais pas encore ce que tu as livré ce soir. Ni pour qui.",
+        continue:'Fermer →',
+        terminal:true,
+        onComplete:(state)=>{
+          G.choiceHistory.push({eventId:'ferrec_mission',result:'complete',ts:Date.now()});
+          save();
+          addLog('La mission de Ferrec est terminée. Quelque chose a changé.','ev');
+          renderLog();
+        }
+      }
+    ]
+  }
+};
+
+let _narState={eventId:null,currentStep:null,stepData:{},history:[]};
+
+function startNarrativeEvent(eventId){
+  const ev=NARRATIVE_EVENTS[eventId];
+  if(!ev)return;
+  _narState={eventId,currentStep:null,stepData:{},history:[]};
+  document.getElementById('narrativeOverlay').style.display='flex';
+  document.getElementById('narrativeTitle').textContent=ev.title;
+  runNarrativeStep(ev.steps[0]);
+}
+
+function runNarrativeStep(step){
+  if(!step)return;
+  _narState.currentStep=step;
+  const textEl=document.getElementById('narrativeText');
+  const choicesEl=document.getElementById('narrativeChoices');
+  const continueEl=document.getElementById('narrativeContinue');
+  const d20El=document.getElementById('narrativeD20');
+  const resultEl=document.getElementById('narrativeResult');
+  choicesEl.innerHTML='';
+  d20El.style.display='none';
+  resultEl.style.display='none';
+  continueEl.style.display='none';
+  if(step.onEnter)step.onEnter(_narState.stepData);
+  const text=typeof step.text==='function'?step.text():step.text||'';
+  textEl.innerHTML=text.replace(/\n/g,'<br>');
+
+  if(step.type==='narration'){
+    continueEl.textContent=step.continue||'Continuer →';
+    continueEl.style.display='block';
+    continueEl.onclick=()=>{
+      if(step.onComplete)step.onComplete(_narState.stepData);
+      if(step.terminal){closeNarrativeEvent();return;}
+      narrativeNextStep(step);
+    };
+  }
+  else if(step.type==='choice'){
+    step.choices.forEach(c=>{
+      const btn=document.createElement('button');
+      btn.className='nar-choice-btn';
+      btn.textContent=c.text;
+      btn.onclick=()=>narrativeGoTo(c.next);
+      choicesEl.appendChild(btn);
+    });
+  }
+  else if(step.type==='d20'||step.type==='d20_conditional'){
+    if(step.type==='d20_conditional'&&step.condition&&!step.condition(_narState.stepData)){
+      textEl.innerHTML=(step.skipText||'').replace(/\n/g,'<br>');
+      continueEl.textContent='Continuer →';
+      continueEl.style.display='block';
+      continueEl.onclick=()=>narrativeNextStep(step);
+      return;
+    }
+    d20El.style.display='block';
+    document.getElementById('narrativeDiff').textContent=step.difficultyName+' (seuil '+step.threshold+')';
+    const rollBtn=document.getElementById('narrativeRollBtn');
+    rollBtn.disabled=false;
+    rollBtn.onclick=()=>{
+      rollBtn.disabled=true;
+      const result=narrativeCheck(step.skill,step.subskill,step.threshold,false);
+      const mod=getModifier(G.sk[step.skill]);
+      const sub=getSubskill(step.skill,step.subskill);
+      let rollInfo='D20 ('+result.roll+') + mod ('+fmtMod(mod)+') + '+step.subskill+' ('+sub+') = <strong>'+result.total+'</strong>';
+      if(result.autoFail)rollInfo="Échec automatique — l'anxiété prend le dessus.";
+      if(result.malusMsg)rollInfo+='<br><em>'+result.malusMsg+'</em>';
+      resultEl.innerHTML='<strong>'+(result.success?'✓ Succès':'✗ Échec')+'</strong> — '+rollInfo+'<br><br>'+(result.success?step.successText:step.failText);
+      resultEl.style.display='block';
+      resultEl.className='nar-result '+(result.success?'nar-success':'nar-fail');
+      if(result.success&&step.onSuccess)step.onSuccess(_narState.stepData);
+      if(!result.success&&step.onFail)step.onFail(_narState.stepData);
+      continueEl.textContent='Continuer →';
+      continueEl.style.display='block';
+      continueEl.onclick=()=>narrativeNextStep(step);
+    };
+  }
+}
+
+function narrativeNextStep(currentStep){
+  const ev=NARRATIVE_EVENTS[_narState.eventId];
+  const steps=ev.steps;
+  const idx=steps.findIndex(s=>s.id===currentStep.id);
+  // Find next sequential step
+  for(let i=idx+1;i<steps.length;i++){
+    const s=steps[i];
+    // Skip choice-target steps — they're accessed via narrativeGoTo
+    const choiceTargets=['ouvrir','trajet','observer','entrer_direct'];
+    if(!choiceTargets.includes(s.id)){
+      runNarrativeStep(s);return;
+    }
+  }
+  closeNarrativeEvent();
+}
+
+function narrativeGoTo(stepId){
+  const ev=NARRATIVE_EVENTS[_narState.eventId];
+  const step=ev.steps.find(s=>s.id===stepId);
+  if(!step){closeNarrativeEvent();return;}
+  // After choice targets, continue in sequence
+  runNarrativeStep(step);
+}
+
+function closeNarrativeEvent(){
+  document.getElementById('narrativeOverlay').style.display='none';
+  renderInv();renderLog();save();
 }
 
 function showReturnSummary(elapsed,levelsGained,goldGained,itemsGained){
@@ -2207,6 +2460,28 @@ function resolveDecision(idx){
   }
 })();
 </script>
+<!-- Narrative Event Overlay -->
+<div class="nar-overlay" id="narrativeOverlay" style="display:none;">
+  <div class="nar-box">
+    <div class="nar-header">
+      <div>
+        <div class="nar-eyebrow">ÉVÉNEMENT NARRATIF</div>
+        <div class="nar-title" id="narrativeTitle"></div>
+      </div>
+    </div>
+    <div class="nar-body">
+      <div class="nar-text" id="narrativeText"></div>
+      <div class="nar-choices" id="narrativeChoices"></div>
+      <div class="nar-d20-section" id="narrativeD20" style="display:none;">
+        <div class="nar-diff" id="narrativeDiff"></div>
+        <button class="nar-roll-btn" id="narrativeRollBtn">Lancer le D20</button>
+        <div class="nar-result" id="narrativeResult" style="display:none;"></div>
+      </div>
+      <button class="nar-continue-btn" id="narrativeContinue" style="display:none;">Continuer →</button>
+    </div>
+  </div>
+</div>
+
 <!-- Return Summary Popup -->
 <div class="return-overlay" id="returnOverlay" style="display:none;">
   <div class="return-box">
