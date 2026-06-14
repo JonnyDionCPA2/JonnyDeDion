@@ -293,6 +293,13 @@ h1.site-title{font-family:'Cinzel',serif;font-size:0.85rem;letter-spacing:.18em;
 .intro-item-name{font-family:'Cinzel',serif;font-size:1rem;color:rgba(196,150,42,.9);margin-bottom:.4rem;}
 .intro-item-desc{font-size:0.85rem;font-style:italic;color:rgba(245,240,224,.7);line-height:1.6;}
 
+/* Audio player */
+.audio-player{position:fixed;bottom:1rem;right:1rem;z-index:50;display:flex;align-items:center;gap:8px;background:rgba(26,15,5,0.85);border:1px solid rgba(196,150,42,.25);border-radius:3px;padding:6px 12px;backdrop-filter:blur(4px);}
+.audio-btn{background:none;border:none;cursor:pointer;font-size:1rem;color:rgba(196,150,42,.7);padding:0;line-height:1;transition:color .15s;}
+.audio-btn:hover{color:rgba(196,150,42,1);}
+.audio-vol{width:70px;accent-color:rgba(196,150,42,.8);cursor:pointer;height:3px;}
+.audio-label{font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:.08em;color:rgba(196,150,42,.4);}
+
 footer{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:0.7rem;letter-spacing:.1em;color:rgba(196,150,42,.3);position:relative;z-index:1;}
 
 @media(max-width:600px){
@@ -2117,6 +2124,39 @@ function resolveDecision(idx){
     showLoginScreen();
   }
 })();
+</script>
+<!-- Audio Player -->
+<div class="audio-player" id="audioPlayer">
+  <span class="audio-label">♪</span>
+  <button class="audio-btn" id="audioToggle" onclick="toggleAudio()" title="Pause/Play">⏸</button>
+  <input class="audio-vol" type="range" id="audioVol" min="0" max="1" step="0.05" value="0.4" oninput="setVolume(this.value)" title="Volume">
+</div>
+<audio id="bgAudio" loop>
+  <source src="https://jonnydioncpa2.github.io/JonnyDeDion/MP3_Fancy_And_Folly.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const audio=document.getElementById('bgAudio');
+const toggleBtn=document.getElementById('audioToggle');
+audio.volume=0.4;
+
+// Auto-play on first user interaction (browser policy)
+let audioStarted=false;
+function tryStartAudio(){
+  if(!audioStarted){
+    audio.play().then(()=>{audioStarted=true;}).catch(()=>{});
+  }
+}
+document.addEventListener('click',tryStartAudio,{once:false});
+
+function toggleAudio(){
+  if(audio.paused){audio.play();toggleBtn.textContent='⏸';}
+  else{audio.pause();toggleBtn.textContent='▶';}
+}
+function setVolume(v){
+  audio.volume=parseFloat(v);
+  if(audio.paused&&parseFloat(v)>0){audio.play();toggleBtn.textContent='⏸';}
+}
 </script>
 </body>
 </html>
