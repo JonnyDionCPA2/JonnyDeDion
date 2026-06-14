@@ -1635,6 +1635,18 @@ const NARRATIVE_EVENTS={
           G.choiceHistory.push({eventId:'ferrec_mark_seen',ts:Date.now()});
         }
       },
+      {id:'sortie',type:'narration',
+        text:(state)=>{
+          let txt="Tu sors de l'échoppe de Davan sans te retourner. L'air de la nuit est froid après la chaleur du comptoir. Tu marches vite, pas par peur — du moins c'est ce que tu te dis.\\n\\nL'inconnu ne t'a pas suivi. Tu t'en es assuré deux fois.";
+          if(state.sigil_noticed){
+            txt+="\\n\\nDans ta main, les pièces sont chaudes. Le médaillon sous ta chemise est froid. Tu ne sais pas pourquoi tu fais le lien entre les deux.";
+          } else {
+            txt+="\\n\\nDans ta main, les pièces sont chaudes. Tu essaies de ne pas repenser à la soirée.";
+          }
+          return txt;
+        },
+        continue:"Retrouver Ferrec →"
+      },
       {id:'retour',type:'narration',
         text:"Tu retrouves Ferrec là où tu l'as laissé. Il compte déjà les pièces de ton paiement sans te regarder.",
         continue:"Lui parler →"
