@@ -1947,8 +1947,11 @@ function renderIntroStep(){
     cont.textContent='Commencer mon histoire →';
   }
   else if(_introState.step===5){
-    applyIntroRewards();
+    applyIntroRewards(); // saves choiceHistory including 'intro' entry
     document.getElementById('intro-screen').style.display='none';
+    // Clear the game screen state so startGame renders fresh
+    clearInterval(tickIv);
+    clearInterval(window._syncIv);
     startGame();
   }
 }
@@ -1996,8 +1999,9 @@ function applyIntroRewards(){
     G.equipment=G.equipment.filter(e=>e.slot!==item.slot);
     G.equipment.push({id:item.id,name:item.name,desc:item.desc,effect:item.effect,slot:item.slot,rare:item.rare});
   }
+  if(!G.choiceHistory)G.choiceHistory=[];
   G.choiceHistory.push({eventId:'intro',c1:_introState.c1choice,c2:_introState.c2choice,ts:Date.now()});
-  save();
+  save(); // Save immediately so the intro check won't re-trigger
 }
 
 function renderPersonnage(){
