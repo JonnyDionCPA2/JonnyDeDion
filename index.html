@@ -1569,9 +1569,20 @@ const NARRATIVE_EVENTS={
       {id:'intro',type:'narration',
         text:()=>{
           const name=PLAYER?PLAYER.character_name:'toi';
-          return name+". Ferrec t'attendait au coin de la Ruelle du Sel — ce qui n'arrive jamais avant le coucher du soleil. Il était midi. Il avait l'air d'un homme qui n'avait pas dormi et qui ne comptait pas le faire de sitôt.\n\n\"J'ai besoin que tu livres ça ce soir. Pas de questions. Et surtout — tu n'ouvres pas.\" Il t'a tendu un colis enveloppé de toile brune. Le sceau de cire portait les armoiries d'une maison que tu ne reconnais pas — un animal svelte, griffes levées. Quelque chose dans sa forme te fait penser au médaillon sous ta chemise, sans que tu puisses dire pourquoi.";
+          return name+". Ferrec t'attendait au coin de la Ruelle du Sel — ce qui n'arrive jamais avant le coucher du soleil. Il était midi. Il avait l'air d'un homme qui n'avait pas dormi et qui ne comptait pas le faire de sitôt.\n\n\"J'ai besoin que tu livres ça ce soir. Pas de questions. Et surtout — tu n'ouvres pas.\" Il t'a tendu un colis enveloppé de toile brune.";
         },
         continue:'Regarder le colis dans tes mains →'
+      },
+      {id:'jet_perception',type:'d20',
+        text:"Le sceau de cire porte les armoiries d'une maison que tu ne reconnais pas — un animal svelte, griffes levées.",
+        skill:'s',subskill:'Perception',threshold:8,difficultyName:'Rumeur de rue',
+        successText:"Tes yeux passent sur le sceau comme ils passent sur tout — vite, sans s'arrêter. Mais tu as enregistré. Ce n'est pas le même animal que celui du médaillon — les pattes sont différentes, la silhouette plus lourde. Mais la posture, l'œil gravé dans la cire... quelque chose résonne.",
+        failText:"Le sceau ne te dit rien de particulier. Une maison noble parmi d'autres.",
+        onSuccess:(state)=>{
+          state.sigil_noticed=true;
+          addSubskill('s','Perception',1);
+          G.choiceHistory.push({eventId:'ferrec_sigil_noticed',ts:Date.now()});
+        }
       },
       {id:'choix_ouvrir',type:'choice',
         text:"Le colis est dans tes mains. Ferrec a disparu dans la ruelle. Personne ne regarde.",
@@ -1611,17 +1622,7 @@ const NARRATIVE_EVENTS={
         text:"Tu pousses la porte. L'inconnu lève les yeux — pas surpris, juste attendant. Tu poses le colis sur le comptoir.",
         continue:'Continuer →'
       },
-      {id:'jet_perception',type:'d20',
-        text:"L'inconnu saisit le colis. Ses mains sont précises, méthodiques. Avant de le glisser sous le comptoir, il vérifie l'intégrité du sceau.",
-        skill:'s',subskill:'Perception',threshold:8,difficultyName:'Rumeur de rue',
-        successText:"Tes yeux passent sur le sceau comme ils passent sur tout — vite, sans s'arrêter. Mais tu as enregistré. Ce n'est pas le même animal que celui du médaillon — les pattes sont différentes, la silhouette plus lourde. Mais la posture, l'œil gravé dans la cire... quelque chose résonne.",
-        failText:"Tu prends ta pièce et repars. Le sceau ne t'a rien dit de particulier.",
-        onSuccess:(state)=>{
-          state.sigil_noticed=true;
-          addSubskill('s','Perception',1);
-          G.choiceHistory.push({eventId:'ferrec_sigil_noticed',ts:Date.now()});
-        }
-      },
+
       {id:'jet_discretion',type:'d20_conditional',
         condition:(state)=>state.observedFirst===true,
         skipText:"Tu récupères ta pièce et sors sans t'attarder.",
@@ -1749,11 +1750,10 @@ function narrativeNextStep(currentStep){
   const ev=NARRATIVE_EVENTS[_narState.eventId];
   const steps=ev.steps;
   const idx=steps.findIndex(s=>s.id===currentStep.id);
-  // Find next sequential step
+  // Choice-target steps accessed via narrativeGoTo, not sequential
+  const choiceTargets=['ouvrir','trajet','observer','entrer_direct'];
   for(let i=idx+1;i<steps.length;i++){
     const s=steps[i];
-    // Skip choice-target steps — they're accessed via narrativeGoTo
-    const choiceTargets=['ouvrir','trajet','observer','entrer_direct'];
     if(!choiceTargets.includes(s.id)){
       runNarrativeStep(s);return;
     }
