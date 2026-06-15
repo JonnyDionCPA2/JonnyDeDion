@@ -1765,6 +1765,18 @@ function ev_steps_ref(){
   return NARRATIVE_EVENTS[_narState.eventId]?NARRATIVE_EVENTS[_narState.eventId].steps:[];
 }
 
+// Safe wrapper for all step function calls — always passes stepData
+// Prevents "cannot read undefined" bugs when adding future narrative events
+function callStepFn(fn, fallback=''){
+  if(!fn) return fallback;
+  try{
+    return fn(_narState.stepData);
+  }catch(e){
+    console.error('Narrative step function error:', e, '\nstepData:', _narState.stepData);
+    return fallback;
+  }
+}
+
 function runNarrativeStep(step){
   if(!step)return;
   _narState.currentStep=step;
@@ -1777,15 +1789,15 @@ function runNarrativeStep(step){
   d20El.style.display='none';
   resultEl.style.display='none';
   continueEl.style.display='none';
-  if(step.onEnter)step.onEnter(_narState.stepData);
-  const text=typeof step.text==='function'?step.text():step.text||'';
+  if(step.onEnter)callStepFn(step.onEnter);
+  const text=typeof step.text==='function'?callStepFn(step.text,''):step.text||'';
   textEl.innerHTML=text.replace(/\n/g,'<br>');
 
   if(step.type==='narration'){
     continueEl.textContent=step.continue||'Continuer →';
     continueEl.style.display='block';
     continueEl.onclick=()=>{
-      if(step.onComplete)step.onComplete(_narState.stepData);
+      if(step.onComplete)callStepFn(step.onComplete);
       if(step.terminal){closeNarrativeEvent();return;}
       if(step.nextStep){
         const next=ev_steps_ref().find(s=>s.id===step.nextStep);
@@ -1805,7 +1817,7 @@ function runNarrativeStep(step){
   }
   else if(step.type==='d20'||step.type==='d20_conditional'){
     const conditionMet = step.type==='d20_conditional'
-      ? (!step.condition || step.condition(_narState.stepData))
+      ? (!step.condition || callStepFn(step.condition, false))
       : true;
     console.log('D20 step:', step.id, 'conditionMet:', conditionMet, 'stepData:', JSON.stringify(_narState.stepData));
 
@@ -1834,8 +1846,8 @@ function runNarrativeStep(step){
       resultEl.innerHTML='<strong>'+(result.success?'✓ Succès':'✗ Échec')+'</strong> — '+rollInfo+'<br><br>'+(result.success?step.successText:step.failText);
       resultEl.style.display='block';
       resultEl.className='nar-result '+(result.success?'nar-success':'nar-fail');
-      if(result.success&&step.onSuccess)step.onSuccess(_narState.stepData);
-      if(!result.success&&step.onFail)step.onFail(_narState.stepData);
+      if(result.success&&step.onSuccess)callStepFn(step.onSuccess);
+      if(!result.success&&step.onFail)callStepFn(step.onFail);
       continueEl.textContent='Continuer →';
       continueEl.style.display='block';
       continueEl.onclick=()=>narrativeNextStep(step);
