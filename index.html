@@ -1728,12 +1728,15 @@ function runNarrativeStep(step){
   }
   else if(step.type==='d20'||step.type==='d20_conditional'){
     if(step.type==='d20_conditional'&&step.condition&&!step.condition(_narState.stepData)){
+      // Condition not met — skip with alternate text
       textEl.innerHTML=(step.skipText||'').replace(/\n/g,'<br>');
       continueEl.textContent='Continuer →';
       continueEl.style.display='block';
       continueEl.onclick=()=>narrativeNextStep(step);
       return;
     }
+    // Condition met (or unconditional) — show text + D20
+    textEl.innerHTML=text.replace(/\n/g,'<br>');
     d20El.style.display='block';
     document.getElementById('narrativeDiff').textContent=step.difficultyName+' (seuil '+step.threshold+')';
     const rollBtn=document.getElementById('narrativeRollBtn');
