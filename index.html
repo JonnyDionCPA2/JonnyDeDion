@@ -1684,14 +1684,15 @@ const NARRATIVE_EVENTS={
       {id:'observer',type:'narration',
         text:"Tu t'arrêtes dans l'ombre du porche d'en face. L'inconnu ne bouge pas. Il ne vérifie pas la porte, ne consulte pas l'heure, ne montre aucun signe d'impatience. Il sait que tu vas venir. C'est ça qui est inquiétant.\n\nAprès deux minutes, tu traverses.",
         continue:"Entrer →",
-        onEnter:(state)=>{state.observedFirst=true;}
+        nextStep:'jet_discretion',
+        onComplete:(state)=>{state.observedFirst=true;}
       },
       {id:'entrer_direct',type:'narration',
         text:"Tu pousses la porte. L'inconnu lève les yeux — pas surpris, juste attendant. Tu poses le colis sur le comptoir.",
-        continue:'Continuer →'
+        continue:'Continuer →',
+        nextStep:'jet_discretion'
       },
-
-      {id:'jet_discretion',type:'d20_conditional',
+            {id:'jet_discretion',type:'d20_conditional',
         condition:(state)=>state.observedFirst===true,
         skipText:"Tu récupères ta pièce et sors sans t'attarder.",
         text:"Avant de partir, tu remarques quelque chose sur le montant de la porte — une marque gravée dans le bois, à hauteur de regard.",
@@ -1760,6 +1761,10 @@ function startNarrativeEvent(eventId){
   runNarrativeStep(ev.steps[0]);
 }
 
+function ev_steps_ref(){
+  return NARRATIVE_EVENTS[_narState.eventId]?NARRATIVE_EVENTS[_narState.eventId].steps:[];
+}
+
 function runNarrativeStep(step){
   if(!step)return;
   _narState.currentStep=step;
@@ -1782,6 +1787,10 @@ function runNarrativeStep(step){
     continueEl.onclick=()=>{
       if(step.onComplete)step.onComplete(_narState.stepData);
       if(step.terminal){closeNarrativeEvent();return;}
+      if(step.nextStep){
+        const next=ev_steps_ref().find(s=>s.id===step.nextStep);
+        if(next){runNarrativeStep(next);return;}
+      }
       narrativeNextStep(step);
     };
   }
@@ -1795,15 +1804,19 @@ function runNarrativeStep(step){
     });
   }
   else if(step.type==='d20'||step.type==='d20_conditional'){
-    if(step.type==='d20_conditional'&&step.condition&&!step.condition(_narState.stepData)){
-      // Condition not met — skip with alternate text
+    const conditionMet = step.type==='d20_conditional'
+      ? (!step.condition || step.condition(_narState.stepData))
+      : true;
+
+    if(!conditionMet){
+      // Condition not met — skip with alternate text and continue button
       textEl.innerHTML=(step.skipText||'').replace(/\n/g,'<br>');
       continueEl.textContent='Continuer →';
       continueEl.style.display='block';
       continueEl.onclick=()=>narrativeNextStep(step);
       return;
     }
-    // Condition met (or unconditional) — show text + D20
+    // Condition met — show text + D20 roll button
     textEl.innerHTML=text.replace(/\n/g,'<br>');
     d20El.style.display='block';
     document.getElementById('narrativeDiff').textContent=step.difficultyName+' (seuil '+step.threshold+')';
@@ -1833,7 +1846,12 @@ function narrativeNextStep(currentStep){
   const ev=NARRATIVE_EVENTS[_narState.eventId];
   const steps=ev.steps;
   const idx=steps.findIndex(s=>s.id===currentStep.id);
-  // Choice-target steps accessed via narrativeGoTo, not sequential
+  // If current step has explicit nextStep, use it
+  if(currentStep.nextStep){
+    const next=steps.find(s=>s.id===currentStep.nextStep);
+    if(next){runNarrativeStep(next);return;}
+  }
+  // Choice-target steps — skip in sequential flow
   const choiceTargets=['ouvrir','trajet','observer','entrer_direct'];
   for(let i=idx+1;i<steps.length;i++){
     const s=steps[i];
