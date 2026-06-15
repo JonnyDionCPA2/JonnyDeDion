@@ -1131,20 +1131,49 @@ function showCreateScreen(){
 // Merge Supabase scores into local G state if Supabase has higher levels
 async function mergeSupabaseScores(playerId){
   if(!G.subskills)G.subskills={c:{},s:{},a:{},v:{}};
+  if(!G.choiceHistory)G.choiceHistory=[];
   const{data:scores}=await sb.from('scores').select('*').eq('player_id',playerId).single();
   if(!scores)return;
-  // Use the highest value between local and Supabase for each skill
-  G.sk.c=Math.max(G.sk.c||1, scores.skill_combat||1);
-  G.sk.s=Math.max(G.sk.s||1, scores.skill_survival||1);
-  G.sk.a=Math.max(G.sk.a||1, scores.skill_craft||1);
-  G.sk.v=Math.max(G.sk.v||1, scores.skill_lore||1);
-  G.gold=Math.max(G.gold||0, scores.gold||0);
-  // Push the merged (highest) values back to Supabase immediately
-  await sb.from('scores').upsert({
-    player_id:playerId,
-    skill_combat:G.sk.c,skill_survival:G.sk.s,skill_craft:G.sk.a,skill_lore:G.sk.v,
-    gold:G.gold,updated_at:new Date().toISOString()
-  },{onConflict:'player_id'});
+
+  const remote=scores.game_state||{};
+  const remoteTime=remote.savedAt||0;
+  const localTime=G.lastSeen||0;
+
+  if(remoteTime>localTime&&remote.sk){
+    // Remote is newer — restore full state from Supabase
+    // But take the MAX for skills to never lose progress
+    G.sk.c=Math.max(G.sk.c||1, remote.sk.c||1, scores.skill_combat||1);
+    G.sk.s=Math.max(G.sk.s||1, remote.sk.s||1, scores.skill_survival||1);
+    G.sk.a=Math.max(G.sk.a||1, remote.sk.a||1, scores.skill_craft||1);
+    G.sk.v=Math.max(G.sk.v||1, remote.sk.v||1, scores.skill_lore||1);
+    G.gold=Math.max(G.gold||0, remote.gold||0, scores.gold||0);
+    // Restore state that only exists in Supabase (other device)
+    if(remote.inv&&Object.keys(remote.inv).length>Object.keys(G.inv||{}).length)
+      G.inv=remote.inv;
+    if(remote.equipment&&remote.equipment.length>0&&(!G.equipment||G.equipment.length===0))
+      G.equipment=remote.equipment;
+    if(remote.choiceHistory&&remote.choiceHistory.length>(G.choiceHistory||[]).length)
+      G.choiceHistory=remote.choiceHistory;
+    if(remote.subskills&&Object.keys(remote.subskills).length>0)
+      G.subskills=remote.subskills;
+    if(remote.queue&&remote.queue.length>(G.queue||[]).length){
+      G.queue=remote.queue;
+      G.queueStart=remote.queueStart;
+    }
+    if(remote.lotteryEntries)G.lotteryEntries=remote.lotteryEntries;
+    if(remote.marketStock)G.marketStock=remote.marketStock;
+    console.log('Restored state from Supabase (remote newer)');
+  } else {
+    // Local is newer or equal — just take max skills/gold
+    G.sk.c=Math.max(G.sk.c||1, scores.skill_combat||1);
+    G.sk.s=Math.max(G.sk.s||1, scores.skill_survival||1);
+    G.sk.a=Math.max(G.sk.a||1, scores.skill_craft||1);
+    G.sk.v=Math.max(G.sk.v||1, scores.skill_lore||1);
+    G.gold=Math.max(G.gold||0, scores.gold||0);
+  }
+
+  // Always push current state to Supabase after merge
+  await saveToSupabase();
 }
 
 async function loginPlayer(){
@@ -1377,14 +1406,53 @@ function save(){
   try{
     localStorage.setItem(KEY+'_pid_'+(PLAYER?PLAYER.id:'local'),JSON.stringify(G));
   }catch(e){}
+  // Debounced Supabase sync — waits 5s after last change
+  if(window._saveDebounce)clearTimeout(window._saveDebounce);
+  window._saveDebounce=setTimeout(()=>saveToSupabase(),5000);
 }
-async function syncScores(){
+
+// Build the game state object to persist (excludes log to keep size small)
+function buildGameState(){
+  return{
+    sk:G.sk, xp:G.xp, gold:G.gold,
+    inv:G.inv, equipment:G.equipment,
+    queue:G.queue, queueStart:G.queueStart,
+    choiceHistory:G.choiceHistory||[],
+    subskills:G.subskills||{},
+    marketStock:G.marketStock||{},
+    lotteryEntries:G.lotteryEntries||{},
+    lastSeen:G.lastSeen,
+    savedAt:Date.now()
+  };
+}
+
+async function saveToSupabase(){
   if(!PLAYER)return;
-  await sb.from('scores').upsert({
-    player_id:PLAYER.id,
-    skill_combat:G.sk.c,skill_survival:G.sk.s,skill_craft:G.sk.a,skill_lore:G.sk.v,
-    gold:G.gold,updated_at:new Date().toISOString()
-  },{onConflict:'player_id'});
+  try{
+    const state=buildGameState();
+    await sb.from('scores').upsert({
+      player_id:PLAYER.id,
+      skill_combat:G.sk.c,
+      skill_survival:G.sk.s,
+      skill_craft:G.sk.a,
+      skill_lore:G.sk.v,
+      gold:G.gold,
+      game_state:state,
+      updated_at:new Date().toISOString()
+    },{onConflict:'player_id'});
+  }catch(e){
+    console.warn('Supabase save failed — local save intact',e);
+  }
+}
+
+// Save immediately on tab close
+window.addEventListener('beforeunload',()=>{
+  if(window._saveDebounce)clearTimeout(window._saveDebounce);
+  saveToSupabase();
+});
+async function syncScores(){
+  // Legacy function — now handled by saveToSupabase()
+  await saveToSupabase();
 }
 
 // --- Utils ---
