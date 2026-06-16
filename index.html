@@ -1706,11 +1706,11 @@ const NARRATIVE_EVENTS={
       },
       {id:'sortie',type:'narration',
         text:(state)=>{
-          let txt="Tu sors de l'échoppe de Davan sans te retourner. L'air de la nuit est froid après la chaleur du comptoir. Tu marches vite, pas par peur — du moins c'est ce que tu te dis.\\n\\nL'inconnu ne t'a pas suivi. Tu t'en es assuré deux fois.";
+          let txt="Tu sors de l'échoppe de Davan sans te retourner. L'air de la nuit est froid après la chaleur du comptoir. Tu marches vite, pas par peur — du moins c'est ce que tu te dis.\n\nL'inconnu ne t'a pas suivi. Tu t'en es assuré deux fois.";
           if(state.sigil_noticed){
-            txt+="\\n\\nDans ta main, les pièces sont chaudes. Le médaillon sous ta chemise est froid. Tu ne sais pas pourquoi tu fais le lien entre les deux.";
+            txt+="\n\nDans ta main, les pièces sont chaudes. Le médaillon sous ta chemise est froid. Tu ne sais pas pourquoi tu fais le lien entre les deux.";
           } else {
-            txt+="\\n\\nDans ta main, les pièces sont chaudes. Tu essaies de ne pas repenser à la soirée.";
+            txt+="\n\nDans ta main, les pièces sont chaudes. Tu essaies de ne pas repenser à la soirée.";
           }
           return txt;
         },
@@ -1720,11 +1720,18 @@ const NARRATIVE_EVENTS={
         text:"Tu retrouves Ferrec là où tu l'as laissé. Il compte déjà les pièces de ton paiement sans te regarder.",
         continue:"Lui parler →"
       },
+      {id:'choix_ferrec',type:'choice',
+        text:"Ferrec compte tes pièces sans te regarder. Tu pourrais partir avec ton or et ne jamais repenser à cette nuit.",
+        choices:[
+          {text:"Partir sans un mot — certaines choses sont mieux ignorées", next:'fin'},
+          {text:"Mentionner la marque sur la porte, l'air de rien", next:'jet_opportunisme'}
+        ]
+      },
       {id:'jet_opportunisme',type:'d20',
-        text:"Tu pourrais partir avec ton or et ne jamais repenser à cette nuit. Ou tu pourrais mentionner, l'air de rien, la marque sur la porte de l'échoppe.",
+        text:"Tu mentionnes la marque, comme si c'était une observation sans importance.",
         skill:'s',subskill:'Opportunisme',threshold:14,difficultyName:'Négociation tendue',
-        successText:"Tu mentionnes la marque, l'air de rien. Ferrec s'arrête de respirer pendant une demi-seconde. Puis il regarde le sol. Il fait signe que non. Il change de sujet et ne revient pas dessus de la soirée. Tu en sais plus maintenant que s'il t'avait répondu.",
-        failText:"Tu essaies de relancer Ferrec. Il te coupe d'un regard. 'T'as été payé. C'est fini.' Il part avant que tu aies le temps de répondre.",
+        successText:"Ferrec s'arrête de respirer pendant une demi-seconde. Puis il regarde le sol. Il fait signe que non. Il change de sujet et ne revient pas dessus de la soirée. Tu en sais plus maintenant que s'il t'avait répondu.",
+        failText:"Ferrec te coupe d'un regard. 'T'as été payé. C'est fini.' Il part avant que tu aies le temps de répondre.",
         onSuccess:(state)=>{
           G.gold+=12;
           document.getElementById('gval').textContent=G.gold;
@@ -1791,7 +1798,7 @@ function runNarrativeStep(step){
   continueEl.style.display='none';
   if(step.onEnter)callStepFn(step.onEnter);
   const text=typeof step.text==='function'?callStepFn(step.text,''):step.text||'';
-  textEl.innerHTML=text.replace(/\n/g,'<br>');
+  textEl.innerHTML=text.replace(/\\n|\n/g,'<br>');
 
   if(step.type==='narration'){
     continueEl.textContent=step.continue||'Continuer →';
@@ -1830,7 +1837,7 @@ function runNarrativeStep(step){
       return;
     }
     // Condition met — show text + D20 roll button
-    textEl.innerHTML=text.replace(/\n/g,'<br>');
+    textEl.innerHTML=text.replace(/\\n|\n/g,'<br>');
     d20El.style.display='block';
     document.getElementById('narrativeDiff').textContent=step.difficultyName+' (seuil '+step.threshold+')';
     const rollBtn=document.getElementById('narrativeRollBtn');
