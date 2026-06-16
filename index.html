@@ -1568,8 +1568,8 @@ function rewardCycle(act){
 }
 function processOffline(){
   const now=Date.now();let elapsed=Math.min(now-G.lastSeen,MAX_OFF);
-  if(elapsed<60000||!G.queue.length)return;
-  
+  if(elapsed<60000)return;
+
   // Snapshot levels before processing
   const levelsBefore={c:G.sk.c,s:G.sk.s,a:G.sk.a,v:G.sk.v};
   const goldBefore=G.gold;
@@ -1577,7 +1577,7 @@ function processOffline(){
   Object.entries(G.inv).forEach(([k,v])=>itemsBefore[k]=v);
 
   let cycles=0,summary={},timeLeft=elapsed;
-  while(timeLeft>0&&G.queue.length){
+  while(G.queue.length&&timeLeft>0){
     const act=headAct();if(!act)break;
     const rem=act.dur-(G.queueStart?Math.min(now-G.queueStart,act.dur):0);
     if(timeLeft>=rem){
@@ -1601,21 +1601,25 @@ function processOffline(){
       if(s.gold>0)line+=', '+s.gold+' or';
       addLog(line,'r');
     });
+  }
 
-    // Build return summary
-    const levelsGained=[];
-    ['c','s','a','v'].forEach(sk=>{
-      for(let lv=levelsBefore[sk]+1;lv<=G.sk[sk];lv++){
-        levelsGained.push(SN[sk]+' '+lv);
-      }
-    });
-    const goldGained=G.gold-goldBefore;
-    const itemsGained={};
-    Object.entries(G.inv).forEach(([k,v])=>{
-      const before=itemsBefore[k]||0;
-      if(v>before)itemsGained[k]=v-before;
-    });
-    showReturnSummary(elapsed,levelsGained,goldGained,itemsGained);
+  // Build return summary — show it whenever the player was away for 1+ minute,
+  // regardless of whether the queue was empty or active
+  const levelsGained=[];
+  ['c','s','a','v'].forEach(sk=>{
+    for(let lv=levelsBefore[sk]+1;lv<=G.sk[sk];lv++){
+      levelsGained.push(SN[sk]+' '+lv);
+    }
+  });
+  const goldGained=G.gold-goldBefore;
+  const itemsGained={};
+  Object.entries(G.inv).forEach(([k,v])=>{
+    const before=itemsBefore[k]||0;
+    if(v>before)itemsGained[k]=v-before;
+  });
+  // Only show popup if something actually happened, or queue was empty (worth notifying)
+  if(cycles>0||levelsGained.length>0||goldGained>0||Object.keys(itemsGained).length>0||!G.queue.length){
+    showReturnSummary(elapsed,levelsGained,goldGained,itemsGained,!G.queue.length&&cycles===0);
   }
 }
 
@@ -1743,7 +1747,7 @@ const NARRATIVE_EVENTS={
         }
       },
       {id:'fin',type:'narration',
-        text:"Tu rentres seul dans la Ruelle des Murmures. Le médaillon est froid contre ta peau.\n\nTu ne sais pas encore ce que tu as livré ce soir. Ni pour qui.",
+        text:"Tu rentres seul dans la Ruelle des Murmures. Les ruelles sont silencieuses à cette heure — ou du moins, elles font semblant de l'être.\n\nTu ne sais pas encore ce que tu as livré ce soir. Ni pour qui.",
         continue:'Fermer →',
         terminal:true,
         onComplete:(state)=>{
@@ -1895,10 +1899,12 @@ function closeNarrativeEvent(){
   renderInv();renderLog();save();
 }
 
-function showReturnSummary(elapsed,levelsGained,goldGained,itemsGained){
+function showReturnSummary(elapsed,levelsGained,goldGained,itemsGained,wasIdle){
   const overlay=document.getElementById('returnOverlay');
   document.getElementById('returnTitle').textContent='Bienvenue de retour, '+( PLAYER?PLAYER.character_name:'voyageur')+'.';
-  document.getElementById('returnDuration').textContent='Tu étais absent depuis '+fmtDur(elapsed)+'.';
+  let durationText='Tu étais absent depuis '+fmtDur(elapsed)+'.';
+  if(wasIdle)durationText+=" Ta file d'attente était vide — pense à planifier tes prochaines activités.";
+  document.getElementById('returnDuration').textContent=durationText;
 
   // Levels
   const levelsEl=document.getElementById('returnLevels');
@@ -2102,7 +2108,7 @@ function addToQueue(actId,qty){
   }
 }
 function removeFromQueue(idx){G.queue.splice(idx,1);if(idx===0)G.queueStart=G.queue.length?Date.now():null;if(!G.queue.length)G.queueStart=null;save();renderQueue();}
-function clearQueue(){G.queue=[];G.queueStart=null;addLog('File d\'attente vidée.','');save();renderQueue();renderLog();}
+function clearQueue(){G.queue=[];G.queueStart=null;addLog("File d'attente vidée.",'');save();renderQueue();renderLog();}
 
 // --- Leaderboard ---
 async function renderLeaderboard(){
