@@ -1559,6 +1559,8 @@ function rewardCycle(act){
   const g=rand(act.ga,act.gb);G.gold+=g;
   let lp=[];
   act.loot.forEach(l=>{const q=rand(l.a,l.b);if(q>0){G.inv[l.n]=(G.inv[l.n]||0)+q;lp.push(q+'× '+l.n);}});
+  // Roll for activity event
+  rollOfflineEvents(act.id, act.dur/H);
   addXp(act.sk,act.xp);
   let line=act.name+' — +'+act.xp+' XP '+SN[act.sk];
   if(lp.length)line+=', '+lp.join(', ');
@@ -1587,7 +1589,7 @@ function processOffline(){
       summary[act.name].xp+=act.xp;summary[act.name].gold+=g;
       act.loot.forEach(l=>{const q=rand(l.a,l.b);if(q>0){G.inv[l.n]=(G.inv[l.n]||0)+q;summary[act.name].loot[l.n]=(summary[act.name].loot[l.n]||0)+q;}});
       addXpSilent(act.sk,act.xp);
-      rollOfflineEvents(act.id, 1);
+      rollOfflineEvents(act.id, act.dur/H);
       G.queue.shift();G.queueStart=G.queue.length?Date.now():null;
     } else {G.queueStart=G.queueStart?G.queueStart-timeLeft:now-timeLeft;break;}
   }
@@ -2292,13 +2294,12 @@ function resolveEvent(choiceIdx){
 }
 
 // Check for events during offline cycles
-function rollOfflineEvents(actId, cycles){
-  // Each cycle has 0.1% chance — roll once per 10 cycles for performance
-  const rolls=Math.ceil(cycles/10);
-  for(let i=0;i<rolls;i++){
-    if(Math.random()<0.001*Math.min(cycles,10)){
-      queuePendingEvent(actId, Date.now());
-    }
+function rollOfflineEvents(actId, hoursElapsed){
+  // 1% chance per hour (temp for testing, final target: ~0.21%/h = 5%/day)
+  const evt=rollActivityEvent(actId, hoursElapsed);
+  if(evt){
+    const act=ACTS.find(a=>a.id===actId);
+    queueEvent(evt, act?act.name:actId);
   }
 }
 
