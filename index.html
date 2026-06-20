@@ -1139,6 +1139,13 @@ async function mergeSupabaseScores(playerId){
   const remoteTime=remote.savedAt||0;
   const localTime=G.lastSeen||0;
 
+  // Option B: if no local lastSeen (new device/browser), restore from Supabase
+  // lastSeen in Supabase is only written on tab close — so it's the real last session end
+  if(!G.lastSeen&&remote.lastSeen){
+    G.lastSeen=remote.lastSeen;
+    console.log('Restored lastSeen from Supabase:', new Date(G.lastSeen));
+  }
+
   if(remoteTime>localTime&&remote.sk){
     // Remote is newer — restore full state from Supabase
     // But take the MAX for skills to never lose progress
@@ -1162,6 +1169,7 @@ async function mergeSupabaseScores(playerId){
     }
     if(remote.lotteryEntries)G.lotteryEntries=remote.lotteryEntries;
     if(remote.marketStock)G.marketStock=remote.marketStock;
+
     console.log('Restored state from Supabase (remote newer)');
   } else {
     // Local is newer or equal — just take max skills/gold
@@ -1421,15 +1429,16 @@ function buildGameState(){
     subskills:G.subskills||{},
     marketStock:G.marketStock||{},
     lotteryEntries:G.lotteryEntries||{},
-    lastSeen:G.lastSeen,
     savedAt:Date.now()
+    // Note: lastSeen intentionally excluded — kept local only for offline calc
   };
 }
 
-async function saveToSupabase(){
+async function saveToSupabase(includeLastSeen=false){
   if(!PLAYER)return;
   try{
     const state=buildGameState();
+    if(includeLastSeen)state.lastSeen=G.lastSeen;
     await sb.from('scores').upsert({
       player_id:PLAYER.id,
       skill_combat:G.sk.c,
@@ -1448,7 +1457,8 @@ async function saveToSupabase(){
 // Save immediately on tab close
 window.addEventListener('beforeunload',()=>{
   if(window._saveDebounce)clearTimeout(window._saveDebounce);
-  saveToSupabase();
+  G.lastSeen=Date.now();
+  saveToSupabase(true); // true = include lastSeen
 });
 async function syncScores(){
   // Legacy function — now handled by saveToSupabase()
